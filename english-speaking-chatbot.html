@@ -380,9 +380,11 @@ function initSpeechRecognition() {
   };
 
   recognition.onend = () => {
-    if (isListening) {
-      // auto-restart if still supposed to be listening (browser cuts off after silence)
+    if (isListening && !chatState.done) {
       try { recognition.start(); } catch(e) {}
+    } else {
+      isListening = false;
+      document.getElementById('mic-btn').classList.remove('listening');
     }
   };
 
@@ -627,6 +629,14 @@ async function submitAnswer() {
     chatState.currentQ++;
     updateProgress();
 
+    // Always stop and reset recognition between questions
+    isListening = false;
+    try { if (recognition) recognition.stop(); } catch(e) {}
+    currentTranscript = '';
+    finalTranscript = '';
+    document.getElementById('live-transcript').textContent = '';
+    document.getElementById('submit-btn').classList.remove('visible');
+
     if (chatState.currentQ >= chatState.questions.length) {
       chatState.done = true;
       document.getElementById('mic-btn').disabled = true;
@@ -634,15 +644,22 @@ async function submitAnswer() {
       setTimeout(() => addBotMessage("Fantastic — you've completed all the questions! 🎉 Here's your full session summary:"), 400);
       setTimeout(() => addSummaryCard(), 900);
     } else {
+      // Wait 2 seconds before showing next question and re-enabling mic
+      // giving student time to read feedback without mic accidentally triggering
+      setMicStatus('Read your feedback above…', 'Tap the microphone when ready for the next question');
       setTimeout(() => {
         addBotMessage(formatQ(chatState.questions[chatState.currentQ], chatState.currentQ + 1, chatState.questions.length));
         document.getElementById('mic-btn').disabled = false;
-        setMicStatus('Tap the microphone to answer the next question', '');
-      }, 500);
+        setMicStatus('Tap the microphone when ready to answer', '');
+      }, 2000);
     }
   } catch(e) {
     removeTyping(typingId);
     addBotMessage("Sorry, there was a problem getting feedback. Please check your connection and try again.");
+    isListening = false;
+    try { if (recognition) recognition.stop(); } catch(e) {}
+    currentTranscript = '';
+    finalTranscript = '';
     document.getElementById('mic-btn').disabled = false;
     setMicStatus('Tap the microphone to try again', '');
   }
