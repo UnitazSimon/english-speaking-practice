@@ -670,11 +670,11 @@ Grammar: 0-3 items max, most important spoken errors only. Ignore transcription 
 Vocabulary: 1-2 items max.
 Be warm, encouraging, constructive. Celebrate effort. Remember this is SPEAKING, not writing — be lenient on formality.`;
 
- const resp = await fetch("https://chatbot-limit-0d2b.simonwhalley.workers.dev", {
+  const resp = await fetch("https://chatbot-limit-0d2b.simonwhalley.workers.dev", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5",
       max_tokens: 1000,
       system: systemPrompt,
       messages: [{ role: "user", content: `Topic: ${topicName}\nQuestion: ${question}\nStudent spoke: ${answer}` }]
