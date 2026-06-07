@@ -670,14 +670,9 @@ Grammar: 0-3 items max, most important spoken errors only. Ignore transcription 
 Vocabulary: 1-2 items max.
 Be warm, encouraging, constructive. Celebrate effort. Remember this is SPEAKING, not writing — be lenient on formality.`;
 
-const resp = await fetch("https://api.anthropic.com/v1/messages", {
+ const resp = await fetch("https://chatbot-limit-0d2b.simonwhalley.workers.dev", {
     method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "x-api-key": "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",
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
