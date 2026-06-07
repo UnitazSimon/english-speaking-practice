@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Speaking Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1814; --ink-mid: #5c5750; --ink-light: #9c9690;
+    --cream: #faf8f4; --cream-dark: #f0ece4; --cream-darker: #e4dfd5;
+    --accent: #c85a2a; --accent-light: #f5e8e0; --accent-dark: #8f3a16;
+    --green: #2d6a4f; --green-light: #e8f4ee;
+    --blue: #1e4f7a; --blue-light: #e8f0f8;
+    --gold: #b8860b; --gold-light: #fdf6e0;
+    --border: #ddd8ce;
+    --shadow: 0 1px 3px rgba(26,24,20,0.08), 0 4px 16px rgba(26,24,20,0.06);
+    --mic-red: #e03e2d;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* LANDING */
+  #screen-landing { flex-direction: column; align-items: center; justify-content: center; padding: 2rem; gap: 1.5rem; }
+  .landing-logo { font-family: 'Lora', serif; font-size: 2rem; color: var(--ink); letter-spacing: -0.02em; text-align: center; }
+  .landing-logo span { color: var(--accent); font-style: italic; }
+  .landing-sub { color: var(--ink-mid); font-size: 14px; text-align: center; max-width: 320px; }
+  .landing-badge { display: flex; align-items: center; gap: 6px; background: var(--green-light); color: var(--green); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 99px; }
+  .landing-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+  .btn-primary { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 13px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, transform 0.1s; text-align: center; }
+  .btn-primary:hover { background: #333; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); border-radius: 8px; padding: 12px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s; text-align: center; }
+  .btn-secondary:hover { background: var(--cream-dark); }
+  .divider { width: 100%; max-width: 300px; height: 1px; background: var(--border); }
+
+  /* TEACHER PANEL */
+  #screen-teacher { flex-direction: column; background: var(--cream); }
+  .panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: white; }
+  .panel-title { font-family: 'Lora', serif; font-size: 1.1rem; }
+  .panel-title span { color: var(--accent); font-style: italic; }
+  .panel-body { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 57px); }
+  .topic-sidebar { width: 240px; border-right: 1px solid var(--border); background: white; display: flex; flex-direction: column; overflow: hidden; }
+  .sidebar-head { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 500; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; justify-content: space-between; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); font-size: 18px; line-height: 1; padding: 2px 4px; border-radius: 4px; }
+  .icon-btn:hover { background: var(--cream-dark); color: var(--ink); }
+  .topic-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .topic-row { padding: 9px 16px; cursor: pointer; font-size: 13px; color: var(--ink-mid); display: flex; align-items: center; gap: 8px; border-left: 2px solid transparent; transition: background 0.12s; }
+  .topic-row:hover { background: var(--cream); color: var(--ink); }
+  .topic-row.active { background: var(--accent-light); color: var(--accent-dark); border-left-color: var(--accent); font-weight: 500; }
+  .week-badge { font-size: 10px; background: var(--cream-darker); color: var(--ink-light); padding: 1px 6px; border-radius: 99px; margin-left: auto; flex-shrink: 0; }
+  .topic-row.active .week-badge { background: var(--accent-light); color: var(--accent); }
+  .topic-editor { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .editor-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--ink-light); gap: 8px; }
+  .field-group { margin-bottom: 20px; }
+  .field-label { font-size: 11px; font-weight: 500; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: block; }
+  .field-input, .field-textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: white; transition: border 0.15s; outline: none; }
+  .field-input:focus, .field-textarea:focus { border-color: var(--accent); }
+  .field-textarea { resize: vertical; min-height: 70px; }
+  .questions-list { display: flex; flex-direction: column; gap: 10px; }
+  .q-row { display: flex; gap: 8px; align-items: flex-start; }
+  .q-num { font-family: 'Lora', serif; font-size: 13px; color: var(--accent); font-weight: 600; min-width: 20px; margin-top: 11px; }
+  .q-remove { background: none; border: none; cursor: pointer; color: var(--ink-light); font-size: 16px; padding: 8px 4px; margin-top: 2px; border-radius: 4px; line-height: 1; }
+  .q-remove:hover { color: var(--accent); }
+  .add-q-btn { background: none; border: 1px dashed var(--border); border-radius: 8px; padding: 9px 14px; font-size: 13px; color: var(--ink-mid); cursor: pointer; width: 100%; text-align: left; transition: border 0.15s, color 0.15s; }
+  .add-q-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .editor-actions { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .btn-save { background: var(--ink); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .btn-save:hover { background: #333; }
+  .btn-delete { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--ink-mid); cursor: pointer; transition: border 0.15s, color 0.15s; margin-left: auto; }
+  .btn-delete:hover { border-color: #c0392b; color: #c0392b; }
+
+  /* STUDENT — SPEAKING */
+  #screen-student { flex-direction: column; background: var(--cream); height: 100vh; }
+  .chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .chat-logo { font-family: 'Lora', serif; font-size: 1rem; }
+  .chat-logo span { color: var(--accent); font-style: italic; }
+  .chat-topic-pill { margin-left: auto; background: var(--cream-dark); color: var(--ink-mid); font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topic-select-area { padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--cream-dark); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .topic-select-area label { font-size: 13px; color: var(--ink-mid); white-space: nowrap; }
+  .topic-select-area select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: white; outline: none; cursor: pointer; }
+  .btn-start { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: background 0.15s; }
+  .btn-start:hover { background: var(--accent-dark); }
+  .progress-bar-wrap { padding: 10px 20px 0; flex-shrink: 0; }
+  .progress-label { font-size: 11px; color: var(--ink-light); margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 3px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.4s ease; }
+  .messages-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .msg-wrap { display: flex; flex-direction: column; max-width: 84%; gap: 6px; }
+  .msg-wrap.bot { align-self: flex-start; }
+  .msg-wrap.user { align-self: flex-end; }
+  .bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
+  .msg-wrap.bot .bubble { background: white; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; color: var(--ink); box-shadow: var(--shadow); }
+  .msg-wrap.user .bubble { background: var(--ink); color: white; border-radius: 16px 4px 16px 16px; }
+  .transcript-label { font-size: 11px; color: var(--ink-light); text-align: right; padding-right: 4px; }
+
+  /* MIC AREA */
+  .mic-area { padding: 16px 20px 20px; border-top: 1px solid var(--border); background: white; display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
+  .mic-status { font-size: 13px; color: var(--ink-mid); min-height: 20px; text-align: center; transition: color 0.2s; }
+  .mic-status.listening { color: var(--mic-red); font-weight: 500; }
+  .mic-status.processing { color: var(--blue); }
+
+  /* transcript live preview */
+  .live-transcript { font-size: 13px; color: var(--ink-mid); font-style: italic; min-height: 18px; max-width: 480px; text-align: center; line-height: 1.5; }
+
+  .mic-controls { display: flex; align-items: center; gap: 16px; }
+
+  /* big mic button */
+  .mic-btn {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: var(--ink);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    outline: none;
+  }
+  .mic-btn:hover { background: #333; transform: scale(1.04); }
+  .mic-btn.listening {
+    background: var(--mic-red);
+    animation: pulse-ring 1.4s ease-out infinite;
+  }
+  .mic-btn.listening:hover { background: #c0392b; }
+  .mic-btn:disabled { background: var(--cream-darker); cursor: not-allowed; transform: none; box-shadow: none; }
+  .mic-btn svg { width: 28px; height: 28px; }
+
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(224,62,45,0.5); }
+    70%  { box-shadow: 0 0 0 18px rgba(224,62,45,0); }
+    100% { box-shadow: 0 0 0 0 rgba(224,62,45,0); }
+  }
+
+  .submit-btn {
+    background: var(--green); color: white; border: none; border-radius: 8px;
+    padding: 10px 18px; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: background 0.15s, opacity 0.15s;
+    display: none;
+  }
+  .submit-btn:hover { background: #1d5e3e; }
+  .submit-btn.visible { display: block; }
+
+  .mic-hint { font-size: 12px; color: var(--ink-light); text-align: center; }
+
+  /* FEEDBACK CARD */
+  .feedback-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: var(--shadow); }
+  .fb-header { padding: 8px 14px; background: var(--cream-dark); font-size: 11px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .fb-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .fb-row { display: flex; gap: 10px; align-items: flex-start; }
+  .fb-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+  .fb-icon.green { background: var(--green-light); color: var(--green); }
+  .fb-icon.amber { background: var(--gold-light); color: var(--gold); }
+  .fb-icon.blue { background: var(--blue-light); color: var(--blue); }
+  .fb-icon.orange { background: var(--accent-light); color: var(--accent); }
+  .fb-icon.red { background: #fdecea; color: var(--mic-red); }
+  .fb-text { line-height: 1.55; color: var(--ink); }
+  .fb-text strong { font-weight: 500; }
+  .fb-text .correction { color: var(--green); font-weight: 500; }
+  .fb-text .original { text-decoration: line-through; color: var(--ink-light); }
+  .fluency-bar-wrap { margin-top: 4px; }
+  .fluency-bar { height: 6px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+  .fluency-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+  /* SUMMARY */
+  .summary-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); font-size: 13px; }
+  .summary-header { padding: 12px 16px; background: var(--ink); color: white; font-family: 'Lora', serif; font-size: 15px; }
+  .summary-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .summary-section-title { font-size: 11px; font-weight: 500; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .summary-item { padding: 8px 12px; border-radius: 8px; line-height: 1.55; margin-bottom: 6px; }
+  .summary-item.grammar { background: var(--accent-light); color: var(--accent-dark); }
+  .summary-item.vocab { background: var(--gold-light); color: #7a5c00; }
+  .summary-item.fluency { background: var(--blue-light); color: var(--blue); }
+  .summary-item.praise { background: var(--green-light); color: var(--green); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,24,20,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 12px; padding: 28px; width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 40px rgba(26,24,20,0.2); }
+  .modal h2 { font-family: 'Lora', serif; font-size: 1.1rem; }
+  .modal p { font-size: 13px; color: var(--ink-mid); }
+  .modal input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; }
+  .modal input:focus { border-color: var(--accent); }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-error { font-size: 12px; color: var(--accent); display: none; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .typing-dots { display: flex; gap: 4px; padding: 12px 16px; background: white; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; width: fit-content; box-shadow: var(--shadow); }
+  .typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-light); animation: bounce 1.2s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  .browser-warning { background: #fdf6e0; border: 1px solid #e8c84a; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #7a5c00; margin: 0 20px; flex-shrink: 0; display: none; }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-logo">English <span>Speaking</span> Practice</div>
+  <div class="landing-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+    Voice-powered speaking practice
+  </div>
+  <div class="landing-sub">Speak your answers aloud and get instant feedback on fluency, grammar, and vocabulary</div>
+  <div class="landing-btns">
+    <button class="btn-primary" onclick="showStudent()">I'm a student →</button>
+    <div class="divider"></div>
+    <button class="btn-secondary" onclick="showPasswordModal()">Teacher panel</button>
+  </div>
+</div>
+
+<!-- TEACHER PANEL -->
+<div id="screen-teacher" class="screen">
+  <div class="panel-header">
+    <div class="panel-title">English <span>Speaking</span> Practice — Teacher Panel</div>
+    <button class="btn-secondary" style="padding:7px 14px;font-size:13px;" onclick="showScreen('landing')">← Back</button>
+  </div>
+  <div class="panel-body">
+    <div class="topic-sidebar">
+      <div class="sidebar-head">Topics <button class="icon-btn" onclick="newTopic()">＋</button></div>
+      <div class="topic-list" id="topic-list"></div>
+    </div>
+    <div class="topic-editor" id="topic-editor">
+      <div class="editor-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>
+        <div style="font-size:14px;">Select a topic or create a new one</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT SPEAKING -->
+<div id="screen-student" class="screen">
+  <div class="chat-header">
+    <div class="chat-logo">English <span>Speaking</span> Practice</div>
+    <div class="chat-topic-pill" id="active-topic-pill">Select a topic</div>
+  </div>
+  <div class="topic-select-area">
+    <label>This week's topic:</label>
+    <select id="student-topic-select" onchange="onTopicChange()">
+      <option value="">— choose —</option>
+    </select>
+    <button class="btn-start" onclick="startChat()">Start</button>
+  </div>
+  <div class="browser-warning" id="browser-warning">
+    ⚠️ Speech recognition works best in <strong>Chrome</strong> or <strong>Edge</strong>. Some browsers may not support it.
+  </div>
+  <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-label">
+      <span id="progress-label-text">Question 1 of 5</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="messages-area" id="messages-area"></div>
+
+  <!-- MIC AREA -->
+  <div class="mic-area" id="mic-area">
+    <div class="live-transcript" id="live-transcript"></div>
+    <div class="mic-controls">
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled title="Tap to speak">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      </button>
+      <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Submit answer →</button>
+    </div>
+    <div class="mic-status" id="mic-status">Start your session above</div>
+    <div class="mic-hint" id="mic-hint"></div>
+    <!-- Typing fallback (shown when mic is unavailable) -->
+    <div id="type-fallback" style="display:none;width:100%;max-width:500px;display:none;flex-direction:column;gap:8px;align-items:center">
+      <textarea id="fallback-input" placeholder="Type your answer here (microphone unavailable locally — voice works once hosted online)…" rows="3"
+        style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);resize:none;outline:none;background:var(--cream-dark);"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitTypedFallback()}"
+      ></textarea>
+      <button onclick="submitTypedFallback()" style="background:var(--accent);color:white;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Submit answer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="pw-modal">
+  <div class="modal">
+    <h2>Teacher Access</h2>
+    <p>Enter the teacher password to manage topics and questions.</p>
+    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div class="modal-error" id="pw-error">Incorrect password. Try again.</div>
+    <div class="modal-btns">
+      <button class="btn-primary" style="flex:1" onclick="checkPw()">Enter</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TEACHER_PASSWORD = "teacher123";
+
+// ── TOPICS DATA ──
+let topics = JSON.parse(localStorage.getItem('esp_topics') || 'null') || [
+  {
+    id: 1, week: 1, name: "Climate Change",
+    questions: [
+      "Do you think individuals or governments have more responsibility to address climate change? Give reasons.",
+      "What changes have you personally made in your daily life to help the environment?",
+      "Some people say economic growth and protecting the environment cannot happen together. Do you agree?",
+      "How do you think climate change will affect your country in the next 50 years?",
+      "Should wealthy countries do more to help developing countries deal with climate change?"
+    ]
+  },
+  {
+    id: 2, week: 2, name: "Social Media",
+    questions: [
+      "How has social media changed the way people communicate compared to 20 years ago?",
+      "Do you think social media has more positive or negative effects on young people?",
+      "Should governments have the right to limit what people post on social media?",
+      "How do you personally use social media, and do you think your habits are healthy?",
+      "Some people say social media makes people feel more lonely. Do you agree?"
+    ]
+  }
+];
+let nextId = Math.max(...topics.map(t => t.id), 0) + 1;
+let selectedTopicId = null;
+
+// ── SPEECH RECOGNITION ──
+let recognition = null;
+let isListening = false;
+let currentTranscript = '';
+let finalTranscript = '';
+
+function initSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('browser-warning').style.display = 'block';
+    return false;
+  }
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-status').textContent = 'Listening… speak now';
+    document.getElementById('mic-status').className = 'mic-status listening';
+    document.getElementById('mic-hint').textContent = 'Tap the mic again when you\'re done speaking';
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    finalTranscript = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    currentTranscript = (finalTranscript + interim).trim();
+    document.getElementById('live-transcript').textContent = currentTranscript || '';
+    if (currentTranscript) {
+      document.getElementById('submit-btn').classList.add('visible');
+    }
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed') {
+      setMicStatus('Microphone access denied. Please allow mic access and refresh.', '');
+    } else if (e.error !== 'no-speech') {
+      setMicStatus('Mic error: ' + e.error, '');
+    }
+    stopListening();
+  };
+
+  recognition.onend = () => {
+    if (isListening) {
+      // auto-restart if still supposed to be listening (browser cuts off after silence)
+      try { recognition.start(); } catch(e) {}
+    }
+  };
+
+  return true;
+}
+
+function toggleMic() {
+  if (chatState.done) return;
+  if (isListening) stopListening();
+  else startListening();
+}
+
+function startListening() {
+  if (!recognition) { alert('Speech recognition not available in this browser. Please use Chrome or Edge.'); return; }
+  finalTranscript = '';
+  currentTranscript = '';
+  document.getElementById('live-transcript').textContent = '';
+  document.getElementById('submit-btn').classList.remove('visible');
+  try { recognition.start(); } catch(e) {}
+}
+
+function stopListening() {
+  isListening = false;
+  try { recognition.stop(); } catch(e) {}
+  document.getElementById('mic-btn').classList.remove('listening');
+  if (currentTranscript) {
+    setMicStatus('Got it! Review your answer below, then submit.', 'Or tap the mic to re-record.');
+    document.getElementById('submit-btn').classList.add('visible');
+  } else {
+    setMicStatus('Tap the microphone to start speaking', '');
+  }
+}
+
+function setMicStatus(msg, hint) {
+  const el = document.getElementById('mic-status');
+  el.textContent = msg;
+  el.className = 'mic-status';
+  document.getElementById('mic-hint').textContent = hint || '';
+}
+
+// ── CHAT STATE ──
+let chatState = { topic: null, questions: [], currentQ: 0, done: false, allFeedback: [] };
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function showStudent() {
+  populateStudentTopics();
+  showScreen('student');
+  // Check browser support
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+    document.getElementById('browser-warning').style.display = 'block';
+  }
+}
+
+function showTeacher() { renderTopicList(); showScreen('teacher'); }
+
+function showPasswordModal() {
+  document.getElementById('pw-modal').classList.add('open');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+function closeModal() { document.getElementById('pw-modal').classList.remove('open'); }
+function checkPw() {
+  if (document.getElementById('pw-input').value === TEACHER_PASSWORD) { closeModal(); showTeacher(); }
+  else document.getElementById('pw-error').style.display = 'block';
+}
+
+// ── TEACHER ──
+function saveTopics() { localStorage.setItem('esp_topics', JSON.stringify(topics)); }
+
+function renderTopicList() {
+  const list = document.getElementById('topic-list');
+  list.innerHTML = '';
+  [...topics].sort((a,b) => a.week - b.week).forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'topic-row' + (t.id === selectedTopicId ? ' active' : '');
+    row.innerHTML = `<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.name}</span><span class="week-badge">Wk ${t.week}</span>`;
+    row.onclick = () => selectTopic(t.id);
+    list.appendChild(row);
+  });
+}
+
+function selectTopic(id) { selectedTopicId = id; renderTopicList(); renderEditor(); }
+
+function renderEditor() {
+  const topic = topics.find(t => t.id === selectedTopicId);
+  if (!topic) return;
+  document.getElementById('topic-editor').innerHTML = `
+    <div style="max-width:620px">
+      <div class="field-group">
+        <label class="field-label">Week number</label>
+        <input class="field-input" type="number" id="ed-week" value="${topic.week}" min="1" max="52" style="width:120px">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Topic name</label>
+        <input class="field-input" type="text" id="ed-name" value="${esc(topic.name)}" placeholder="e.g. Climate Change">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Speaking questions (4–5 recommended)</label>
+        <div class="questions-list" id="ed-questions">
+          ${topic.questions.map((q,i) => `<div class="q-row"><span class="q-num">${i+1}.</span><textarea class="field-textarea" id="eq-${i}" style="min-height:56px">${esc(q)}</textarea><button class="q-remove" onclick="removeQuestion(${i})">×</button></div>`).join('')}
+        </div>
+        <button class="add-q-btn" style="margin-top:10px" onclick="addQuestion()">+ Add question</button>
+      </div>
+      <div class="editor-actions">
+        <button class="btn-save" onclick="saveTopic()">Save topic</button>
+        <button class="btn-delete" onclick="deleteTopic()">Delete topic</button>
+      </div>
+    </div>`;
+}
+
+function addQuestion() {
+  const topic = topics.find(t => t.id === selectedTopicId);
+  if (!topic) return;
+  topic.questions.push('');
+  renderEditor();
+  const inputs = document.querySelectorAll('[id^="eq-"]');
+  if (inputs.length) inputs[inputs.length-1].focus();
+}
+
+function removeQuestion(i) {
+  const topic = topics.find(t => t.id === selectedTopicId);
+  if (!topic || topic.questions.length <= 1) return;
+  topic.questions.splice(i, 1);
+  renderEditor();
+}
+
+function saveTopic() {
+  const topic = topics.find(t => t.id === selectedTopicId);
+  if (!topic) return;
+  topic.week = parseInt(document.getElementById('ed-week').value) || 1;
+  topic.name = document.getElementById('ed-name').value.trim() || 'Untitled';
+  const qEls = document.querySelectorAll('[id^="eq-"]');
+  topic.questions = Array.from(qEls).map(el => el.value.trim()).filter(q => q);
+  saveTopics();
+  renderTopicList();
+  showToast('Topic saved ✓');
+}
+
+function deleteTopic() {
+  if (!confirm('Delete this topic?')) return;
+  topics = topics.filter(t => t.id !== selectedTopicId);
+  selectedTopicId = null;
+  saveTopics();
+  renderTopicList();
+  document.getElementById('topic-editor').innerHTML = `<div class="editor-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg><div style="font-size:14px;">Select a topic or create a new one</div></div>`;
+}
+
+function newTopic() {
+  const t = { id: nextId++, week: topics.length + 1, name: 'New Topic', questions: [''] };
+  topics.push(t);
+  saveTopics();
+  selectedTopicId = t.id;
+  renderTopicList();
+  renderEditor();
+  setTimeout(() => document.getElementById('ed-name').select(), 50);
+}
+
+// ── STUDENT ──
+function populateStudentTopics() {
+  const sel = document.getElementById('student-topic-select');
+  sel.innerHTML = '<option value="">— choose a topic —</option>';
+  [...topics].sort((a,b) => a.week - b.week).forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = `Week ${t.week} — ${t.name}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onTopicChange() {
+  const sel = document.getElementById('student-topic-select');
+  const t = topics.find(t => t.id == sel.value);
+  document.getElementById('active-topic-pill').textContent = t ? t.name : 'Select a topic';
+}
+
+function startChat() {
+  const sel = document.getElementById('student-topic-select');
+  const topic = topics.find(t => t.id == sel.value);
+  if (!topic) { alert('Please choose a topic first.'); return; }
+
+  const hasSpeech = initSpeechRecognition();
+
+  chatState = { topic, questions: [...topic.questions], currentQ: 0, done: false, allFeedback: [] };
+  document.getElementById('messages-area').innerHTML = '';
+  document.getElementById('progress-wrap').style.display = 'block';
+  updateProgress();
+
+  if (hasSpeech) {
+    document.getElementById('mic-btn').disabled = false;
+    setMicStatus('Tap the microphone when ready to speak', '');
+  } else {
+    setMicStatus('Speech recognition not supported in this browser', 'Please use Chrome or Edge');
+  }
+
+  document.getElementById('submit-btn').classList.remove('visible');
+  document.getElementById('live-transcript').textContent = '';
+
+  addBotMessage(`Hi! 👋 Welcome to speaking practice on <strong>${topic.name}</strong>.<br><br>I'll ask you ${topic.questions.length} questions. <strong>Speak your answer</strong> using the microphone below — take as long as you need! After each answer, I'll give you feedback on your fluency, grammar, and vocabulary.<br><br>Here's your first question:`);
+  setTimeout(() => addBotMessage(formatQ(chatState.questions[0], 1, topic.questions.length)), 700);
+}
+
+function formatQ(q, num, total) {
+  return `<strong>Question ${num} of ${total}:</strong><br><br>${q}`;
+}
+
+function updateProgress() {
+  const total = chatState.questions.length;
+  const current = chatState.currentQ;
+  const pct = Math.round((current / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label-text').textContent = current >= total ? 'Complete!' : `Question ${current + 1} of ${total}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+async function submitAnswer() {
+  const answer = currentTranscript.trim();
+  if (!answer) { setMicStatus('No speech detected. Please tap the mic and try again.', ''); return; }
+  if (isListening) stopListening();
+
+  document.getElementById('mic-btn').disabled = true;
+  document.getElementById('submit-btn').classList.remove('visible');
+  document.getElementById('live-transcript').textContent = '';
+  setMicStatus('Analysing your answer…', '');
+  document.getElementById('mic-status').className = 'mic-status processing';
+
+  addUserMessage(answer, true);
+  currentTranscript = '';
+  finalTranscript = '';
+
+  const typingId = addTyping();
+
+  try {
+    const feedback = await getSpokenFeedback(answer, chatState.questions[chatState.currentQ], chatState.topic.name);
+    removeTyping(typingId);
+    addFeedbackCard(feedback);
+    chatState.allFeedback.push({ q: chatState.questions[chatState.currentQ], a: answer, feedback });
+    chatState.currentQ++;
+    updateProgress();
+
+    if (chatState.currentQ >= chatState.questions.length) {
+      chatState.done = true;
+      document.getElementById('mic-btn').disabled = true;
+      setMicStatus('Session complete! Great work 🎉', '');
+      setTimeout(() => addBotMessage("Fantastic — you've completed all the questions! 🎉 Here's your full session summary:"), 400);
+      setTimeout(() => addSummaryCard(), 900);
+    } else {
+      setTimeout(() => {
+        addBotMessage(formatQ(chatState.questions[chatState.currentQ], chatState.currentQ + 1, chatState.questions.length));
+        document.getElementById('mic-btn').disabled = false;
+        setMicStatus('Tap the microphone to answer the next question', '');
+      }, 500);
+    }
+  } catch(e) {
+    removeTyping(typingId);
+    addBotMessage("Sorry, there was a problem getting feedback. Please check your connection and try again.");
+    document.getElementById('mic-btn').disabled = false;
+    setMicStatus('Tap the microphone to try again', '');
+  }
+}
+
+async function getSpokenFeedback(answer, question, topicName) {
+  const systemPrompt = `You are a warm, encouraging English speaking coach for university students at B1-B2 level.
+A student has just spoken their answer aloud (transcribed by speech recognition, so ignore minor transcription artifacts).
+
+Evaluate their SPOKEN English and return ONLY valid JSON with this exact structure:
+{
+  "praise": "One genuine specific compliment about their spoken answer (1-2 sentences) — focus on ideas, confidence, or a good phrase they used",
+  "fluency": {
+    "score": 75,
+    "comment": "One sentence about their fluency, hesitation, or sentence flow"
+  },
+  "grammar": [{"original": "phrase with error", "correction": "corrected phrase", "explanation": "brief tip — keep it encouraging"}],
+  "vocabulary": [{"original": "word/phrase used", "better": "stronger spoken alternative", "explanation": "why this sounds more natural or sophisticated"}],
+  "speaking_tip": "One practical tip for speaking more naturally or confidently (not writing tips)",
+  "overall": "One warm encouraging closing sentence"
+}
+
+Fluency score: 0-100 (50=basic, 75=good, 90=very fluent).
+Grammar: 0-3 items max, most important spoken errors only. Ignore transcription noise.
+Vocabulary: 1-2 items max.
+Be warm, encouraging, constructive. Celebrate effort. Remember this is SPEAKING, not writing — be lenient on formality.`;
+
+  const resp = await fetch("https://chatbot-limit-0d2b.simonwhalley.workers.dev", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: `Topic: ${topicName}\nQuestion: ${question}\nStudent spoke: ${answer}` }]
+    })
+  });
+
+  const data = await resp.json();
+  const text = data.content[0].text;
+  return JSON.parse(text.replace(/```json|```/g, '').trim());
+}
+
+function addFeedbackCard(fb) {
+  const area = document.getElementById('messages-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap bot';
+
+  const score = fb.fluency?.score || 70;
+  const scoreColor = score >= 80 ? '#2d6a4f' : score >= 60 ? '#b8860b' : '#c85a2a';
+
+  let grammarHtml = fb.grammar?.length
+    ? fb.grammar.map(g => `<div class="fb-row"><div class="fb-icon amber">✎</div><div class="fb-text"><strong>Grammar:</strong> <span class="original">"${esc(g.original)}"</span> → <span class="correction">"${esc(g.correction)}"</span><br>${esc(g.explanation)}</div></div>`).join('')
+    : `<div class="fb-row"><div class="fb-icon green">✓</div><div class="fb-text"><strong>Grammar:</strong> No major errors — well spoken!</div></div>`;
+
+  let vocabHtml = (fb.vocabulary || []).map(v => `<div class="fb-row"><div class="fb-icon blue">💡</div><div class="fb-text"><strong>Vocabulary:</strong> Try <span class="correction">"${esc(v.better)}"</span> instead of "${esc(v.original)}" — ${esc(v.explanation)}</div></div>`).join('');
+
+  wrap.innerHTML = `
+    <div class="feedback-card">
+      <div class="fb-header"><span>Speaking Feedback</span><span style="font-size:12px;color:var(--ink-mid)">Fluency: ${score}/100</span></div>
+      <div class="fb-body">
+        <div class="fb-row"><div class="fb-icon green">★</div><div class="fb-text">${esc(fb.praise)}</div></div>
+        <div>
+          <div class="fb-row"><div class="fb-icon blue">〜</div><div class="fb-text"><strong>Fluency:</strong> ${esc(fb.fluency?.comment || '')}</div></div>
+          <div class="fluency-bar-wrap" style="padding-left:32px">
+            <div class="fluency-bar"><div class="fluency-fill" style="width:${score}%;background:${scoreColor}"></div></div>
+          </div>
+        </div>
+        ${grammarHtml}
+        ${vocabHtml}
+        <div class="fb-row"><div class="fb-icon orange">🗣</div><div class="fb-text"><strong>Speaking tip:</strong> ${esc(fb.speaking_tip)}</div></div>
+        <div class="fb-row"><div class="fb-icon green">→</div><div class="fb-text">${esc(fb.overall)}</div></div>
+      </div>
+    </div>`;
+
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function addSummaryCard() {
+  const area = document.getElementById('messages-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap bot';
+
+  const allGrammar = chatState.allFeedback.flatMap(f => f.feedback.grammar || []);
+  const allVocab = chatState.allFeedback.flatMap(f => f.feedback.vocabulary || []);
+  const avgFluency = Math.round(chatState.allFeedback.reduce((s,f) => s + (f.feedback.fluency?.score || 70), 0) / chatState.allFeedback.length);
+
+  const grammarItems = allGrammar.length
+    ? allGrammar.map(g => `<div class="summary-item grammar">✎ <strong>${esc(g.original)}</strong> → ${esc(g.correction)}</div>`).join('')
+    : `<div class="summary-item grammar">✓ No major grammar errors recorded — excellent!</div>`;
+
+  const vocabItems = allVocab.length
+    ? allVocab.map(v => `<div class="summary-item vocab">💡 Use <strong>${esc(v.better)}</strong> instead of "${esc(v.original)}"</div>`).join('')
+    : `<div class="summary-item vocab">Your vocabulary was strong throughout the session!</div>`;
+
+  const fluencyColor = avgFluency >= 80 ? '#2d6a4f' : avgFluency >= 60 ? '#b8860b' : '#c85a2a';
+
+  wrap.innerHTML = `
+    <div class="summary-card">
+      <div class="summary-header">Session Summary — ${esc(chatState.topic.name)}</div>
+      <div class="summary-body">
+        <div>
+          <div class="summary-section-title">Overall fluency score</div>
+          <div class="summary-item fluency" style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:22px;font-weight:500;color:${fluencyColor}">${avgFluency}<span style="font-size:13px">/100</span></span>
+            <span>${avgFluency >= 80 ? 'Very fluent — keep it up!' : avgFluency >= 60 ? 'Good fluency — practising regularly will improve this further.' : 'Keep practising — fluency improves with confidence!'}</span>
+          </div>
+        </div>
+        <div><div class="summary-section-title">Grammar to practise</div>${grammarItems}</div>
+        <div><div class="summary-section-title">Vocabulary to remember</div>${vocabItems}</div>
+        <div class="summary-item praise">🎓 Great speaking session! Review this before next class. The more you speak, the more confident you'll become — you're doing brilliantly!</div>
+      </div>
+    </div>`;
+
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function addBotMessage(html) {
+  const area = document.getElementById('messages-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap bot';
+  wrap.innerHTML = `<div class="bubble">${html}</div>`;
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function addUserMessage(text, isVoice) {
+  const area = document.getElementById('messages-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap user';
+  wrap.innerHTML = `
+    ${isVoice ? '<div class="transcript-label">🎤 spoken answer</div>' : ''}
+    <div class="bubble">${esc(text)}</div>`;
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function addTyping() {
+  const area = document.getElementById('messages-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap bot';
+  const id = 'typing-' + Date.now();
+  wrap.id = id;
+  wrap.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return id;
+}
+
+function removeTyping(id) { const el = document.getElementById(id); if (el) el.remove(); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+</script>
+</body>
+</html>
