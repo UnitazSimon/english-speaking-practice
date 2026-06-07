@@ -649,26 +649,30 @@ async function submitAnswer() {
 }
 
 async function getSpokenFeedback(answer, question, topicName) {
-  const systemPrompt = `You are a warm, encouraging English speaking coach for university students at B1-B2 level.
-A student has just spoken their answer aloud (transcribed by speech recognition, so ignore minor transcription artifacts).
+  const systemPrompt = `You are a rigorous English speaking coach for 4th-year university students (target level B2-C1).
+A student has just spoken their answer aloud (transcribed by speech recognition — ignore minor transcription artifacts).
 
-Evaluate their SPOKEN English and return ONLY valid JSON with this exact structure:
+Apply HIGH standards. These are advanced students preparing for professional and academic careers. Be honest, specific, and demanding while remaining constructive. Do not overlook errors or give empty praise.
+
+Return ONLY valid JSON with this exact structure:
 {
-  "praise": "One genuine specific compliment about their spoken answer (1-2 sentences) — focus on ideas, confidence, or a good phrase they used",
+  "praise": "One specific, genuine compliment — only if truly merited. Focus on a strong argument, sophisticated phrase, or good use of evidence. Do not praise basic competence.",
   "fluency": {
     "score": 75,
-    "comment": "One sentence about their fluency, hesitation, or sentence flow"
+    "comment": "Honest assessment of fluency, pace, hesitation, and sentence flow. Note specific weaknesses."
   },
-  "grammar": [{"original": "phrase with error", "correction": "corrected phrase", "explanation": "brief tip — keep it encouraging"}],
-  "vocabulary": [{"original": "word/phrase used", "better": "stronger spoken alternative", "explanation": "why this sounds more natural or sophisticated"}],
-  "speaking_tip": "One practical tip for speaking more naturally or confidently (not writing tips)",
-  "overall": "One warm encouraging closing sentence"
+  "grammar": [{"original": "phrase with error", "correction": "corrected phrase", "explanation": "precise grammatical rule with example of correct usage"}],
+  "vocabulary": [{"original": "word/phrase used", "better": "more sophisticated alternative", "explanation": "why this is more appropriate for B2-C1 academic/professional spoken English"}],
+  "speaking_tip": "One specific, actionable tip targeting a clear weakness in this answer — e.g. hedging language, discourse markers, pausing patterns, argument structure.",
+  "cefr_estimate": "B1",
+  "overall": "One honest, constructive closing sentence that sets a clear target for improvement."
 }
 
-Fluency score: 0-100 (50=basic, 75=good, 90=very fluent).
-Grammar: 0-3 items max, most important spoken errors only. Ignore transcription noise.
-Vocabulary: 1-2 items max.
-Be warm, encouraging, constructive. Celebrate effort. Remember this is SPEAKING, not writing — be lenient on formality.`;
+Fluency score: 0-100 (60=B1, 72=B2, 85=C1, 95=C2).
+Grammar: up to 4 errors — do not skip minor but important errors like article use, prepositions, tense consistency.
+Vocabulary: up to 3 suggestions — push students toward C1 lexical range.
+CEFR estimate: A2 / B1 / B2 / C1 / C2 — assess this answer honestly based on complexity, accuracy, and range.
+Remember: high standards serve the student better than false encouragement.`;
 
   const resp = await fetch("https://chatbot-limit-0d2b.simonwhalley.workers.dev", {
     method: "POST",
@@ -731,13 +735,30 @@ function addSummaryCard() {
   const allVocab = chatState.allFeedback.flatMap(f => f.feedback.vocabulary || []);
   const avgFluency = Math.round(chatState.allFeedback.reduce((s,f) => s + (f.feedback.fluency?.score || 70), 0) / chatState.allFeedback.length);
 
+  // CEFR: pick most common level across answers
+  const cefrOrder = ['A1','A2','B1','B2','C1','C2'];
+  const cefrLevels = chatState.allFeedback.map(f => f.feedback.cefr_estimate || 'B1');
+  const cefrCounts = cefrLevels.reduce((acc, l) => { acc[l] = (acc[l]||0)+1; return acc; }, {});
+  const dominantCEFR = Object.entries(cefrCounts).sort((a,b) => b[1]-a[1])[0][0];
+  const cefrIndex = cefrOrder.indexOf(dominantCEFR);
+  const nextCEFR = cefrOrder[Math.min(cefrIndex+1, cefrOrder.length-1)];
+  const cefrColor = dominantCEFR === 'C2' || dominantCEFR === 'C1' ? '#2d6a4f' : dominantCEFR === 'B2' ? '#b8860b' : '#c85a2a';
+  const cefrDesc = {
+    'A1': 'Beginner — focus on basic sentence structure and common vocabulary.',
+    'A2': 'Elementary — work on forming complete sentences and expanding vocabulary.',
+    'B1': 'Intermediate — develop more complex structures and academic vocabulary.',
+    'B2': 'Upper-intermediate — refine accuracy, range, and fluency for academic contexts.',
+    'C1': 'Advanced — polish discourse structure, nuance, and idiomatic expression.',
+    'C2': 'Mastery — near-native command of English. Keep refining precision and style.'
+  };
+
   const grammarItems = allGrammar.length
-    ? allGrammar.map(g => `<div class="summary-item grammar">✎ <strong>${esc(g.original)}</strong> → ${esc(g.correction)}</div>`).join('')
-    : `<div class="summary-item grammar">✓ No major grammar errors recorded — excellent!</div>`;
+    ? allGrammar.map(g => `<div class="summary-item grammar">✎ <strong>${esc(g.original)}</strong> → ${esc(g.correction)}<br><small style="opacity:0.8">${esc(g.explanation)}</small></div>`).join('')
+    : `<div class="summary-item grammar">✓ No major grammar errors recorded.</div>`;
 
   const vocabItems = allVocab.length
-    ? allVocab.map(v => `<div class="summary-item vocab">💡 Use <strong>${esc(v.better)}</strong> instead of "${esc(v.original)}"</div>`).join('')
-    : `<div class="summary-item vocab">Your vocabulary was strong throughout the session!</div>`;
+    ? allVocab.map(v => `<div class="summary-item vocab">💡 <strong>${esc(v.better)}</strong> instead of "${esc(v.original)}" — ${esc(v.explanation)}</div>`).join('')
+    : `<div class="summary-item vocab">Vocabulary was appropriate throughout.</div>`;
 
   const fluencyColor = avgFluency >= 80 ? '#2d6a4f' : avgFluency >= 60 ? '#b8860b' : '#c85a2a';
 
@@ -746,15 +767,25 @@ function addSummaryCard() {
       <div class="summary-header">Session Summary — ${esc(chatState.topic.name)}</div>
       <div class="summary-body">
         <div>
-          <div class="summary-section-title">Overall fluency score</div>
-          <div class="summary-item fluency" style="display:flex;align-items:center;gap:12px">
-            <span style="font-size:22px;font-weight:500;color:${fluencyColor}">${avgFluency}<span style="font-size:13px">/100</span></span>
-            <span>${avgFluency >= 80 ? 'Very fluent — keep it up!' : avgFluency >= 60 ? 'Good fluency — practising regularly will improve this further.' : 'Keep practising — fluency improves with confidence!'}</span>
+          <div class="summary-section-title">Estimated CEFR level</div>
+          <div class="summary-item fluency" style="display:flex;align-items:center;gap:14px">
+            <span style="font-size:28px;font-weight:600;color:${cefrColor};font-family:'Lora',serif">${dominantCEFR}</span>
+            <div>
+              <div style="font-weight:500;margin-bottom:2px">${cefrDesc[dominantCEFR]}</div>
+              ${dominantCEFR !== 'C2' ? `<div style="font-size:12px;opacity:0.8">Target: <strong>${nextCEFR}</strong></div>` : ''}
+            </div>
           </div>
         </div>
-        <div><div class="summary-section-title">Grammar to practise</div>${grammarItems}</div>
-        <div><div class="summary-section-title">Vocabulary to remember</div>${vocabItems}</div>
-        <div class="summary-item praise">🎓 Great speaking session! Review this before next class. The more you speak, the more confident you'll become — you're doing brilliantly!</div>
+        <div>
+          <div class="summary-section-title">Overall fluency</div>
+          <div class="summary-item fluency" style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:22px;font-weight:500;color:${fluencyColor}">${avgFluency}<span style="font-size:13px">/100</span></span>
+            <span>${avgFluency >= 80 ? 'Strong fluency — keep pushing for C1 precision.' : avgFluency >= 60 ? 'Adequate fluency — work on reducing hesitation and filler words.' : 'Fluency needs development — practise speaking at length without stopping.'}</span>
+          </div>
+        </div>
+        <div><div class="summary-section-title">Grammar to correct</div>${grammarItems}</div>
+        <div><div class="summary-section-title">Vocabulary to upgrade</div>${vocabItems}</div>
+        <div class="summary-item praise">🎓 Review these points carefully before your next session. Consistent, focused practice is the fastest route to ${nextCEFR !== dominantCEFR ? nextCEFR : 'mastery'}.</div>
       </div>
     </div>`;
 
