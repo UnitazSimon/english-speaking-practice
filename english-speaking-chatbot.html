@@ -306,32 +306,43 @@
 
 <script>
 const TEACHER_PASSWORD = "teacher123";
+const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
 
 // ── TOPICS DATA ──
-let topics = JSON.parse(localStorage.getItem('esp_topics') || 'null') || [
-  {
-    id: 1, week: 1, name: "Climate Change",
-    questions: [
-      "Do you think individuals or governments have more responsibility to address climate change? Give reasons.",
-      "What changes have you personally made in your daily life to help the environment?",
-      "Some people say economic growth and protecting the environment cannot happen together. Do you agree?",
-      "How do you think climate change will affect your country in the next 50 years?",
-      "Should wealthy countries do more to help developing countries deal with climate change?"
-    ]
-  },
-  {
-    id: 2, week: 2, name: "Social Media",
-    questions: [
-      "How has social media changed the way people communicate compared to 20 years ago?",
-      "Do you think social media has more positive or negative effects on young people?",
-      "Should governments have the right to limit what people post on social media?",
-      "How do you personally use social media, and do you think your habits are healthy?",
-      "Some people say social media makes people feel more lonely. Do you agree?"
-    ]
-  }
-];
-let nextId = Math.max(...topics.map(t => t.id), 0) + 1;
+let topics = [];
+let nextId = 1;
 let selectedTopicId = null;
+
+// Load topics from Cloudflare KV on startup
+async function loadTopics() {
+  try {
+    const resp = await fetch(WORKER_URL + '/topics');
+    const data = await resp.json();
+    if (Array.isArray(data) && data.length > 0) {
+      topics = data;
+      nextId = Math.max(...topics.map(t => t.id), 0) + 1;
+    } else {
+      topics = [];
+      nextId = 1;
+    }
+  } catch(e) {
+    console.error('Failed to load topics:', e);
+    topics = [];
+  }
+}
+
+async function saveTopics() {
+  try {
+    await fetch(WORKER_URL + '/topics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(topics)
+    });
+  } catch(e) {
+    console.error('Failed to save topics:', e);
+    showToast('Error saving — check your connection');
+  }
+}
 
 // ── SPEECH RECOGNITION ──
 let recognition = null;
@@ -436,15 +447,20 @@ function showScreen(id) {
 }
 
 function showStudent() {
-  populateStudentTopics();
   showScreen('student');
-  // Check browser support
   if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
     document.getElementById('browser-warning').style.display = 'block';
   }
+  const sel = document.getElementById('student-topic-select');
+  sel.innerHTML = '<option value="">Loading topics…</option>';
+  loadTopics().then(() => populateStudentTopics());
 }
 
-function showTeacher() { renderTopicList(); showScreen('teacher'); }
+function showTeacher() {
+  showScreen('teacher');
+  document.getElementById('topic-list').innerHTML = '<div style="padding:16px;font-size:13px;color:var(--ink-light)">Loading…</div>';
+  loadTopics().then(() => renderTopicList());
+}
 
 function showPasswordModal() {
   document.getElementById('pw-modal').classList.add('open');
@@ -525,17 +541,21 @@ function saveTopic() {
   topic.name = document.getElementById('ed-name').value.trim() || 'Untitled';
   const qEls = document.querySelectorAll('[id^="eq-"]');
   topic.questions = Array.from(qEls).map(el => el.value.trim()).filter(q => q);
-  saveTopics();
-  renderTopicList();
-  showToast('Topic saved ✓');
+  showToast('Saving…');
+  saveTopics().then(() => {
+    renderTopicList();
+    showToast('Topic saved ✓');
+  });
 }
 
 function deleteTopic() {
   if (!confirm('Delete this topic?')) return;
   topics = topics.filter(t => t.id !== selectedTopicId);
   selectedTopicId = null;
-  saveTopics();
-  renderTopicList();
+  saveTopics().then(() => {
+    renderTopicList();
+    showToast('Topic deleted');
+  });
   document.getElementById('topic-editor').innerHTML = `<div class="editor-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg><div style="font-size:14px;">Select a topic or create a new one</div></div>`;
 }
 
