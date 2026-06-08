@@ -976,4 +976,11 @@ function showLoading(msg) {
   document.getElementById('loading-text').textContent = msg || 'Analysing…';
   document.getElementById('loading-overlay').classList.add('show');
 }
-function 
+function hideLoading() {
+  document.getElementById("loading-overlay").classList.remove("show");
+}
+function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function showToast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2500); }
+</script>
+</body>
+</html>
