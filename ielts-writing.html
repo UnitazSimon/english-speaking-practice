@@ -982,7 +982,8 @@ Scores 4.0–9.0 in 0.5 steps. Max 3 grammar errors, max 2 vocab suggestions.`
   };
   const resp = await fetch(WORKER_URL, {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:1400, system:prompts[taskType], messages:[{role:'user',content:`Question: ${question}\n\nStudent response:\n${text}`}]   });
+    body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:1400, system:prompts[taskType], messages:[{role:'user',content:`Question: ${question}\n\nStudent response:\n${text}`}] })
+  });
   const data = await resp.json();
   return JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
 }
