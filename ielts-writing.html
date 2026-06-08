@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Writing Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1814; --ink-mid: #5c5750; --ink-light: #9c9690;
+    --cream: #faf8f4; --cream-dark: #f0ece4; --cream-darker: #e4dfd5;
+    --accent: #1a4f8a; --accent-light: #e8f0f8; --accent-dark: #0f2f5a;
+    --green: #2d6a4f; --green-light: #e8f4ee;
+    --blue: #1e4f7a; --blue-light: #e8f0f8;
+    --gold: #b8860b; --gold-light: #fdf6e0;
+    --red: #c0392b; --red-light: #fdecea;
+    --purple: #7a3a8a; --purple-light: #f0e8f8;
+    --border: #ddd8ce;
+    --shadow: 0 1px 3px rgba(26,24,20,0.08), 0 4px 16px rgba(26,24,20,0.06);
+    --task1: #1a4f8a; --task2: #7a3a8a;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* LANDING */
+  #screen-landing { flex-direction: column; align-items: center; justify-content: center; padding: 2rem; gap: 1.2rem; }
+  .landing-logo { font-family: 'Lora', serif; font-size: 1.8rem; color: var(--ink); letter-spacing: -0.02em; text-align: center; }
+  .landing-logo span { color: var(--accent); font-style: italic; }
+  .landing-sub { color: var(--ink-mid); font-size: 14px; text-align: center; max-width: 360px; }
+  .landing-badge { display: flex; align-items: center; gap: 6px; background: var(--purple-light); color: var(--purple); font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 99px; }
+  .landing-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+  .btn-primary { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 13px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; text-align: center; }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); border-radius: 8px; padding: 12px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s; text-align: center; }
+  .btn-secondary:hover { background: var(--cream-dark); }
+  .divider { width: 100%; max-width: 300px; height: 1px; background: var(--border); }
+  .parts-info { display: flex; gap: 8px; max-width: 340px; width: 100%; }
+  .part-chip { flex: 1; text-align: center; padding: 10px 6px; border-radius: 8px; font-size: 11px; font-weight: 500; }
+  .part-chip.t1 { background: var(--accent-light); color: var(--task1); }
+  .part-chip.t2 { background: var(--purple-light); color: var(--task2); }
+  .part-chip div:first-child { font-size: 14px; font-weight: 700; margin-bottom: 2px; font-family: 'Lora', serif; }
+
+  /* STUDENT */
+  #screen-student { flex-direction: column; height: 100vh; background: var(--cream); }
+  .chat-header { padding: 12px 18px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .chat-logo { font-family: 'Lora', serif; font-size: 0.95rem; }
+  .chat-logo span { color: var(--accent); font-style: italic; }
+  .task-indicator { margin-left: auto; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 99px; }
+  .task-indicator.t1 { background: var(--accent-light); color: var(--task1); }
+  .task-indicator.t2 { background: var(--purple-light); color: var(--task2); }
+  .task-indicator.done { background: var(--cream-darker); color: var(--ink-light); }
+
+  .exam-select-area { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--cream-dark); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .exam-select-area label { font-size: 13px; color: var(--ink-mid); white-space: nowrap; }
+  .exam-select-area select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: white; outline: none; }
+  .btn-start { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+
+  .progress-bar-wrap { padding: 8px 16px 0; flex-shrink: 0; }
+  .progress-label { font-size: 11px; color: var(--ink-light); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 3px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; background: var(--task1); }
+
+  .main-area { flex: 1; display: flex; overflow: hidden; }
+
+  /* QUESTION PANEL */
+  .question-panel { width: 380px; border-right: 1px solid var(--border); background: white; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; padding: 20px; gap: 14px; }
+  .question-panel.hidden { display: none; }
+  .task-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 99px; display: inline-block; margin-bottom: 4px; }
+  .task-label.t1 { background: var(--accent-light); color: var(--task1); }
+  .task-label.t2 { background: var(--purple-light); color: var(--task2); }
+  .question-title { font-family: 'Lora', serif; font-size: 1rem; color: var(--ink); line-height: 1.5; }
+  .question-body { font-size: 13px; color: var(--ink-mid); line-height: 1.7; }
+  .question-body strong { color: var(--ink); font-weight: 500; }
+  .chart-desc { background: var(--cream-dark); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--ink); line-height: 1.6; border-left: 3px solid var(--accent); }
+  .word-count-req { font-size: 12px; color: var(--ink-light); padding: 6px 10px; background: var(--cream-darker); border-radius: 6px; display: flex; justify-content: space-between; }
+  .time-req { font-size: 12px; color: var(--ink-light); }
+  .tips-box { background: var(--green-light); border-radius: 8px; padding: 10px 12px; }
+  .tips-title { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .tips-list { list-style: none; }
+  .tips-list li { font-size: 12px; color: var(--green); padding: 2px 0 2px 14px; position: relative; }
+  .tips-list li::before { content: "✓"; position: absolute; left: 0; }
+
+  /* WRITING PANEL */
+  .writing-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .writing-panel.hidden { display: none; }
+  .writing-toolbar { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--cream-dark); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .word-count-display { font-size: 13px; color: var(--ink-mid); }
+  .word-count-display span { font-weight: 500; color: var(--ink); }
+  .word-count-display.warning span { color: var(--gold); }
+  .word-count-display.good span { color: var(--green); }
+  .writing-textarea { flex: 1; border: none; padding: 20px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); resize: none; outline: none; background: white; line-height: 1.8; }
+  .writing-textarea::placeholder { color: var(--ink-light); }
+  .writing-actions { padding: 12px 16px; border-top: 1px solid var(--border); background: white; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+  .btn-submit { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+  .btn-submit:hover { background: var(--accent-dark); }
+  .btn-submit:disabled { background: var(--cream-darker); color: var(--ink-light); cursor: not-allowed; }
+  .submit-hint { font-size: 12px; color: var(--ink-light); }
+
+  /* FEEDBACK */
+  .feedback-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .feedback-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: var(--shadow); }
+  .fb-header { padding: 10px 14px; background: var(--cream-dark); font-size: 11px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .fb-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .fb-row { display: flex; gap: 10px; align-items: flex-start; }
+  .fb-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .fb-icon.green { background: var(--green-light); color: var(--green); }
+  .fb-icon.amber { background: var(--gold-light); color: var(--gold); }
+  .fb-icon.blue { background: var(--blue-light); color: var(--blue); }
+  .fb-icon.purple { background: var(--purple-light); color: var(--purple); }
+  .fb-icon.red { background: var(--red-light); color: var(--red); }
+  .fb-text { line-height: 1.6; color: var(--ink); flex: 1; }
+  .fb-text .correction { color: var(--green); font-weight: 500; }
+  .fb-text .original { text-decoration: line-through; color: var(--ink-light); }
+  .corrected-sentence { background: var(--green-light); border-radius: 6px; padding: 8px 12px; font-size: 13px; color: var(--green); line-height: 1.6; margin-top: 4px; }
+  .original-sentence { background: var(--red-light); border-radius: 6px; padding: 8px 12px; font-size: 13px; color: var(--red); line-height: 1.6; text-decoration: line-through; margin-top: 4px; }
+
+  /* CRITERION SCORES */
+  .criterion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .criterion-box { background: var(--cream-dark); border-radius: 8px; padding: 10px 12px; }
+  .criterion-box-name { font-size: 11px; color: var(--ink-light); margin-bottom: 4px; }
+  .criterion-box-score { font-size: 20px; font-weight: 700; font-family: 'Lora', serif; }
+
+  /* SUMMARY */
+  .summary-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: var(--shadow); }
+  .summary-header { padding: 14px 16px; background: var(--accent); color: white; font-family: 'Lora', serif; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+  .summary-band { font-size: 28px; font-weight: 700; }
+  .summary-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .summary-section-title { font-size: 11px; font-weight: 500; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .criterion-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: var(--cream-dark); margin-bottom: 5px; }
+  .criterion-name { font-size: 12px; font-weight: 500; flex: 1; }
+  .criterion-bar-wrap { flex: 2; height: 6px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; }
+  .criterion-bar { height: 100%; border-radius: 99px; }
+  .criterion-score { font-size: 14px; font-weight: 700; font-family: 'Lora', serif; min-width: 28px; text-align: right; }
+  .summary-item { padding: 8px 12px; border-radius: 8px; line-height: 1.6; margin-bottom: 5px; font-size: 13px; }
+  .summary-item.good { background: var(--green-light); color: var(--green); }
+  .summary-item.improve { background: var(--accent-light); color: var(--accent-dark); }
+  .summary-item.vocab { background: var(--gold-light); color: #7a5c00; }
+  .summary-item.praise { background: var(--green-light); color: var(--green); }
+
+  /* TASK DIVIDER */
+  .task-divider { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+  .task-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .task-divider-label { font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .task-divider-label.t1 { background: var(--accent-light); color: var(--task1); }
+  .task-divider-label.t2 { background: var(--purple-light); color: var(--task2); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,24,20,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 12px; padding: 28px; width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 40px rgba(26,24,20,0.2); }
+  .modal h2 { font-family: 'Lora', serif; font-size: 1.1rem; }
+  .modal p { font-size: 13px; color: var(--ink-mid); }
+  .modal input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-error { font-size: 12px; color: var(--red); display: none; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(250,248,244,0.9); display: none; align-items: center; justify-content: center; z-index: 50; flex-direction: column; gap: 12px; }
+  .loading-overlay.show { display: flex; }
+  .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; color: var(--ink-mid); }
+
+  @media (max-width: 700px) {
+    .question-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 40vh; }
+    .main-area { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-logo">IELTS <span>Writing</span> Practice</div>
+  <div class="landing-badge">✍️ Full Writing Test — Task 1 & Task 2</div>
+  <div class="landing-sub">Practice both IELTS Writing tasks with detailed band score feedback on all 4 official criteria</div>
+  <div class="parts-info">
+    <div class="part-chip t1"><div>Task 1</div>Graph/Chart<br>150+ words</div>
+    <div class="part-chip t2"><div>Task 2</div>Essay<br>250+ words</div>
+  </div>
+  <div class="landing-btns">
+    <button class="btn-primary" onclick="showStudent()">Start practice →</button>
+    <div class="divider"></div>
+    <button class="btn-secondary" onclick="showPasswordModal()">Teacher panel</button>
+  </div>
+</div>
+
+<!-- STUDENT -->
+<div id="screen-student" class="screen">
+  <div class="chat-header">
+    <div class="chat-logo">IELTS <span>Writing</span> Practice</div>
+    <div class="task-indicator done" id="task-indicator">Select a test</div>
+  </div>
+  <div class="exam-select-area">
+    <label>Select test:</label>
+    <select id="exam-select" onchange="onExamChange()">
+      <option value="">— choose a test —</option>
+    </select>
+    <button class="btn-start" onclick="startExam()">Start</button>
+  </div>
+  <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-label">
+      <span id="progress-label-text">Task 1</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="main-area" id="main-area" style="display:none">
+    <!-- QUESTION PANEL -->
+    <div class="question-panel" id="question-panel">
+      <div id="question-content"><!-- filled dynamically --></div>
+    </div>
+    <!-- WRITING / FEEDBACK PANEL -->
+    <div class="writing-panel" id="writing-panel">
+      <div class="writing-toolbar">
+        <div class="word-count-display" id="word-count-display">Words: <span>0</span></div>
+        <div class="time-req" id="time-req"></div>
+      </div>
+      <textarea class="writing-textarea" id="writing-textarea"
+        placeholder="Write your answer here…"
+        oninput="updateWordCount()"></textarea>
+      <div class="writing-actions">
+        <button class="btn-submit" id="submit-btn" onclick="submitAnswer()">Submit answer →</button>
+        <div class="submit-hint" id="submit-hint"></div>
+      </div>
+    </div>
+    <!-- FEEDBACK PANEL (shown after submission) -->
+    <div class="feedback-area" id="feedback-area" style="display:none"></div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="pw-modal">
+  <div class="modal">
+    <h2>Teacher Access</h2>
+    <p>Enter the teacher password.</p>
+    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div class="modal-error" id="pw-error">Incorrect password.</div>
+    <div class="modal-btns">
+      <button class="btn-primary" style="flex:1" onclick="checkPw()">Enter</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Analysing your writing…</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TEACHER_PASSWORD = "teacher123";
+const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
+
+// ── 20 IELTS WRITING TESTS ──
+const IELTS_TESTS = [
+  {
+    id: 1, name: "IELTS Writing Test 1",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows the percentage of households with internet access in five countries between 2005 and 2020.",
+      description: "The bar chart shows internet access rates in the UK, USA, Germany, Brazil, and India. In 2005, the UK led with 60%, followed by the USA at 55% and Germany at 50%, while Brazil had 15% and India just 5%. By 2020, the UK reached 95%, the USA 90%, Germany 92%, Brazil 70%, and India 50%. All countries showed significant growth, with developing nations showing the steepest rises.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Some people believe that the internet has made the world a better place, while others think it has made it worse. Discuss both views and give your own opinion.",
+      tips: ["Discuss BOTH views with examples", "Give your own clear opinion", "Use topic sentences for each paragraph", "Include a conclusion that restates your position"]
+    }
+  },
+  {
+    id: 2, name: "IELTS Writing Test 2",
+    task1: {
+      type: "line_graph",
+      title: "The graph below shows the average monthly temperature in three cities — London, Sydney, and Cairo — over the course of a year.",
+      description: "The line graph shows monthly temperatures. Cairo remains consistently hot, ranging from 14°C in January to 35°C in July. Sydney shows opposite seasonal patterns to London due to being in the southern hemisphere, peaking at 26°C in January and dropping to 13°C in July. London has the coolest range, from 5°C in January to 22°C in July. Cairo has the highest annual temperatures overall, while London has the coolest.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "In many countries, the gap between the rich and the poor is growing. What problems does this cause, and what measures can be taken to address them?",
+      tips: ["Identify at least 2-3 problems clearly", "Suggest specific, realistic solutions", "Link problems to solutions where possible", "Use formal academic vocabulary"]
+    }
+  },
+  {
+    id: 3, name: "IELTS Writing Test 3",
+    task1: {
+      type: "pie_chart",
+      title: "The pie charts below show how energy is produced in Country X in 2000 and 2020.",
+      description: "In 2000, Country X's energy came primarily from coal (45%), oil (25%), natural gas (20%), and renewables just 10%. By 2020, coal dropped dramatically to 20%, oil fell to 15%, natural gas remained similar at 22%, while renewables surged to 43%. Nuclear energy appeared at a small 5% share by 2020. The shift clearly shows a major transition toward renewable energy sources over two decades.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Governments should invest more money in renewable energy rather than continuing to rely on oil and coal. To what extent do you agree or disagree?",
+      tips: ["State your position clearly in the introduction", "Support your argument with specific reasons and examples", "Consider counter-arguments and address them", "Use hedging language where appropriate"]
+    }
+  },
+  {
+    id: 4, name: "IELTS Writing Test 4",
+    task1: {
+      type: "table",
+      title: "The table below shows information about population, GDP per capita, and life expectancy in six countries in 2022.",
+      description: "The table shows data for six countries. Norway has the highest GDP per capita at $89,000 and life expectancy of 83 years with 5.4M population. USA has GDP $65,000, life expectancy 79, population 332M. China has GDP $12,500, life expectancy 78, population 1.4B. Brazil GDP $8,900, life expectancy 76, population 214M. India GDP $2,200, life expectancy 70, population 1.4B. Nigeria GDP $2,100, life expectancy 55, population 218M.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "discussion",
+      question: "Some people argue that developed countries have a responsibility to provide financial aid to developing nations. Others believe each country should be responsible for its own development. Discuss both views and give your own opinion.",
+      tips: ["Present both sides fairly", "Include specific examples from real countries if possible", "Make your personal position clear", "Aim for a balanced, analytical tone"]
+    }
+  },
+  {
+    id: 5, name: "IELTS Writing Test 5",
+    task1: {
+      type: "process",
+      title: "The diagram below illustrates the process of how glass bottles are recycled.",
+      description: "The recycling process begins when consumers place glass bottles in recycling bins. Collection trucks gather the glass and transport it to a sorting facility where bottles are separated by colour (clear, green, brown). The sorted glass is then cleaned and crushed into small pieces called cullet. The cullet is melted in a furnace at approximately 1500°C. The molten glass is then moulded into new bottles using automatic machines. Finally, the new bottles are quality-checked, labelled, and distributed to manufacturers.",
+      prompt: "Summarise the information by selecting and reporting the main stages in the process."
+    },
+    task2: {
+      type: "opinion",
+      question: "Many people believe that individuals should take responsibility for recycling and reducing waste, rather than relying on governments and businesses. To what extent do you agree?",
+      tips: ["Decide on your position before writing", "Acknowledge the role of both individuals AND institutions", "Use specific examples to support your argument", "Avoid being too extreme in your position"]
+    }
+  },
+  {
+    id: 6, name: "IELTS Writing Test 6",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows the number of tourists visiting four Asian countries from 2010 to 2022.",
+      description: "The bar chart shows tourist arrivals in millions. Thailand consistently topped with 15M in 2010 rising to 40M in 2019 before dropping to 6M in 2021 due to the pandemic. Japan grew from 9M to 32M by 2019, then fell to 25M. Vietnam grew steadily from 5M to 18M. Indonesia grew from 7M to 16M. All countries showed a sharp decline in 2020-2021 due to COVID-19 restrictions, with gradual recovery beginning in 2022.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "International tourism has many benefits for local economies but also causes significant environmental and cultural damage. What are the advantages and disadvantages of international tourism?",
+      tips: ["Give roughly equal weight to both advantages and disadvantages", "Use specific examples where possible", "Organise clearly — either by side or by point", "End with a balanced conclusion"]
+    }
+  },
+  {
+    id: 7, name: "IELTS Writing Test 7",
+    task1: {
+      type: "line_graph",
+      title: "The graph below shows the proportion of the population aged 65 and over in four countries between 1960 and 2040 (with projections from 2020).",
+      description: "All four countries show rising proportions of elderly populations. Japan shows the most dramatic increase, from 6% in 1960 to a projected 35% by 2040. Italy rises from 9% to a projected 30%. Sweden grows from 12% to 25%. China starts at just 4% but is projected to reach 20% by 2040. The projections suggest accelerating ageing across all countries, with Japan facing the most severe demographic challenge.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "In many countries, the population is ageing rapidly. What are the causes of this trend, and what are the consequences for society?",
+      tips: ["Clearly distinguish causes from consequences", "Include both positive and negative consequences", "Use linking language (as a result, consequently, due to)", "Support points with realistic examples"]
+    }
+  },
+  {
+    id: 8, name: "IELTS Writing Test 8",
+    task1: {
+      type: "map",
+      title: "The maps below show a small town in 1990 and 2020.",
+      description: "In 1990, the town had a central market surrounded by residential houses, one school, a church, and farmland to the north and east. A river ran through the southern edge. By 2020, the market had been replaced by a shopping centre. New residential areas had been built on former farmland. A bypass road was constructed to the north. The riverside area was converted into a public park and recreational facility. The school expanded, and a new hospital was built in the northwest.",
+      prompt: "Summarise the information by selecting and reporting the main changes that occurred."
+    },
+    task2: {
+      type: "opinion",
+      question: "The development of cities and towns often leads to the destruction of natural environments. Some people believe this is inevitable; others think it can be avoided. Discuss and give your view.",
+      tips: ["Address the 'inevitable vs avoidable' tension directly", "Consider urban planning solutions as evidence", "Use a range of cohesive devices", "Make your personal stance clear"]
+    }
+  },
+  {
+    id: 9, name: "IELTS Writing Test 9",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows the average working hours per week in six countries in 2022.",
+      description: "The bar chart shows weekly working hours. Mexico tops the list at 45 hours per week, followed by South Korea at 43 hours and the USA at 40 hours. Germany works 35 hours per week, France 36 hours, and Denmark the fewest at 33 hours. There is a clear pattern where European countries generally work fewer hours than non-European nations, with Denmark and Germany showing notably lower figures compared to Mexico and South Korea.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "discussion",
+      question: "Some employers believe that employees should be available for contact outside of working hours. Others think that there should be a clear separation between work and personal life. Discuss both views and give your opinion.",
+      tips: ["Explore legitimate arguments on both sides", "Consider the impact on wellbeing, productivity, and family life", "Refer to modern working practices like remote work", "Give a clear personal conclusion"]
+    }
+  },
+  {
+    id: 10, name: "IELTS Writing Test 10",
+    task1: {
+      type: "pie_chart",
+      title: "The pie charts below show the main causes of water usage in the world and in a selected developing country in 2015.",
+      description: "Globally, agriculture accounted for 70% of water usage, followed by industry at 22%, and domestic use at 8%. In the selected developing country, agriculture dominated even more at 85%, while industry used only 5% and domestic use was 10%. The comparison highlights how agriculture is the primary consumer of water globally, but this dependence is significantly greater in developing nations where industrial development is limited.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Water scarcity is becoming an increasingly serious problem in many parts of the world. What are the causes of this problem, and what can be done to tackle it?",
+      tips: ["Address both causes AND solutions clearly", "Include a range of causes (climate, population, agriculture)", "Propose practical, realistic solutions", "Use specific geographical examples if possible"]
+    }
+  },
+  {
+    id: 11, name: "IELTS Writing Test 11",
+    task1: {
+      type: "line_graph",
+      title: "The graph below shows the percentage of people using three types of social media platforms between 2010 and 2023.",
+      description: "Facebook started dominant at 40% in 2010, grew to peak at 68% in 2017, then declined slightly to 60% by 2023. Instagram grew from almost 0% in 2010 to 45% by 2023, showing consistent growth. Twitter/X grew from 8% to peak at 25% around 2020 before declining to 20% by 2023. Facebook remains the most widely used, but Instagram shows the strongest growth trend, while Twitter has plateaued.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "Social media has transformed the way people communicate and share information. However, it has also been linked to a range of social problems. Do the advantages of social media outweigh the disadvantages?",
+      tips: ["Directly answer the question — do advantages outweigh disadvantages?", "Use specific examples of both benefits and harms", "Consider different groups — young people, businesses, politicians", "Your conclusion should reflect your overall judgment"]
+    }
+  },
+  {
+    id: 12, name: "IELTS Writing Test 12",
+    task1: {
+      type: "table",
+      title: "The table below shows the results of a survey asking people in four countries about their preferred method of news consumption in 2023.",
+      description: "The table shows percentages for TV, Online, Newspaper, and Radio. In the USA: TV 35%, Online 45%, Newspaper 12%, Radio 8%. UK: TV 40%, Online 42%, Newspaper 10%, Radio 8%. Germany: TV 38%, Online 35%, Newspaper 20%, Radio 7%. Japan: TV 45%, Online 38%, Newspaper 14%, Radio 3%. Online is the top or second source everywhere. Germany retains the highest newspaper readership. Japan watches the most TV news. Radio is least popular in all countries.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Traditional newspapers will soon disappear as people increasingly get their news from online sources. To what extent do you agree with this prediction?",
+      tips: ["Consider both why newspapers might survive and why they might not", "Think about different demographics and reading habits", "Avoid making absolute statements — use hedging language", "Support your view with logical reasoning"]
+    }
+  },
+  {
+    id: 13, name: "IELTS Writing Test 13",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows the percentage of students choosing different university subjects in a particular country in 2000 and 2022.",
+      description: "In 2000, Business was the top choice at 25%, followed by Engineering 20%, Humanities 18%, Science 17%, Medicine 12%, and Arts 8%. By 2022, Business remained top at 28%, but Technology/Computing surged from almost nothing to 22%, Engineering dropped to 15%, Humanities fell to 10%, Science rose slightly to 19%, Medicine grew to 14%, and Arts declined to 5%. The most notable change is the dramatic rise of Technology subjects.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "discussion",
+      question: "Some people think that universities should focus on providing practical skills for employment, while others believe the main purpose of higher education is to develop critical thinking and broader knowledge. Discuss both views and give your opinion.",
+      tips: ["Give equal, fair consideration to both views", "Use specific examples of subjects or career paths", "Make your own opinion clear but balanced", "Consider whether the two views are mutually exclusive"]
+    }
+  },
+  {
+    id: 14, name: "IELTS Writing Test 14",
+    task1: {
+      type: "process",
+      title: "The diagram below shows how solar panels generate electricity for home use.",
+      description: "The process begins with sunlight hitting photovoltaic (PV) cells on the solar panels mounted on the roof. The PV cells convert solar energy into direct current (DC) electricity. The DC electricity flows to an inverter, which converts it into alternating current (AC) electricity suitable for home use. The AC electricity then powers household appliances. Any surplus electricity is fed through a meter to the national grid, earning the homeowner credit. When solar production is insufficient, electricity is drawn back from the grid.",
+      prompt: "Summarise the information by selecting and reporting the main stages in the process."
+    },
+    task2: {
+      type: "opinion",
+      question: "Some people believe that individuals can do very little to combat climate change and that it is governments and large corporations that must take action. To what extent do you agree?",
+      tips: ["Clarify the relationship between individual and institutional responsibility", "Avoid an extreme position — acknowledge both sides", "Use logical cause-effect reasoning", "Consider the scale of the problem vs. individual impact"]
+    }
+  },
+  {
+    id: 15, name: "IELTS Writing Test 15",
+    task1: {
+      type: "line_graph",
+      title: "The graph below shows the number of cars produced annually in three countries between 2000 and 2022.",
+      description: "China's car production grew explosively, from 2 million in 2000 to 27 million in 2022, becoming by far the world's largest producer. Japan remained relatively stable, declining slightly from 10 million to 7.8 million over the period. Germany maintained steady production around 5-5.5 million throughout. The most striking feature is China's extraordinary growth, which by 2015 was producing more than Japan and Germany combined.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "Many cities around the world are struggling with traffic congestion and air pollution caused by cars. What measures could governments introduce to reduce the number of private vehicles on the roads?",
+      tips: ["Focus specifically on government measures, not individual actions", "Suggest a range of measures (economic, infrastructure, legal)", "Evaluate the feasibility of your suggestions", "Be specific rather than vague — say HOW measures would work"]
+    }
+  },
+  {
+    id: 16, name: "IELTS Writing Test 16",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows participation rates in different types of exercise among adults in Australia in 2022, broken down by age group.",
+      description: "The bar chart shows exercise by age. Walking is most popular across all groups, especially 55-64 year olds at 52%. Gym use peaks among 18-34 year olds at 38% but drops sharply to 12% for those 65+. Cycling is most popular with 35-44 year olds at 22%. Swimming increases with age, with 65+ adults at 28%. Team sports are most popular with 18-24 year olds at 35% but decline sharply with age. Yoga/Pilates grows steadily with age, reaching 24% among 55-64 year olds.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Governments should make physical education compulsory at all levels of schooling to tackle the growing problem of obesity and poor health among young people. Do you agree or disagree?",
+      tips: ["State your position clearly in the opening paragraph", "Support your argument with specific reasoning", "Consider practical challenges and counter-arguments", "Maintain a consistent position throughout"]
+    }
+  },
+  {
+    id: 17, name: "IELTS Writing Test 17",
+    task1: {
+      type: "map",
+      title: "The maps below show the layout of a university campus in 2000 and its planned development by 2030.",
+      description: "In 2000, the campus had a central library, two academic buildings, a small cafeteria, student accommodation on the eastern side, and a large sports field to the west. By 2030, the plans show the library has been expanded, three new academic buildings added, the cafeteria replaced by a larger student centre, additional accommodation blocks built to the north, the sports field reduced in size, and a new technology park constructed on the western edge. Green spaces are maintained throughout.",
+      prompt: "Summarise the information by selecting and reporting the main changes that are planned."
+    },
+    task2: {
+      type: "discussion",
+      question: "Some people think that universities should accept equal numbers of male and female students in every subject. Others believe that universities should be free to accept students based purely on ability. Discuss both views and give your own opinion.",
+      tips: ["Engage seriously with both perspectives", "Consider the concept of equality vs meritocracy", "Refer to the potential impact on society and the workplace", "Give a nuanced personal view in your conclusion"]
+    }
+  },
+  {
+    id: 18, name: "IELTS Writing Test 18",
+    task1: {
+      type: "table",
+      title: "The table below shows the percentage of adults in six countries who reported eating at least five portions of fruit and vegetables per day in 2022.",
+      description: "The table shows diet data. Norway leads with 42% of adults eating 5+ portions, followed by France at 38%, UK at 31%, USA at 26%, Brazil at 22%, and India at 18%. The data is broken down by gender: in all countries, women are significantly more likely than men to meet the recommendation. The UK and USA show the largest gender gaps (9% and 10% respectively), while India shows the smallest gap at 4%.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Some people believe that governments should introduce taxes on unhealthy foods and drinks in order to improve public health. To what extent do you agree or disagree?",
+      tips: ["Consider both the health benefits and the social equity implications", "Think about whether taxes actually change behaviour", "Reference examples of countries that have tried this", "Take a clear but nuanced position"]
+    }
+  },
+  {
+    id: 19, name: "IELTS Writing Test 19",
+    task1: {
+      type: "line_graph",
+      title: "The graph below shows the proportion of adults in the UK who read books for pleasure, broken down by format, between 2005 and 2023.",
+      description: "Print book reading declined from 65% in 2005 to 52% in 2023, but remains the most popular format. E-book reading grew from near zero in 2005 to 28% by 2023, with the sharpest growth between 2010 and 2015. Audiobook listening grew slowly from 5% to 18% by 2023. Overall book reading (any format) remained fairly stable around 70-72% despite the shift in format preferences. Younger adults (18-34) show the highest rates of e-book and audiobook consumption.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "argument",
+      question: "In the digital age, reading books is becoming less popular. Some people think this is a serious problem, while others believe it is a natural development. Discuss both views and give your own opinion.",
+      tips: ["Distinguish between reading books and reading generally", "Consider what is actually lost if book reading declines", "Think about what digital reading offers instead", "Use your own opinion to resolve the discussion in the conclusion"]
+    }
+  },
+  {
+    id: 20, name: "IELTS Writing Test 20",
+    task1: {
+      type: "bar_chart",
+      title: "The chart below shows the percentage of adults in four countries who reported using artificial intelligence tools in their daily work in 2023.",
+      description: "The bar chart shows AI usage at work. South Korea leads with 39% of workers using AI tools daily, followed by the USA at 32%, UK at 24%, and Germany at 19%. Broken down by sector: technology sector workers lead in all countries (USA 65%, South Korea 72%). Healthcare workers show growing AI adoption (15-25%). Education and manufacturing show lower but growing rates. Older workers (55+) show significantly lower adoption rates across all countries.",
+      prompt: "Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    },
+    task2: {
+      type: "opinion",
+      question: "Artificial intelligence will have a greater positive impact on the world than any other technology developed in recent decades. To what extent do you agree or disagree with this statement?",
+      tips: ["Consider both the breadth and depth of AI's potential impact", "Compare to other technologies (internet, medicine, energy)", "Address potential risks as well as benefits", "Use hedging language to acknowledge uncertainty — 'may', 'could', 'might'"]
+    }
+  }
+];
+
+// ── STATE ──
+let examState = {
+  test: null,
+  phase: null, // 'task1', 'task2', 'done'
+  task1Feedback: null,
+  task2Feedback: null,
+  done: false
+};
+
+// ── NAVIGATION ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function showStudent() {
+  populateExams();
+  showScreen('student');
+}
+
+function populateExams() {
+  const sel = document.getElementById('exam-select');
+  sel.innerHTML = '<option value="">— choose a test —</option>';
+  IELTS_TESTS.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name;
+    sel.appendChild(opt);
+  });
+}
+
+function onExamChange() {
+  const sel = document.getElementById('exam-select');
+  const t = IELTS_TESTS.find(t => t.id == sel.value);
+  const ind = document.getElementById('task-indicator');
+  ind.textContent = t ? 'Ready' : 'Select a test';
+  ind.className = 'task-indicator done';
+}
+
+function showPasswordModal() {
+  document.getElementById('pw-modal').classList.add('open');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+}
+function closeModal() { document.getElementById('pw-modal').classList.remove('open'); }
+function checkPw() {
+  if (document.getElementById('pw-input').value === TEACHER_PASSWORD) {
+    closeModal(); showToast('Tests are built into the code — no setup needed!');
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+// ── EXAM ──
+function startExam() {
+  const sel = document.getElementById('exam-select');
+  const test = IELTS_TESTS.find(t => t.id == sel.value);
+  if (!test) { alert('Please choose a test first.'); return; }
+
+  examState = { test, phase: 'task1', task1Feedback: null, task2Feedback: null, done: false };
+
+  document.getElementById('main-area').style.display = 'flex';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('feedback-area').style.display = 'none';
+  document.getElementById('writing-panel').style.display = 'flex';
+  document.getElementById('writing-textarea').value = '';
+  document.getElementById('writing-textarea').disabled = false;
+
+  showTask1();
+}
+
+function showTask1() {
+  const { test } = examState;
+  examState.phase = 'task1';
+  updateProgress();
+
+  document.getElementById('task-indicator').textContent = 'Task 1';
+  document.getElementById('task-indicator').className = 'task-indicator t1';
+  document.getElementById('time-req').textContent = '⏱ Recommended: 20 minutes';
+  document.getElementById('writing-textarea').value = '';
+  document.getElementById('writing-textarea').placeholder = 'Write your Task 1 response here (minimum 150 words)…';
+  updateWordCount();
+
+  document.getElementById('question-content').innerHTML = `
+    <div class="task-label t1">Task 1 — Graph / Chart Description</div>
+    <div class="question-title" style="margin-bottom:12px">${esc(test.task1.title)}</div>
+    <div class="chart-desc">${esc(test.task1.description)}</div>
+    <div style="margin-top:12px;font-size:13px;color:var(--ink-mid);font-style:italic">${esc(test.task1.prompt)}</div>
+    <div class="word-count-req" style="margin-top:10px">
+      <span>Minimum: 150 words</span>
+      <span>Recommended: ~180 words</span>
+    </div>
+    <div class="tips-box" style="margin-top:12px">
+      <div class="tips-title">Task 1 Tips</div>
+      <ul class="tips-list">
+        <li>Begin with an overview of the main trend or feature</li>
+        <li>Select and compare the most significant data points</li>
+        <li>Do NOT include personal opinions</li>
+        <li>Use accurate data — refer to specific figures</li>
+        <li>Use a range of comparative language</li>
+      </ul>
+    </div>`;
+
+  document.getElementById('submit-btn').textContent = 'Submit Task 1 →';
+  document.getElementById('submit-hint').textContent = 'Minimum 150 words';
+  document.getElementById('feedback-area').style.display = 'none';
+  document.getElementById('writing-panel').style.display = 'flex';
+}
+
+function showTask2() {
+  const { test } = examState;
+  examState.phase = 'task2';
+  updateProgress();
+
+  document.getElementById('task-indicator').textContent = 'Task 2';
+  document.getElementById('task-indicator').className = 'task-indicator t2';
+  document.getElementById('time-req').textContent = '⏱ Recommended: 40 minutes';
+  document.getElementById('writing-textarea').value = '';
+  document.getElementById('writing-textarea').placeholder = 'Write your Task 2 essay here (minimum 250 words)…';
+  updateWordCount();
+
+  document.getElementById('question-content').innerHTML = `
+    <div class="task-label t2">Task 2 — Essay</div>
+    <div class="question-title" style="margin-bottom:12px">${esc(test.task2.question)}</div>
+    <div class="word-count-req">
+      <span>Minimum: 250 words</span>
+      <span>Recommended: ~280-320 words</span>
+    </div>
+    <div class="tips-box" style="margin-top:12px">
+      <div class="tips-title">Task 2 Tips</div>
+      <ul class="tips-list">
+        ${test.task2.tips.map(t => `<li>${esc(t)}</li>`).join('')}
+      </ul>
+    </div>
+    <div style="margin-top:12px;background:var(--accent-light);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--accent-dark)">
+      <strong>Essay structure:</strong> Introduction → Body paragraph 1 → Body paragraph 2 (→ Body paragraph 3) → Conclusion
+    </div>`;
+
+  document.getElementById('submit-btn').textContent = 'Submit Task 2 →';
+  document.getElementById('submit-hint').textContent = 'Minimum 250 words';
+  document.getElementById('feedback-area').style.display = 'none';
+  document.getElementById('writing-panel').style.display = 'flex';
+}
+
+function updateWordCount() {
+  const text = document.getElementById('writing-textarea').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const min = examState.phase === 'task1' ? 150 : 250;
+  const display = document.getElementById('word-count-display');
+  display.innerHTML = `Words: <span>${words}</span>`;
+  display.className = words >= min ? 'word-count-display good' : words >= min * 0.7 ? 'word-count-display warning' : 'word-count-display';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = words < 50;
+  document.getElementById('submit-hint').textContent = words >= min ? '✓ Word count met' : `Minimum ${min} words (${min - words} more needed)`;
+}
+
+function updateProgress() {
+  const pct = examState.phase === 'task1' ? 25 : examState.phase === 'task2' ? 75 : 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-fill').style.background = examState.phase === 'task2' ? 'var(--task2)' : examState.phase === 'done' ? 'var(--green)' : 'var(--task1)';
+  document.getElementById('progress-label-text').textContent =
+    examState.phase === 'task1' ? 'Task 1 — Graph/Chart Description' :
+    examState.phase === 'task2' ? 'Task 2 — Essay' : 'Complete!';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+async function submitAnswer() {
+  const text = document.getElementById('writing-textarea').value.trim();
+  const wordCount = text.split(/\s+/).length;
+  const min = examState.phase === 'task1' ? 150 : 250;
+
+  if (wordCount < 50) { showToast('Please write more before submitting.'); return; }
+
+  showLoading(examState.phase === 'task1' ? 'Analysing your Task 1 response…' : 'Analysing your essay…');
+
+  try {
+    const { test, phase } = examState;
+    const question = phase === 'task1' ? test.task1.title + ' ' + test.task1.description : test.task2.question;
+    const taskType = phase === 'task1' ? 'task1' : 'task2';
+
+    const feedback = await getWritingFeedback(text, question, taskType, wordCount, min);
+    hideLoading();
+
+    if (phase === 'task1') {
+      examState.task1Feedback = feedback;
+      showFeedback(feedback, 'Task 1', 't1');
+      // Add "next" button
+      setTimeout(() => {
+        const area = document.getElementById('feedback-area');
+        const nextBtn = document.createElement('div');
+        nextBtn.style.cssText = 'display:flex;justify-content:center;padding:8px 0 4px';
+        nextBtn.innerHTML = `<button onclick="proceedToTask2()" style="background:var(--task2);color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit">Continue to Task 2 →</button>`;
+        area.appendChild(nextBtn);
+      }, 300);
+    } else {
+      examState.task2Feedback = feedback;
+      examState.phase = 'done';
+      examState.done = true;
+      updateProgress();
+      document.getElementById('task-indicator').textContent = 'Complete';
+      document.getElementById('task-indicator').className = 'task-indicator done';
+      showFeedback(feedback, 'Task 2', 't2');
+      setTimeout(() => addSummaryCard(), 400);
+    }
+  } catch(e) {
+    hideLoading();
+    showToast('Error getting feedback — please check your connection and try again.');
+  }
+}
+
+function proceedToTask2() {
+  showTask2();
+  document.getElementById('feedback-area').style.display = 'none';
+  document.getElementById('writing-panel').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+
+function showFeedback(fb, taskLabel, cls) {
+  document.getElementById('writing-panel').style.display = 'none';
+  const area = document.getElementById('feedback-area');
+  area.style.display = 'flex';
+  area.innerHTML = '';
+
+  // Task divider
+  const divider = document.createElement('div');
+  divider.className = 'task-divider';
+  divider.innerHTML = `<div class="task-divider-line"></div><div class="task-divider-label ${cls}">${taskLabel} Feedback</div><div class="task-divider-line"></div>`;
+  area.appendChild(divider);
+
+  // Criterion scores
+  const scoreCard = document.createElement('div');
+  scoreCard.className = 'feedback-card';
+  const ta = fb.task_achievement?.score || fb.task_response?.score || 6;
+  const cc = fb.coherence_cohesion?.score || 6;
+  const lr = fb.lexical_resource?.score || 6;
+  const gr = fb.grammatical_range?.score || 6;
+  const avg = ((ta + cc + lr + gr) / 4);
+  const roundHalf = n => Math.round(n * 2) / 2;
+  const bandColor = avg >= 7.5 ? '#2d6a4f' : avg >= 6 ? '#b8860b' : '#c85a2a';
+  const taLabel = cls === 't1' ? 'Task Achievement' : 'Task Response';
+
+  scoreCard.innerHTML = `
+    <div class="fb-header"><span>${taskLabel} Band Scores</span><span style="color:${bandColor};font-weight:700;font-size:14px">Band ${roundHalf(avg).toFixed(1)}</span></div>
+    <div class="fb-body">
+      <div class="criterion-grid">
+        <div class="criterion-box"><div class="criterion-box-name">${taLabel}</div><div class="criterion-box-score" style="color:${bandColor}">${ta.toFixed(1)}</div><div style="font-size:12px;color:var(--ink-light);margin-top:4px">${esc(fb.task_achievement?.comment || fb.task_response?.comment || '')}</div></div>
+        <div class="criterion-box"><div class="criterion-box-name">Coherence & Cohesion</div><div class="criterion-box-score" style="color:${bandColor}">${cc.toFixed(1)}</div><div style="font-size:12px;color:var(--ink-light);margin-top:4px">${esc(fb.coherence_cohesion?.comment || '')}</div></div>
+        <div class="criterion-box"><div class="criterion-box-name">Lexical Resource</div><div class="criterion-box-score" style="color:${bandColor}">${lr.toFixed(1)}</div><div style="font-size:12px;color:var(--ink-light);margin-top:4px">${esc(fb.lexical_resource?.comment || '')}</div></div>
+        <div class="criterion-box"><div class="criterion-box-name">Grammatical Range</div><div class="criterion-box-score" style="color:${bandColor}">${gr.toFixed(1)}</div><div style="font-size:12px;color:var(--ink-light);margin-top:4px">${esc(fb.grammatical_range?.comment || '')}</div></div>
+      </div>
+    </div>`;
+  area.appendChild(scoreCard);
+
+  // Detailed feedback
+  const detailCard = document.createElement('div');
+  detailCard.className = 'feedback-card';
+
+  const grammarHtml = fb.grammar_errors?.length
+    ? fb.grammar_errors.map(g => `
+        <div class="fb-row">
+          <div class="fb-icon amber">✎</div>
+          <div class="fb-text">
+            <div class="original-sentence">${esc(g.original)}</div>
+            <div class="corrected-sentence">${esc(g.correction)}</div>
+            <div style="margin-top:4px;font-size:12px;color:var(--ink-mid)">${esc(g.explanation)}</div>
+          </div>
+        </div>`).join('')
+    : `<div class="fb-row"><div class="fb-icon green">✓</div><div class="fb-text">No significant grammar errors — well done!</div></div>`;
+
+  const vocabHtml = (fb.vocabulary_suggestions || []).map(v => `
+    <div class="fb-row">
+      <div class="fb-icon blue">💡</div>
+      <div class="fb-text"><strong>Vocabulary:</strong> Consider <span class="correction">"${esc(v.better)}"</span> instead of "${esc(v.original)}" — ${esc(v.explanation)}</div>
+    </div>`).join('');
+
+  const structureHtml = fb.structure_feedback
+    ? `<div class="fb-row"><div class="fb-icon purple">📝</div><div class="fb-text"><strong>Structure:</strong> ${esc(fb.structure_feedback)}</div></div>`
+    : '';
+
+  detailCard.innerHTML = `
+    <div class="fb-header"><span>Detailed Feedback</span></div>
+    <div class="fb-body">
+      <div class="fb-row"><div class="fb-icon green">★</div><div class="fb-text">${esc(fb.praise)}</div></div>
+      ${structureHtml}
+      ${grammarHtml}
+      ${vocabHtml}
+      <div class="fb-row"><div class="fb-icon purple">✍</div><div class="fb-text"><strong>Writing tip:</strong> ${esc(fb.writing_tip)}</div></div>
+      <div class="fb-row"><div class="fb-icon green">→</div><div class="fb-text">${esc(fb.overall)}</div></div>
+    </div>`;
+  area.appendChild(detailCard);
+}
+
+function addSummaryCard() {
+  const area = document.getElementById('feedback-area');
+
+  const divider = document.createElement('div');
+  divider.className = 'task-divider';
+  divider.innerHTML = `<div class="task-divider-line"></div><div class="task-divider-label t2" style="background:var(--green-light);color:var(--green)">Full Test Summary</div><div class="task-divider-line"></div>`;
+  area.appendChild(divider);
+
+  const f1 = examState.task1Feedback;
+  const f2 = examState.task2Feedback;
+  const roundHalf = n => Math.round(n * 2) / 2;
+
+  const t1avg = ((f1.task_achievement?.score || 6) + (f1.coherence_cohesion?.score || 6) + (f1.lexical_resource?.score || 6) + (f1.grammatical_range?.score || 6)) / 4;
+  const t2avg = ((f2.task_response?.score || 6) + (f2.coherence_cohesion?.score || 6) + (f2.lexical_resource?.score || 6) + (f2.grammatical_range?.score || 6)) / 4;
+  // Task 2 is weighted more heavily in IELTS (Task 1: 1/3, Task 2: 2/3)
+  const overall = roundHalf((t1avg / 3) + (t2avg * 2 / 3));
+  const bandColor = overall >= 7.5 ? '#2d6a4f' : overall >= 6 ? '#b8860b' : '#c85a2a';
+
+  const avgCriterion = (key1, key2, key3) => {
+    const s1 = f1[key1]?.score || 6;
+    const s2 = f2[key2 || key1]?.score || 6;
+    return (s1 + s2) / 2;
+  };
+
+  const ta = avgCriterion('task_achievement', 'task_response');
+  const cc = avgCriterion('coherence_cohesion', 'coherence_cohesion');
+  const lr = avgCriterion('lexical_resource', 'lexical_resource');
+  const gr = avgCriterion('grammatical_range', 'grammatical_range');
+
+  const criterionBar = (label, score, color) => `
+    <div class="criterion-row">
+      <div class="criterion-name">${label}</div>
+      <div class="criterion-bar-wrap"><div class="criterion-bar" style="width:${(score/9)*100}%;background:${color}"></div></div>
+      <div class="criterion-score" style="color:${color}">${roundHalf(score).toFixed(1)}</div>
+    </div>`;
+
+  const allGrammar = [...(f1.grammar_errors || []), ...(f2.grammar_errors || [])];
+  const allVocab = [...(f1.vocabulary_suggestions || []), ...(f2.vocabulary_suggestions || [])];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'summary-card';
+  wrap.innerHTML = `
+    <div class="summary-header">
+      <span>IELTS Writing — Full Test Summary</span>
+      <div>
+        <div style="font-size:11px;opacity:0.8;margin-bottom:2px">Overall Band</div>
+        <div class="summary-band">${overall.toFixed(1)}</div>
+      </div>
+    </div>
+    <div class="summary-body">
+      <div>
+        <div class="summary-section-title">Band scores by criterion (averaged across both tasks)</div>
+        ${criterionBar('Task Achievement / Response', ta, '#1a4f8a')}
+        ${criterionBar('Coherence & Cohesion', cc, '#b8860b')}
+        ${criterionBar('Lexical Resource', lr, '#7a3a8a')}
+        ${criterionBar('Grammatical Range & Accuracy', gr, '#2d6a4f')}
+      </div>
+      <div>
+        <div class="summary-section-title">Task scores</div>
+        <div class="criterion-row">
+          <div class="criterion-name">Task 1 (Graph/Chart)</div>
+          <div class="criterion-bar-wrap"><div class="criterion-bar" style="width:${(t1avg/9)*100}%;background:var(--task1)"></div></div>
+          <div class="criterion-score" style="color:var(--task1)">${roundHalf(t1avg).toFixed(1)}</div>
+        </div>
+        <div class="criterion-row">
+          <div class="criterion-name">Task 2 (Essay) — weighted ×2</div>
+          <div class="criterion-bar-wrap"><div class="criterion-bar" style="width:${(t2avg/9)*100}%;background:var(--task2)"></div></div>
+          <div class="criterion-score" style="color:var(--task2)">${roundHalf(t2avg).toFixed(1)}</div>
+        </div>
+      </div>
+      <div>
+        <div class="summary-section-title">Grammar to review</div>
+        ${allGrammar.length ? allGrammar.map(g => `<div class="summary-item improve">✎ <strong>${esc(g.original)}</strong><br>→ ${esc(g.correction)}</div>`).join('') : '<div class="summary-item good">✓ No significant grammar errors recorded.</div>'}
+      </div>
+      <div>
+        <div class="summary-section-title">Vocabulary to upgrade</div>
+        ${allVocab.length ? allVocab.map(v => `<div class="summary-item vocab">💡 <strong>${esc(v.better)}</strong> instead of "${esc(v.original)}"</div>`).join('') : '<div class="summary-item vocab">Good vocabulary range throughout.</div>'}
+      </div>
+      <div class="summary-item praise">🎓 ${overall >= 7 ? 'Excellent writing! You are performing at a high level. Focus on consistency and pushing your band score higher.' : overall >= 6 ? 'Good result! With focused practice on task achievement and vocabulary range, you can reach Band 7.' : 'Keep practising! Focus on answering the question fully, organising your ideas clearly, and expanding your vocabulary.'}</div>
+    </div>`;
+  area.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function getWritingFeedback(text, question, taskType, wordCount, minWords) {
+  const wordWarning = wordCount < minWords ? `Note: the student wrote only ${wordCount} words (minimum is ${minWords}). Penalise Task Achievement accordingly.` : '';
+
+  const systemPrompts = {
+    task1: `You are an expert IELTS examiner assessing Task 1 (graph/chart description). ${wordWarning}
+Assess strictly according to IELTS Band Descriptors. Return ONLY valid JSON:
+{
+  "praise": "One specific genuine strength",
+  "task_achievement": {"score": 6.5, "comment": "Did they cover main features and make comparisons? Did they include an overview?"},
+  "coherence_cohesion": {"score": 6.0, "comment": "Organisation, paragraphing, cohesive devices"},
+  "lexical_resource": {"score": 6.5, "comment": "Vocabulary range, precision, spelling"},
+  "grammatical_range": {"score": 6.0, "comment": "Range and accuracy of grammar structures"},
+  "grammar_errors": [{"original": "exact phrase from text", "correction": "corrected version", "explanation": "rule"}],
+  "vocabulary_suggestions": [{"original": "word/phrase used", "better": "more academic alternative", "explanation": "why"}],
+  "structure_feedback": "Comment on overview, grouping of data, and paragraph organisation",
+  "writing_tip": "One specific actionable improvement",
+  "overall": "One encouraging closing sentence"
+}
+Band scores use 0.5 increments 4.0-9.0. Grammar errors: max 3. Vocabulary: max 2.`,
+
+    task2: `You are an expert IELTS examiner assessing Task 2 (essay). ${wordWarning}
+Assess strictly according to IELTS Band Descriptors. Return ONLY valid JSON:
+{
+  "praise": "One specific genuine strength",
+  "task_response": {"score": 6.5, "comment": "Did they fully answer all parts of the question? Is the position clear?"},
+  "coherence_cohesion": {"score": 6.0, "comment": "Essay structure, paragraphing, topic sentences, cohesive devices"},
+  "lexical_resource": {"score": 6.5, "comment": "Vocabulary range, precision, collocations, spelling"},
+  "grammatical_range": {"score": 6.0, "comment": "Range of structures, accuracy, sentence variety"},
+  "grammar_errors": [{"original": "exact phrase from text", "correction": "corrected version", "explanation": "rule"}],
+  "vocabulary_suggestions": [{"original": "word/phrase used", "better": "more academic alternative", "explanation": "why"}],
+  "structure_feedback": "Comment on introduction quality, argument development, and conclusion",
+  "writing_tip": "One specific actionable improvement for this essay type",
+  "overall": "One encouraging closing sentence with a clear next step"
+}
+Band scores use 0.5 increments 4.0-9.0. Grammar errors: max 3. Vocabulary: max 2.`
+  };
+
+  const resp = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1400,
+      system: systemPrompts[taskType],
+      messages: [{ role: 'user', content: `Question/Task: ${question}\n\nStudent's response:\n${text}` }]
+    })
+  });
+
+  const data = await resp.json();
+  const raw = data.content[0].text;
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+// ── LOADING ──
+function showLoading(msg) {
+  document.getElementById('loading-text').textContent = msg || 'Analysing…';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function 
