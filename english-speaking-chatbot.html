@@ -534,7 +534,7 @@ function removeQuestion(i) {
   renderEditor();
 }
 
-function saveTopic() {
+async function saveTopic() {
   const topic = topics.find(t => t.id === selectedTopicId);
   if (!topic) return;
   topic.week = parseInt(document.getElementById('ed-week').value) || 1;
@@ -542,20 +542,18 @@ function saveTopic() {
   const qEls = document.querySelectorAll('[id^="eq-"]');
   topic.questions = Array.from(qEls).map(el => el.value.trim()).filter(q => q);
   showToast('Saving…');
-  saveTopics().then(() => {
-    renderTopicList();
-    showToast('Topic saved ✓');
-  });
+  await saveTopics();
+  renderTopicList();
+  showToast('Topic saved ✓');
 }
 
-function deleteTopic() {
+async function deleteTopic() {
   if (!confirm('Delete this topic?')) return;
   topics = topics.filter(t => t.id !== selectedTopicId);
   selectedTopicId = null;
-  saveTopics().then(() => {
-    renderTopicList();
-    showToast('Topic deleted');
-  });
+  await saveTopics();
+  renderTopicList();
+  showToast('Topic deleted');
   document.getElementById('topic-editor').innerHTML = `<div class="editor-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg><div style="font-size:14px;">Select a topic or create a new one</div></div>`;
 }
 
