@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiscussEarth Daily — Learn English. Understand Your Planet.</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --forest: #2a4a35; --forest-mid: #3d6b4f; --moss: #5a7a4a; --sage: #8aab72; --sage-light: #b8d4a0;
+  --earth: #8b5e3c; --earth-light: #c4956a; --sand: #f5f0e8; --sand-dark: #ede4d4;
+  --parchment: #faf7f2; --ink: #1c1a16; --ink-mid: #4a4540; --ink-light: #8a8278;
+  --border: #d8cfc0; --white: #ffffff;
+  --b1: #1a4f8a; --b2: #7a3a8a; --c1: #2d6a4f;
+  --mic-red: #e03e2d;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: var(--ink); line-height: 1.6; font-size: 15px; min-height: 100vh; }
+
+/* ── SCREENS ── */
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── LANDING ── */
+#screen-landing {
+  background: linear-gradient(160deg, var(--forest) 0%, var(--forest-mid) 50%, var(--moss) 100%);
+  align-items: center; justify-content: center; padding: 2rem; gap: 1.4rem; text-align: center;
+}
+.landing-logo { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: white; letter-spacing: -0.02em; }
+.landing-logo span { color: var(--sage-light); font-style: italic; }
+.landing-tagline { font-size: 13px; color: rgba(255,255,255,0.65); letter-spacing: 0.08em; text-transform: uppercase; }
+.landing-sub { font-size: 15px; color: rgba(255,255,255,0.75); max-width: 360px; line-height: 1.7; }
+.streak-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 99px; padding: 8px 16px; font-size: 13px; color: rgba(255,255,255,0.9); }
+.landing-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+.btn-land-primary { background: var(--earth-light); color: var(--ink); border: none; border-radius: 10px; padding: 14px 28px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+.btn-land-primary:hover { background: var(--earth); color: white; }
+.btn-land-secondary { background: transparent; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 13px 28px; font-size: 14px; cursor: pointer; font-family: inherit; transition: border-color 0.2s; }
+.btn-land-secondary:hover { border-color: white; color: white; }
+.topic-preview { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 380px; }
+.topic-mini { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 99px; padding: 5px 12px; font-size: 12px; color: rgba(255,255,255,0.75); }
+
+/* ── TOPIC BROWSER ── */
+#screen-topics { background: var(--parchment); }
+.app-header { padding: 14px 18px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.app-logo { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--forest); }
+.app-logo span { color: var(--earth); font-style: italic; }
+.header-streak { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--earth); }
+.back-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); font-size: 13px; padding: 4px 8px; border-radius: 6px; font-family: inherit; }
+.back-btn:hover { background: var(--sand); }
+
+.level-selector { padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--sand); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.level-selector label { font-size: 12px; color: var(--ink-light); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.level-btn { border: 1px solid var(--border); background: white; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.level-btn.b1.active, .level-btn.b1:hover { background: var(--b1); color: white; border-color: var(--b1); }
+.level-btn.b2.active, .level-btn.b2:hover { background: var(--b2); color: white; border-color: var(--b2); }
+.level-btn.c1.active, .level-btn.c1:hover { background: var(--c1); color: white; border-color: var(--c1); }
+
+.topics-scroll { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.topic-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; display: flex; gap: 16px; align-items: center; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
+.topic-card:hover { box-shadow: 0 4px 20px rgba(42,74,53,0.1); transform: translateY(-1px); }
+.topic-card.completed { border-color: var(--sage); background: var(--sand); }
+.topic-emoji { font-size: 2rem; flex-shrink: 0; }
+.topic-info { flex: 1; }
+.topic-category { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); margin-bottom: 3px; }
+.topic-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--forest); margin-bottom: 4px; }
+.topic-desc { font-size: 13px; color: var(--ink-mid); line-height: 1.5; }
+.topic-meta { display: flex; gap: 8px; margin-top: 8px; }
+.topic-tag { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+.topic-tag.level-b1 { background: #e8f0f8; color: var(--b1); }
+.topic-tag.level-b2 { background: #f0e8f8; color: var(--b2); }
+.topic-tag.level-c1 { background: var(--sage-light); color: var(--forest); }
+.topic-tag.mins { background: var(--sand-dark); color: var(--ink-mid); }
+.topic-check { font-size: 20px; flex-shrink: 0; }
+
+/* ── LESSON ── */
+#screen-lesson { background: var(--parchment); }
+.lesson-progress-wrap { padding: 10px 18px 0; flex-shrink: 0; }
+.lesson-progress-bar { height: 4px; background: var(--sand-dark); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.lesson-progress-fill { height: 100%; border-radius: 99px; background: var(--forest); transition: width 0.4s ease; }
+.lesson-step-label { font-size: 11px; color: var(--ink-light); display: flex; justify-content: space-between; }
+
+.lesson-body { flex: 1; overflow-y: auto; padding: 20px 18px; display: flex; flex-direction: column; gap: 18px; }
+
+/* Article */
+.article-card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.article-header { padding: 14px 18px; background: var(--forest); color: white; }
+.article-category { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sage-light); margin-bottom: 4px; }
+.article-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; line-height: 1.4; }
+.article-body { padding: 18px; font-size: 14px; line-height: 1.8; color: var(--ink); }
+.article-body p { margin-bottom: 10px; }
+.article-body p:last-child { margin-bottom: 0; }
+.highlight-word { background: #fff3cd; border-radius: 3px; padding: 0 2px; cursor: help; border-bottom: 1px dashed var(--gold); }
+.article-level-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; margin-top: 12px; }
+.article-level-badge.b1 { background: #e8f0f8; color: var(--b1); }
+.article-level-badge.b2 { background: #f0e8f8; color: var(--b2); }
+.article-level-badge.c1 { background: var(--sage-light); color: var(--forest); }
+
+/* Vocab */
+.vocab-grid { display: flex; flex-direction: column; gap: 10px; }
+.vocab-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.vocab-word { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--forest); font-weight: 700; margin-bottom: 2px; }
+.vocab-type { font-size: 11px; color: var(--ink-light); font-style: italic; margin-bottom: 6px; }
+.vocab-def { font-size: 13px; color: var(--ink); margin-bottom: 6px; line-height: 1.5; }
+.vocab-example { font-size: 13px; color: var(--ink-mid); font-style: italic; border-left: 3px solid var(--sage); padding-left: 10px; line-height: 1.5; }
+
+/* Quiz */
+.quiz-question { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 14px; line-height: 1.5; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 14px; cursor: pointer; transition: all 0.15s; text-align: left; font-family: inherit; color: var(--ink); }
+.quiz-option:hover:not(:disabled) { border-color: var(--forest); background: var(--sand); }
+.quiz-option.correct { background: var(--green-light, #e8f4ee); border-color: var(--forest); color: var(--forest); }
+.quiz-option.wrong { background: #fdecea; border-color: #c0392b; color: #c0392b; }
+.quiz-feedback { font-size: 13px; margin-top: 10px; padding: 10px 14px; border-radius: 8px; line-height: 1.5; }
+.quiz-feedback.correct { background: #e8f4ee; color: var(--forest); }
+.quiz-feedback.wrong { background: #fdecea; color: #c0392b; }
+.quiz-counter { font-size: 12px; color: var(--ink-light); margin-bottom: 10px; }
+
+/* Practice */
+.practice-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+.practice-btn { flex: 1; border: 1px solid var(--border); background: white; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; color: var(--ink-mid); }
+.practice-btn.active { background: var(--forest); color: white; border-color: var(--forest); }
+.practice-prompt-box { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.practice-prompt-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); font-weight: 600; margin-bottom: 6px; }
+.practice-prompt-text { font-size: 14px; color: var(--ink); line-height: 1.6; }
+.practice-textarea { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 14px; color: var(--ink); resize: none; outline: none; background: white; line-height: 1.7; min-height: 120px; }
+.practice-textarea:focus { border-color: var(--forest); }
+.word-count-bar { font-size: 12px; color: var(--ink-light); margin-bottom: 10px; }
+.word-count-bar span { font-weight: 500; color: var(--ink); }
+
+/* Mic */
+.mic-area { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 0; }
+.mic-btn { width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer; background: var(--forest); color: white; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; outline: none; }
+.mic-btn:hover { transform: scale(1.04); }
+.mic-btn.listening { background: var(--mic-red); animation: pulse-ring 1.4s ease-out infinite; }
+.mic-btn:disabled { background: var(--sand-dark); cursor: not-allowed; transform: none; }
+.mic-btn svg { width: 28px; height: 28px; }
+@keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(224,62,45,0.5)} 70%{box-shadow:0 0 0 16px rgba(224,62,45,0)} 100%{box-shadow:0 0 0 0 rgba(224,62,45,0)} }
+.mic-status { font-size: 13px; color: var(--ink-mid); text-align: center; }
+.mic-status.listening { color: var(--mic-red); font-weight: 500; }
+.live-transcript { font-size: 13px; color: var(--ink-mid); font-style: italic; text-align: center; min-height: 18px; max-width: 380px; line-height: 1.5; }
+.submit-speak-btn { background: var(--forest); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; display: none; }
+.submit-speak-btn.visible { display: block; }
+
+/* Feedback */
+.feedback-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: 0 2px 12px rgba(42,74,53,0.08); }
+.fb-header { padding: 8px 14px; background: var(--sand); font-size: 11px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+.fb-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+.fb-row { display: flex; gap: 9px; align-items: flex-start; }
+.fb-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.fb-icon.green { background: #e8f4ee; color: var(--forest); }
+.fb-icon.amber { background: #fdf6e0; color: #b8860b; }
+.fb-icon.blue { background: #e8f0f8; color: #1a4f8a; }
+.fb-text { line-height: 1.55; color: var(--ink); flex: 1; font-size: 13px; }
+.fb-text .correction { color: var(--forest); font-weight: 500; }
+
+/* Complete */
+.complete-card { background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 100%); border-radius: 16px; padding: 28px; text-align: center; color: white; }
+.complete-emoji { font-size: 3rem; margin-bottom: 12px; }
+.complete-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px; }
+.complete-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 20px; line-height: 1.6; }
+.complete-fact { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 20px; border-left: 3px solid var(--sage-light); text-align: left; }
+.complete-fact strong { color: var(--sage-light); }
+.streak-display { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+.streak-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+
+/* Bottom action bar */
+.lesson-footer { padding: 14px 18px; border-top: 1px solid var(--border); background: white; flex-shrink: 0; }
+.btn-next { width: 100%; background: var(--forest); color: white; border: none; border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+.btn-next:hover { background: var(--forest-mid); }
+.btn-next:disabled { background: var(--sand-dark); color: var(--ink-light); cursor: not-allowed; }
+
+/* Section headers */
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+.section-icon { font-size: 18px; }
+.section-title-text { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--forest); }
+.section-sub-text { font-size: 12px; color: var(--ink-light); margin-bottom: 14px; }
+
+.loading-overlay { position: fixed; inset: 0; background: rgba(250,247,242,0.92); display: none; align-items: center; justify-content: center; z-index: 50; flex-direction: column; gap: 12px; }
+.loading-overlay.show { display: flex; }
+.loading-spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--forest); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--ink-mid); }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-logo">Discuss<span>Earth</span></div>
+  <div class="landing-tagline">Learn English · Understand Your Planet</div>
+  <div class="streak-badge">🔥 Build a daily streak — 5 minutes a day</div>
+  <div class="landing-sub">Short daily lessons combining real environmental science with English language practice at your level.</div>
+  <div class="topic-preview">
+    <span class="topic-mini">🌊 Oceans</span>
+    <span class="topic-mini">🌳 Forests</span>
+    <span class="topic-mini">🦁 Wildlife</span>
+    <span class="topic-mini">🌡️ Climate</span>
+    <span class="topic-mini">⚡ Energy</span>
+    <span class="topic-mini">🍽 Food</span>
+  </div>
+  <div class="landing-btns">
+    <button class="btn-land-primary" onclick="showTopics()">Start learning →</button>
+    <button class="btn-land-secondary" onclick="showTopics()">Browse all topics</button>
+  </div>
+</div>
+
+<!-- TOPIC BROWSER -->
+<div id="screen-topics" class="screen">
+  <div class="app-header">
+    <div class="app-logo">Discuss<span>Earth</span> Daily</div>
+    <div class="header-streak">🔥 <span id="streak-count">0</span> day streak</div>
+  </div>
+  <div class="level-selector">
+    <label>My level:</label>
+    <button class="level-btn b1 active" onclick="setLevel('B1')">B1</button>
+    <button class="level-btn b2" onclick="setLevel('B2')">B2</button>
+    <button class="level-btn c1" onclick="setLevel('C1')">C1</button>
+  </div>
+  <div class="topics-scroll" id="topics-list"></div>
+</div>
+
+<!-- LESSON -->
+<div id="screen-lesson" class="screen">
+  <div class="app-header">
+    <button class="back-btn" onclick="showTopics()">← Topics</button>
+    <div id="lesson-header-title" style="font-size:14px;font-weight:500;color:var(--forest)"></div>
+    <div class="header-streak" style="margin-left:auto">🔥 <span id="lesson-streak">0</span></div>
+  </div>
+  <div class="lesson-progress-wrap">
+    <div class="lesson-step-label">
+      <span id="step-label">Step 1 of 5</span>
+      <span id="step-pct">0%</span>
+    </div>
+    <div class="lesson-progress-bar"><div class="lesson-progress-fill" id="lesson-progress" style="width:0%"></div></div>
+  </div>
+  <div class="lesson-body" id="lesson-body"></div>
+  <div class="lesson-footer">
+    <button class="btn-next" id="btn-next" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Getting your feedback…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
+
+// ── LESSONS DATA ──
+const LESSONS = [
+  {
+    id: 1, emoji: '🌊', category: 'Oceans & Marine Life', title: 'Coral Reefs Under Threat',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Coral reefs are some of the most important ecosystems on Earth. They cover less than 1% of the ocean floor, but they are home to about 25% of all marine species. Fish, turtles, sharks, and thousands of other animals depend on coral reefs to survive.\n\nUnfortunately, coral reefs are in serious danger. The main problem is climate change. When the ocean gets too warm, corals lose the algae that live inside them. Without this algae, corals turn white. This is called coral bleaching. If the water stays warm for too long, the corals die.\n\nScientists say that we have already lost about 50% of the world's coral reefs. If temperatures continue to rise, we could lose 90% of all coral reefs by 2050. This would be a disaster for millions of people who depend on reefs for food and income.` },
+      B2: { level:'B2', text: `Coral reefs are among the most biodiverse ecosystems on the planet, occupying less than 1% of the ocean floor yet supporting approximately 25% of all marine species. They also provide critical services to human communities, including coastal protection, tourism revenue, and food security for hundreds of millions of people worldwide.\n\nHowever, coral reefs are facing an unprecedented crisis. Ocean warming — driven primarily by greenhouse gas emissions — triggers a process known as coral bleaching, in which corals expel the symbiotic algae (zooxanthellae) that provide them with nutrients and colour. Prolonged bleaching events lead to widespread coral mortality.\n\nSince 1950, the world has lost approximately 50% of its coral reefs. Scientists warn that if global temperatures rise by 2°C above pre-industrial levels, up to 99% of reef ecosystems could be lost permanently. Urgent action to reduce carbon emissions is considered the only viable long-term solution.` },
+      C1: { level:'C1', text: `Coral reefs represent one of the most ecologically significant yet imperilled biomes on Earth. Comprising less than 1% of the ocean floor, they nonetheless sustain roughly 25% of all marine biodiversity, fulfilling disproportionate ecological roles as nursery grounds, feeding stations, and structural habitats for thousands of species.\n\nThe primary threat to reef systems is anthropogenic ocean warming, which disrupts the mutualistic relationship between coral polyps and their endosymbiotic dinoflagellates (zooxanthellae). When sea surface temperatures exceed the thermal tolerance threshold by as little as 1°C for extended periods, mass expulsion of these algae occurs — a phenomenon termed bleaching — leaving corals metabolically compromised and susceptible to mortality.\n\nThe trajectory is alarming: the global coral cover has declined by approximately 50% since the mid-twentieth century, and modelling studies project near-total loss of functional reef ecosystems under a 2°C warming scenario. The window for meaningful intervention is narrowing rapidly, demanding transformative reductions in greenhouse gas emissions alongside localised interventions such as assisted evolution and marine protected areas.` }
+    },
+    vocab: [
+      { word: 'ecosystem', type: 'noun', def: 'A system of living things that interact with each other and their environment.', example: 'The coral reef ecosystem supports thousands of species.' },
+      { word: 'bleaching', type: 'noun/verb', def: 'When corals turn white due to loss of algae caused by warm water.', example: 'Scientists observed widespread bleaching after the ocean temperature rose.' },
+      { word: 'biodiversity', type: 'noun', def: 'The variety of plant and animal life in a particular habitat.', example: 'Coral reefs have extraordinary biodiversity.' },
+      { word: 'symbiotic', type: 'adjective', def: 'Describing a relationship where two different organisms benefit from each other.', example: 'Corals have a symbiotic relationship with algae.' }
+    ],
+    quiz: [
+      { q: 'What percentage of marine species depend on coral reefs?', opts: ['10%','25%','50%','75%'], correct: 1, explanation: 'Coral reefs support about 25% of all marine species despite covering less than 1% of the ocean floor.' },
+      { q: 'What causes coral bleaching?', opts: ['Oil spills','Plastic pollution','Ocean warming','Fishing'], correct: 2, explanation: 'Coral bleaching is triggered by ocean warming, which causes corals to expel their symbiotic algae.' },
+      { q: 'How much of the world\'s coral reefs have already been lost?', opts: ['10%','25%','50%','75%'], correct: 2, explanation: 'Scientists estimate that approximately 50% of the world\'s coral reefs have been lost since 1950.' }
+    ],
+    prompt: 'Do you think governments are doing enough to protect coral reefs? What more could be done?',
+    fact: '🌊 A single coral reef can support more species per unit area than any other ecosystem on Earth — including tropical rainforests.'
+  },
+  {
+    id: 2, emoji: '🌳', category: 'Forests & Biodiversity', title: 'The Amazon in Crisis',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `The Amazon rainforest is the largest tropical rainforest in the world. It covers about 5.5 million square kilometres across nine countries in South America. Scientists call it "the lungs of the Earth" because it produces about 20% of the world's oxygen.\n\nThe Amazon is also home to an incredible variety of plants and animals. It contains about 10% of all species on Earth. Many of these species have not even been discovered yet.\n\nUnfortunately, the Amazon is being destroyed very quickly. Deforestation — cutting down trees — is the biggest problem. Farmers cut down trees to create land for cattle and crops. Every year, thousands of square kilometres of forest disappear. Scientists warn that if we lose too much forest, the Amazon could turn into a dry savannah. This would be a disaster for the climate and for millions of people and animals.` },
+      B2: { level:'B2', text: `The Amazon basin, spanning 5.5 million square kilometres across nine South American nations, represents the largest tropical rainforest on Earth and one of the most biodiverse regions ever documented. It is estimated to contain approximately 10% of all species on the planet, many of which remain undescribed by science.\n\nBeyond its extraordinary biodiversity, the Amazon plays a critical role in regulating global climate. The forest absorbs vast quantities of carbon dioxide and releases water vapour that drives rainfall patterns across South America and beyond. Some scientists describe it as a "flying river" — the moisture it generates is essential for agriculture across the continent.\n\nDeforestation, driven primarily by cattle ranching and soy production, poses an existential threat to the biome. Brazil lost over 11,000 square kilometres of Amazon forest in 2022 alone. Scientists warn that if deforestation continues at current rates, the Amazon may reach a "tipping point" beyond which it can no longer sustain itself, potentially transitioning to a degraded savannah state.` },
+      C1: { level:'C1', text: `The Amazon basin constitutes the world's largest tropical rainforest, extending across 5.5 million square kilometres and nine sovereign states, and is widely regarded as the most species-rich terrestrial biome on Earth. Conservative estimates suggest it harbours approximately 10% of all known species, with substantial numbers yet to be formally described.\n\nThe Amazon's biogeophysical significance extends far beyond its boundaries. As a principal carbon sink, it sequesters billions of tonnes of CO₂ annually, while its hydrological cycle generates atmospheric moisture that sustains agricultural productivity across South America — the so-called "flying rivers" phenomenon. Its degradation therefore constitutes not merely a regional ecological crisis but a systemic threat to planetary climate stability.\n\nDeforestation, predominantly driven by expansion of cattle pasture and soy monocultures, has accelerated markedly in recent decades. Palaeoclimatological modelling and empirical observation increasingly support the hypothesis that the Amazon is approaching a tipping point — estimated at 20-25% total forest loss — beyond which self-sustaining dieback would transform large portions of the biome into savannah, releasing catastrophic quantities of stored carbon and eliminating irreplaceable biodiversity.` }
+    },
+    vocab: [
+      { word: 'deforestation', type: 'noun', def: 'The large-scale removal of trees from a forest or woodland.', example: 'Deforestation in the Amazon has accelerated in recent years.' },
+      { word: 'tipping point', type: 'noun', def: 'A critical point at which a system changes dramatically and irreversibly.', example: 'Scientists fear the Amazon may reach a tipping point.' },
+      { word: 'carbon sink', type: 'noun', def: 'A natural environment that absorbs more carbon dioxide than it releases.', example: 'Forests are important carbon sinks.' },
+      { word: 'biome', type: 'noun', def: 'A large naturally occurring community of plants and animals in a specific habitat.', example: 'The Amazon rainforest is the largest tropical biome on Earth.' }
+    ],
+    quiz: [
+      { q: 'Why is the Amazon called "the lungs of the Earth"?', opts: ['It is very large','It produces oxygen','It absorbs water','It has many animals'], correct: 1, explanation: 'The Amazon is called the lungs of the Earth because it produces about 20% of the world\'s oxygen.' },
+      { q: 'What is the main cause of Amazon deforestation?', opts: ['Mining','Tourism','Cattle ranching and farming','Climate change'], correct: 2, explanation: 'The primary driver of Amazon deforestation is cattle ranching and agricultural expansion.' },
+      { q: 'What might happen if the Amazon reaches its "tipping point"?', opts: ['It will grow larger','It could become a savannah','It will produce more oxygen','Animals will migrate'], correct: 1, explanation: 'Scientists warn that beyond the tipping point, the Amazon could transition to a degraded savannah state.' }
+    ],
+    prompt: 'Should wealthy countries pay Brazil and other Amazon nations to protect the rainforest? Give your opinion with reasons.',
+    fact: '🌳 The Amazon releases about 20 billion tonnes of water into the atmosphere every day — more than the flow of the Amazon River itself.'
+  },
+  {
+    id: 3, emoji: '🦁', category: 'Wildlife & Extinction', title: 'The Sixth Mass Extinction',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Scientists believe that we are living through the sixth mass extinction in Earth's history. A mass extinction is when a very large number of species disappear in a short period of time. The last mass extinction happened 66 million years ago, when the dinosaurs died out after an asteroid hit the Earth.\n\nThis time, however, humans are causing the extinction. We are destroying habitats, hunting animals, and polluting the environment. The World Wildlife Fund says that we have lost 69% of all wildlife populations since 1970. That is in just 50 years.\n\nOver one million species are currently threatened with extinction. This includes elephants, tigers, and many types of birds and insects. Scientists warn that losing so many species could damage ecosystems in ways that affect human life too. For example, if bees disappear, many crops that humans depend on will not be able to grow.` },
+      B2: { level:'B2', text: `Earth is currently experiencing what many scientists describe as its sixth mass extinction event — a period of biodiversity loss so rapid and widespread that it rivals the five previous mass extinctions in the planet's geological history, including the event that wiped out the non-avian dinosaurs 66 million years ago.\n\nUnlike previous extinctions caused by natural catastrophes such as asteroid impacts or volcanic eruptions, the current crisis is anthropogenic in origin. Habitat destruction, overexploitation, invasive species, pollution, and climate change are the primary drivers. The World Wildlife Fund's Living Planet Report 2022 documented a 69% average decline in monitored wildlife populations between 1970 and 2018.\n\nThe IUCN Red List currently identifies over one million species as threatened with extinction. The consequences extend beyond the loss of individual species: the collapse of ecological networks — including pollination, seed dispersal, and nutrient cycling — threatens the agricultural and water systems upon which human civilisation depends.` },
+      C1: { level:'C1', text: `The contemporary biodiversity crisis has prompted a growing scientific consensus that Earth is undergoing its sixth mass extinction — a rapid, anthropogenically-driven collapse in species diversity without geological precedent in terms of causation, pace, or reversibility within human timescales.\n\nThe proximate drivers are well-characterised: habitat conversion and fragmentation (principally through agriculture, urbanisation, and infrastructure development), overexploitation of wild populations, biological invasions, chemical pollution, and the accelerating perturbations of anthropogenic climate change. The WWF's Living Planet Index recorded a mean decline of 69% across monitored vertebrate populations between 1970 and 2018, with freshwater species suffering the most precipitous losses.\n\nThe ecological ramifications are systemic. The disruption of trophic cascades, mutualistic networks, and biogeochemical cycles upon which ecosystem services depend has profound implications for human welfare — from agricultural productivity contingent on insect pollination to water purification mediated by wetland vegetation. The framing of extinction as a biodiversity concern alone therefore understates its civilisational significance. Effective response demands not merely conservation at the margins of existing systems, but fundamental transformation of food systems, land use, and economic incentive structures.` }
+    },
+    vocab: [
+      { word: 'extinction', type: 'noun', def: 'The complete disappearance of a species from the Earth.', example: 'The extinction of bees would have devastating consequences for agriculture.' },
+      { word: 'habitat', type: 'noun', def: 'The natural environment where a plant or animal normally lives.', example: 'Deforestation destroys the habitat of many endangered species.' },
+      { word: 'ecosystem services', type: 'noun', def: 'The benefits that humans receive from natural ecosystems, such as clean water and pollination.', example: 'Bees provide essential ecosystem services through pollination.' },
+      { word: 'anthropogenic', type: 'adjective', def: 'Caused or produced by human activity.', example: 'Scientists agree that the current extinction crisis is anthropogenic.' }
+    ],
+    quiz: [
+      { q: 'How many species are currently threatened with extinction?', opts: ['100,000','500,000','Over 1 million','5 million'], correct: 2, explanation: 'The IUCN Red List identifies over one million species as currently threatened with extinction.' },
+      { q: 'By how much have wildlife populations declined since 1970?', opts: ['20%','40%','69%','90%'], correct: 2, explanation: 'The WWF Living Planet Report documented a 69% average decline in monitored wildlife populations between 1970 and 2018.' },
+      { q: 'What makes the current extinction different from previous ones?', opts: ['It is happening faster','It is caused by humans','More species are dying','The climate is warmer'], correct: 1, explanation: 'Unlike previous mass extinctions caused by natural events, the current crisis is anthropogenic — caused by human activity.' }
+    ],
+    prompt: 'Should protecting endangered species be a higher priority than economic development? Justify your position.',
+    fact: '🦁 Scientists estimate that species are currently going extinct at 1,000 times the natural background rate — a pace unprecedented in human history.'
+  },
+  {
+    id: 4, emoji: '🌡️', category: 'Climate & Weather', title: 'The Carbon Budget',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `When we burn fossil fuels like oil, gas, and coal, we release carbon dioxide (CO₂) into the atmosphere. This gas traps heat from the sun, making the Earth warmer. This is called the greenhouse effect, and it is causing climate change.\n\nScientists have calculated something called the "carbon budget." This is the total amount of CO₂ that we can release before the Earth gets more than 1.5°C warmer. The Paris Agreement — signed by almost all countries in the world — says we must try to keep warming below 1.5°C.\n\nThe problem is that we are using our carbon budget very quickly. At our current rate, we will have used the entire budget in less than 10 years. After that, every year of fossil fuel use makes the situation worse. Scientists say we need to cut emissions by 45% by 2030 and reach zero emissions by 2050 to have a chance of staying within the budget.` },
+      B2: { level:'B2', text: `The concept of the "carbon budget" has become central to climate science and policy. It refers to the cumulative quantity of CO₂ that humanity can emit while still maintaining a reasonable probability of limiting global warming to the 1.5°C threshold established by the 2015 Paris Agreement.\n\nThe Intergovernmental Panel on Climate Change (IPCC) estimates that, as of 2023, the remaining carbon budget for a 50% chance of staying within 1.5°C of warming is approximately 250 billion tonnes of CO₂. Given that current global emissions stand at around 37 billion tonnes per year, this budget will be exhausted within approximately seven years if emissions continue at current levels.\n\nThe implications are profound. To remain within the budget, global emissions must decline by 43% by 2030 and reach net zero by 2050. This requires an unprecedented transformation of energy systems, transport, industry, and agriculture — a transition that, while technically feasible, faces enormous political, economic, and social challenges.` },
+      C1: { level:'C1', text: `The carbon budget framework provides a quantitative basis for climate policy by defining the cumulative emissions envelope consistent with specified temperature targets. The IPCC's Sixth Assessment Report (AR6) estimates the remaining budget for a 50% probability of limiting warming to 1.5°C at approximately 250 GtCO₂ as of early 2023 — a figure that, at current annual emission rates of ~37 GtCO₂, would be exhausted within seven years.\n\nThis temporal constraint has profound implications for the urgency and scale of decarbonisation. The emissions trajectories consistent with 1.5°C require a 43% reduction in global greenhouse gas emissions by 2030 relative to 2019 levels, and net-zero CO₂ by approximately 2050. Achieving this demands systemic transformation across energy supply, industrial processes, land use, and consumption patterns — a transition orders of magnitude faster than any historical precedent.\n\nThe political economy of budget adherence is complicated by distributional questions: historical emitters (principally wealthy nations) bear disproportionate moral responsibility for budget consumption, yet future emissions are projected to grow fastest in developing economies seeking industrialisation. Equitable allocation frameworks, technology transfer, and climate finance are therefore inseparable from purely technical decarbonisation strategies.` }
+    },
+    vocab: [
+      { word: 'carbon budget', type: 'noun', def: 'The total amount of CO₂ that can be emitted while still limiting warming to a specific target.', example: 'At current rates, our carbon budget will be exhausted within a decade.' },
+      { word: 'net zero', type: 'noun/adjective', def: 'A state where the amount of greenhouse gases emitted equals the amount removed from the atmosphere.', example: 'Most countries have pledged to reach net zero by 2050.' },
+      { word: 'emissions', type: 'noun', def: 'Gases released into the atmosphere, especially those that cause climate change.', example: 'Transport is one of the biggest sources of carbon emissions.' },
+      { word: 'decarbonisation', type: 'noun', def: 'The process of reducing or eliminating carbon dioxide emissions from an activity or sector.', example: 'The decarbonisation of industry is one of the greatest challenges of our time.' }
+    ],
+    quiz: [
+      { q: 'What temperature limit did the Paris Agreement aim to stay within?', opts: ['1°C','1.5°C','2°C','2.5°C'], correct: 1, explanation: 'The Paris Agreement established 1.5°C as the target limit for global warming above pre-industrial levels.' },
+      { q: 'How much must global emissions fall by 2030?', opts: ['20%','30%','43%','60%'], correct: 2, explanation: 'The IPCC states that global emissions must fall by approximately 43% by 2030 to stay within the 1.5°C carbon budget.' },
+      { q: 'When must the world reach net zero to stay within the carbon budget?', opts: ['2030','2040','2050','2060'], correct: 2, explanation: 'Net zero CO₂ emissions must be reached by approximately 2050 to maintain the 1.5°C target.' }
+    ],
+    prompt: 'Should countries that historically produced the most emissions take on more responsibility for reducing them today? Why or why not?',
+    fact: '🌡️ The last decade (2011–2020) was the hottest on record. Each of the past four decades has been successively warmer than any decade before it since 1850.'
+  },
+  {
+    id: 5, emoji: '🐝', category: 'Pollinators & Food', title: 'The Bee Crisis',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Bees are one of the most important animals on Earth. They pollinate about 75% of the food crops that humans eat. Without bees, we would lose fruits, vegetables, nuts, and many other foods. Scientists estimate that bees contribute about $500 billion to the global food supply every year.\n\nUnfortunately, bee populations around the world are in serious decline. In the United States, beekeepers lose about 30-40% of their bee colonies every winter. In Europe, many wild bee species are threatened with extinction.\n\nThe main causes of bee decline are pesticides, habitat loss, disease, and climate change. Pesticides kill bees directly or damage their ability to navigate and reproduce. When wildflowers disappear from the countryside, bees have less food. Scientists and farmers are working on solutions, such as planting more wildflowers and reducing pesticide use. But the situation remains urgent.` },
+      B2: { level:'B2', text: `Bees and other pollinators perform an ecosystem service of incalculable value, facilitating the reproduction of approximately 75% of flowering plant species and around 35% of global food production by volume. The economic contribution of pollination services is estimated at $500 billion annually — a figure that does not capture the ecological cascades that would follow pollinator collapse.\n\nThe evidence of pollinator decline is alarming. In North America, managed honeybee colonies have declined by approximately 60% since the 1940s, while wild bee populations across Europe face significant losses, with around 10% of bee species now classified as threatened with extinction. Similar trends are documented across Asia and South America.\n\nThe drivers of decline are multifactorial: neonicotinoid pesticides — the most widely used class of insecticides — have been demonstrated to impair bee navigation, reproduction, and immune function at sublethal doses. Agricultural intensification has eliminated vast areas of wildflower habitat. Parasitic mites (particularly Varroa destructor), fungal pathogens, and climate-induced phenological mismatches compound these pressures.` },
+      C1: { level:'C1', text: `The documented decline of wild and managed bee populations constitutes a crisis that extends well beyond entomology: pollinators mediate the reproduction of approximately 87% of flowering plant species and underpin roughly 35% of global food production, with the economic value of these services conservatively estimated at half a trillion dollars annually.\n\nThe aetiology of pollinator decline is characterised by multiple interacting stressors operating across scales. At the molecular and physiological level, exposure to neonicotinoid insecticides — even at sublethal field-realistic concentrations — has been demonstrated to impair hippocampal function in bees, disrupting navigational capacity, foraging efficiency, and reproductive success. At landscape scale, the industrialisation of agriculture has precipitated widespread elimination of semi-natural habitats and floral diversity, reducing the nutritional quality and temporal continuity of pollen and nectar resources. Parasitological threats, principally Varroa destructor infestations and associated viral transmission, further compromise colony resilience, while climate change introduces phenological decoupling between pollinator emergence and peak floral abundance.\n\nThe implications for food system security are non-trivial. Many nutritionally dense and economically valuable crops — almonds, blueberries, apples, cocoa — are almost entirely dependent on animal pollination. Designing agricultural landscapes for pollinator persistence is therefore not merely an ecological nicety but an agricultural necessity.` }
+    },
+    vocab: [
+      { word: 'pollination', type: 'noun', def: 'The process by which pollen is transferred between flowers, enabling plants to reproduce.', example: 'Without pollination by bees, many fruit trees cannot produce fruit.' },
+      { word: 'pesticide', type: 'noun', def: 'A chemical used to kill insects or other organisms that damage crops.', example: 'Some pesticides are harmful to bees even in small quantities.' },
+      { word: 'colony collapse', type: 'noun', def: 'A phenomenon where most worker bees in a colony disappear, leaving the hive unable to function.', example: 'Colony collapse disorder has devastated bee populations in North America.' },
+      { word: 'phenological', type: 'adjective', def: 'Relating to the timing of natural events, such as flowering or insect emergence.', example: 'Climate change can cause phenological mismatches between bees and the flowers they pollinate.' }
+    ],
+    quiz: [
+      { q: 'What percentage of food crops do bees help to pollinate?', opts: ['25%','50%','75%','90%'], correct: 2, explanation: 'Bees pollinate approximately 75% of the food crops that humans eat.' },
+      { q: 'Which of these is NOT a main cause of bee decline?', opts: ['Pesticides','Habitat loss','Noise pollution','Climate change'], correct: 2, explanation: 'The main causes of bee decline are pesticides, habitat loss, disease, and climate change — not noise pollution.' },
+      { q: 'What is the estimated economic value of bee pollination globally?', opts: ['$50 billion','$200 billion','$500 billion','$1 trillion'], correct: 2, explanation: 'Bees contribute approximately $500 billion to the global food supply through pollination services.' }
+    ],
+    prompt: 'Should the use of pesticides that harm bees be banned, even if this makes food more expensive to produce? Give your view.',
+    fact: '🐝 A single honeybee will visit around 2,000 flowers to produce just one teaspoon of honey — and travels up to 55,000 miles in its lifetime.'
+  },
+  {
+    id: 6, emoji: '🏔️', category: 'Ice & Water', title: 'Glaciers in Retreat',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Glaciers are large, slow-moving bodies of ice that form over thousands of years. They can be found in mountain ranges and at the Earth's poles. Glaciers are an important source of fresh water for billions of people around the world. When glaciers melt, they release water into rivers, which people use for drinking, farming, and electricity.\n\nToday, glaciers around the world are melting at an alarming rate because of climate change. Scientists estimate that glaciers are losing about 267 billion tonnes of ice every year. This is causing sea levels to rise, which threatens coastal cities and low-lying islands.\n\nIn some mountain regions, glaciers provide up to 70% of the fresh water that local communities depend on. As glaciers disappear, these communities face serious water shortages. Scientists predict that by 2100, many smaller mountain glaciers could completely disappear.` },
+      B2: { level:'B2', text: `Glaciers — slow-moving accumulations of compacted snow and ice formed over millennia — play a critical hydrological role, storing approximately 69% of the world's fresh water and supplying rivers that sustain an estimated two billion people across Asia, South America, and beyond.\n\nClimate warming is driving an accelerating retreat of glaciers worldwide. Current estimates suggest global glaciers are losing approximately 267 billion tonnes of ice annually, contributing meaningfully to the roughly 3.6mm of sea level rise recorded each year. In the Hindu Kush Himalaya region — sometimes called the "Third Pole" — two-thirds of glaciers could disappear by 2100 under a high-emissions scenario, threatening water supplies for 240 million people in the mountain zone and 1.65 billion in river basins downstream.\n\nBeyond water security, glacier retreat carries significant ecological consequences. Glacial meltwater streams support unique cold-water ecosystems, and their diminishment threatens endemic species adapted to these environments. Furthermore, retreating glaciers expose permafrost, whose thawing releases stored methane — a potent greenhouse gas — creating a dangerous feedback loop.` },
+      C1: { level:'C1', text: `Cryospheric systems constitute a critical component of Earth's climate regulation and hydrological architecture. Glaciers and ice sheets collectively sequester approximately 69% of global fresh water, and their dynamics exert disproportionate influence on sea level, regional hydrology, and planetary albedo — the reflectivity that moderates incoming solar radiation.\n\nContemporary rates of glacial mass loss are unprecedented within the instrumental record. Global glacier mass balance measurements indicate net annual losses of ~267 Gt, with acceleration documented across most regions. The consequences for sea level are already measurable: glacier and ice sheet contribution accounts for roughly 40% of the observed 3.6mm/year of mean sea level rise — a figure projected to escalate substantially under continued warming.\n\nIn high-mountain Asia, the geopolitical and humanitarian dimensions of glacial retreat are acute. The Hindu Kush Himalayan cryosphere supplies seasonal meltwater to ten major river systems supporting approximately 1.9 billion people. Modelling under RCP 8.5 scenarios projects losses exceeding 75% of current ice volume by 2100, precipitating a transition from water abundance to chronic shortage — a trajectory with profound implications for regional food security, energy generation, and geopolitical stability across some of the most densely populated and nuclear-armed nations on Earth.` }
+    },
+    vocab: [
+      { word: 'glacier', type: 'noun', def: 'A large, slowly moving mass of ice formed from compacted snow over many years.', example: 'The glacier has retreated several kilometres over the past century.' },
+      { word: 'meltwater', type: 'noun', def: 'Water produced by the melting of snow or ice.', example: 'Meltwater from glaciers flows into rivers and provides fresh water for millions.' },
+      { word: 'sea level rise', type: 'noun', def: 'The increase in the average level of the world\'s oceans due to melting ice and thermal expansion of water.', example: 'Sea level rise threatens low-lying coastal cities worldwide.' },
+      { word: 'permafrost', type: 'noun', def: 'Ground that remains frozen throughout the year, found in Arctic and mountainous regions.', example: 'Thawing permafrost releases large amounts of methane into the atmosphere.' }
+    ],
+    quiz: [
+      { q: 'How much fresh water do glaciers store?', opts: ['10%','35%','50%','69%'], correct: 3, explanation: 'Glaciers store approximately 69% of the world\'s fresh water.' },
+      { q: 'How much ice are glaciers losing every year?', opts: ['67 billion tonnes','167 billion tonnes','267 billion tonnes','367 billion tonnes'], correct: 2, explanation: 'Scientists estimate that glaciers globally are losing approximately 267 billion tonnes of ice annually.' },
+      { q: 'What happens when permafrost thaws?', opts: ['It creates more glaciers','It releases methane','It causes earthquakes','It produces more fresh water'], correct: 1, explanation: 'Thawing permafrost releases stored methane — a potent greenhouse gas — creating a dangerous climate feedback loop.' }
+    ],
+    prompt: 'Who should pay for the consequences of glacier loss — countries that produced the most carbon emissions, or those most affected? Make your argument.',
+    fact: '🏔️ The Himalayan glaciers are sometimes called the "Third Pole" — after the Arctic and Antarctic, they hold the largest reserve of fresh water outside the polar regions.'
+  },
+  {
+    id: 7, emoji: '🐋', category: 'Oceans & Marine Life', title: 'Plastic and the Ocean',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Every year, about 8 million tonnes of plastic enter the ocean. This is like dropping a rubbish truck full of plastic into the sea every minute. Plastic pollution is one of the most serious environmental problems in the world today.\n\nPlastic does not disappear. Over time, it breaks into tiny pieces called microplastics. These tiny pieces are now found everywhere — in the deepest parts of the ocean, in the Arctic ice, and even in the air we breathe. Scientists have found microplastics inside fish, seabirds, whales, and humans.\n\nPlastic pollution harms wildlife in many ways. Animals can get trapped in plastic bags and fishing nets. They can eat plastic by mistake, thinking it is food. This can block their stomachs and kill them. Scientists estimate that plastic pollution kills over one million seabirds and 100,000 marine mammals every year.` },
+      B2: { level:'B2', text: `The ocean plastic crisis has reached a scale that few could have imagined when synthetic polymers began entering mass production in the mid-twentieth century. Current estimates suggest that approximately 8-10 million tonnes of plastic enter marine environments annually, adding to an accumulated stock of over 150 million tonnes already present in the world's oceans.\n\nOf particular concern is the proliferation of microplastics — particles smaller than 5mm produced by the fragmentation of larger plastic items through UV exposure and physical abrasion. These particles have now been detected in the deepest ocean trenches, Antarctic sea ice, the human placenta, and the blood of remote indigenous communities with minimal plastic use. The ecological and health implications remain incompletely understood but are increasingly concerning.\n\nMarine megafauna bear the most visible toll: over one million seabirds and 100,000 marine mammals are estimated to die annually from plastic entanglement and ingestion. Pacific seabird species feed plastic debris to their chicks, mistaking it for food — an increasingly documented form of inadvertent intergenerational pollution transfer.` },
+      C1: { level:'C1', text: `Marine plastic pollution represents one of the defining environmental crises of the Anthropocene, characterised by the convergence of massive production volumes, near-universal persistence in environmental matrices, and complex ecotoxicological dynamics that science is still striving to elucidate.\n\nGlobal plastic production has increased from ~2 million tonnes in 1950 to over 400 million tonnes annually, with approximately 8-10 million tonnes entering marine systems each year through riverine transport, direct dumping, and atmospheric deposition. The accumulated oceanic plastic stock exceeds 150 million tonnes, distributed across the water column, seafloor sediment, and coastal environments globally.\n\nThe microplastic dimension presents particular scientific and regulatory challenges. Secondary microplastics — generated through photolytic and mechanical degradation of macroplastics — have been documented in the full range of marine environments, from abyssal sediments to polar sea ice, and have been detected in multiple human tissues, including blood, placenta, and lung tissue. While acute toxicity at environmentally relevant concentrations is debated, the capacity of microplastics to adsorb and concentrate persistent organic pollutants, act as vectors for pathogenic biofilm communities, and disrupt endocrine function warrants precautionary regulatory responses.\n\nGlobal governance of marine plastic pollution is advancing incrementally: the 2022 UN Environment Assembly resolution to develop a legally binding plastics treaty represents a significant step, though effective implementation will require confronting powerful petrochemical and packaging industry interests.` }
+    },
+    vocab: [
+      { word: 'microplastics', type: 'noun', def: 'Tiny plastic particles less than 5mm in size, produced when larger plastics break down.', example: 'Microplastics have been found in the deepest ocean trenches.' },
+      { word: 'entanglement', type: 'noun', def: 'When an animal becomes trapped or caught in something, such as plastic debris or fishing nets.', example: 'Entanglement in discarded fishing nets kills thousands of marine animals each year.' },
+      { word: 'ingestion', type: 'noun', def: 'The process of taking food or another substance into the body by swallowing.', example: 'Ingestion of plastic debris is a major cause of death in seabirds.' },
+      { word: 'polymer', type: 'noun', def: 'A chemical compound made of large molecules formed from smaller repeating units — plastics are synthetic polymers.', example: 'Synthetic polymers are designed to be durable, which makes plastic so problematic in the environment.' }
+    ],
+    quiz: [
+      { q: 'How much plastic enters the ocean every year?', opts: ['800,000 tonnes','8 million tonnes','80 million tonnes','800 million tonnes'], correct: 1, explanation: 'Approximately 8 million tonnes of plastic enter the ocean every year — equivalent to a truckload every minute.' },
+      { q: 'What are microplastics?', opts: ['Tiny fish that eat plastic','Plastic smaller than 5mm','Plastic bags in the ocean','Chemical pollutants'], correct: 1, explanation: 'Microplastics are tiny plastic particles smaller than 5mm, produced when larger plastic items break down.' },
+      { q: 'How many seabirds does plastic pollution kill every year?', opts: ['10,000','100,000','1 million','10 million'], correct: 2, explanation: 'Scientists estimate that plastic pollution kills over one million seabirds annually.' }
+    ],
+    prompt: 'Should plastic production be heavily taxed or restricted by governments? Or is individual responsibility more important? Give your view.',
+    fact: '🐋 There is a "garbage patch" of plastic in the Pacific Ocean that is twice the size of Texas. It contains an estimated 80,000 tonnes of plastic debris.'
+  },
+  {
+    id: 8, emoji: '⚡', category: 'Energy & Innovation', title: 'The Renewable Revolution',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Renewable energy comes from natural sources that are constantly replenished, such as sunlight, wind, and water. Unlike fossil fuels — which produce greenhouse gases when burned — renewable energy is clean and does not cause climate change.\n\nThe good news is that renewable energy is growing very quickly. In 2022, renewable energy provided about 30% of global electricity. Solar power is growing especially fast. The cost of solar panels has dropped by 90% in the last ten years, making it cheaper than coal in most parts of the world.\n\nSeveral countries are leading the way in renewable energy. Denmark gets about 50% of its electricity from wind. Iceland uses geothermal energy — heat from the Earth — to provide almost all of its heating and electricity. China is currently building more renewable energy than the rest of the world combined. The challenge now is to speed up the transition and to store energy for when the sun is not shining and the wind is not blowing.` },
+      B2: { level:'B2', text: `The global energy transition is accelerating at a pace that has outstripped most projections from even a decade ago. Renewable energy capacity additions broke records in 2022 for the twenty-first consecutive year, with solar photovoltaic (PV) leading growth. The cost of utility-scale solar has fallen by approximately 90% since 2010, making it the cheapest source of new electricity generation in history in most markets.\n\nWind and solar now account for approximately 12% of global electricity generation, with renewables as a whole providing around 30%. The International Energy Agency projects that renewables could supply 90% of new power capacity additions through 2025, signalling a decisive shift in the economics of electricity generation.\n\nNevertheless, formidable challenges remain. The intermittency of solar and wind power necessitates significant investment in energy storage technologies — particularly grid-scale batteries and green hydrogen — as well as expanded transmission infrastructure. The decarbonisation of hard-to-abate sectors such as steelmaking, shipping, and aviation remains largely unresolved. And despite impressive progress in electricity, the heating, transport, and industrial sectors continue to depend heavily on fossil fuels.` },
+      C1: { level:'C1', text: `The energy transition underway represents one of the most consequential technological and economic transformations in human history, characterised by a remarkable convergence of cost deflation, policy ambition, and corporate commitment to decarbonisation.\n\nThe cost trajectory of solar photovoltaics has confounded virtually all institutional forecasts: utility-scale solar LCOE has declined by approximately 90% since 2010, rendering it the cheapest source of electricity generation ever recorded in most geographies. Onshore wind has followed a comparable learning curve. This cost revolution has fundamentally restructured the economics of new power investment: in 2022, renewable capacity additions comprised over 90% of new global electricity generation capacity.\n\nYet the systemic challenge of deep decarbonisation extends substantially beyond the power sector. The electricity system — while itself demanding transformative investment in storage, grid infrastructure, and demand flexibility — represents only approximately 20% of global final energy consumption. The decarbonisation of heat, transport, and industrial processes (particularly in hard-to-abate sectors such as cement, steel, and long-haul aviation) requires technological solutions — including green hydrogen, direct air capture, and electrification of industrial heat — that remain at early stages of commercial deployment.\n\nFurthermore, the energy transition raises profound questions of geopolitical restructuring. The fossil fuel order — which has shaped international relations, economic development patterns, and military strategy for over a century — is being gradually superseded by a new critical mineral economy centred on lithium, cobalt, nickel, and rare earth elements, with its own attendant concentrations of supply and attendant vulnerabilities.` }
+    },
+    vocab: [
+      { word: 'renewable energy', type: 'noun', def: 'Energy from sources that are naturally replenished, such as solar, wind, and hydropower.', example: 'Investment in renewable energy is growing faster than any other energy sector.' },
+      { word: 'intermittency', type: 'noun', def: 'The characteristic of stopping and starting at irregular intervals — a challenge for solar and wind power.', example: 'The intermittency of solar power means we need better energy storage solutions.' },
+      { word: 'photovoltaic', type: 'adjective', def: 'Relating to the conversion of light into electricity using semiconductor materials.', example: 'The cost of photovoltaic solar panels has fallen dramatically over the past decade.' },
+      { word: 'decarbonisation', type: 'noun', def: 'The process of reducing or eliminating carbon dioxide emissions from energy systems or industries.', example: 'The decarbonisation of the transport sector is a major challenge for governments worldwide.' }
+    ],
+    quiz: [
+      { q: 'By how much has the cost of solar power fallen in the last decade?', opts: ['40%','60%','75%','90%'], correct: 3, explanation: 'The cost of utility-scale solar power has fallen by approximately 90% since 2010.' },
+      { q: 'What percentage of global electricity came from renewables in 2022?', opts: ['10%','20%','30%','40%'], correct: 2, explanation: 'In 2022, renewable energy provided approximately 30% of global electricity.' },
+      { q: 'What is the main challenge for solar and wind power?', opts: ['They are too expensive','They are too slow to build','Their energy output is intermittent','They produce pollution'], correct: 2, explanation: 'The main challenge for solar and wind is their intermittency — they do not produce energy consistently, requiring storage solutions.' }
+    ],
+    prompt: 'Should governments ban the sale of new petrol and diesel cars to speed up the shift to electric vehicles? Is this realistic?',
+    fact: '⚡ The amount of solar energy that hits the Earth\'s surface in one hour is enough to power the entire world for one full year.'
+  },
+  {
+    id: 9, emoji: '🍽️', category: 'Food & Agriculture', title: 'Food Systems and the Planet',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `The way we produce and eat food has a huge impact on the environment. Food systems — farming, processing, packaging, and transport — are responsible for about one-third of all global greenhouse gas emissions. Meat production is especially harmful. Producing one kilogram of beef creates about 60kg of CO₂, compared to just 4kg for chicken and 1kg for lentils.\n\nLivestock also uses a lot of land. About 80% of agricultural land is used for raising animals and growing their food. However, meat and dairy only provide about 20% of the world's calories. This means we are using land very inefficiently.\n\nThere is also the problem of food waste. About one-third of all food produced in the world is wasted. This wasted food releases greenhouse gases as it rots in landfill. Scientists say that if we ate less meat, wasted less food, and grew crops more sustainably, we could dramatically reduce the impact of food systems on the climate.` },
+      B2: { level:'B2', text: `Global food systems — encompassing agricultural production, processing, packaging, distribution, retail, consumption, and waste management — are now recognised as a major driver of environmental crisis, accounting for approximately 26-34% of total global greenhouse gas emissions and consuming around 70% of freshwater withdrawn from rivers and aquifers.\n\nAnimal agriculture represents a disproportionately impactful component of these systems. Livestock production, including land use change for pasture and feed cultivation, accounts for approximately 14.5% of total global greenhouse gas emissions. The land footprint is similarly stark: livestock and their feed crops occupy approximately 80% of global agricultural land while contributing only around 20% of the world's calories and 37% of protein.\n\nDietary transition towards plant-rich diets represents one of the highest-leverage interventions available. Modelling by Oxford University researchers suggests that adopting a vegan diet reduces an individual's food-related carbon footprint by approximately 75%, while a flexitarian diet (low meat, mostly plant-based) reduces it by around 50%. However, dietary change at population scale requires not only individual motivation but systemic changes to food environments, agricultural subsidies, and food culture.` },
+      C1: { level:'C1', text: `The nexus between food systems and planetary boundaries represents one of the most complex and politically charged dimensions of the sustainability transition. Food production and its associated land use change account for approximately 26-34% of total anthropogenic greenhouse gas emissions, while consuming roughly 70% of freshwater abstraction and occupying approximately 50% of the planet's habitable land surface.\n\nAnimal agriculture occupies a particularly fraught position in this analysis. The FAO's well-cited estimate that livestock contributes 14.5% of global GHG emissions encompasses direct enteric methane production, manure management, feed cultivation (including soy-driven deforestation), land use change, and processing and transport. The protein and caloric return on these inputs is strikingly inefficient: livestock systems occupy ~80% of agricultural land while delivering ~20% of global caloric supply.\n\nThe transformative potential of dietary shift is well-established in the scientific literature. Springmann et al. (2018) estimated that universal adoption of plant-based diets could reduce food-related GHG emissions by up to 70% while simultaneously reducing mortality from diet-related non-communicable diseases. However, technocratic dietary prescriptions have faced legitimate criticism for neglecting cultural embeddedness of food practices, the dependence of pastoral communities on livestock, and the structural conditions — food deserts, price disparities, subsidy regimes — that constrain dietary agency for lower-income populations. Effective food system transformation therefore demands upstream policy interventions: reorientation of agricultural subsidies, reformulation of school meal standards, and investment in alternative protein innovation, alongside but not instead of consumer-level behaviour change strategies.` }
+    },
+    vocab: [
+      { word: 'food system', type: 'noun', def: 'The entire network of activities involved in producing, processing, distributing, and consuming food.', example: 'Our food system is responsible for about a third of global greenhouse gas emissions.' },
+      { word: 'livestock', type: 'noun', def: 'Farm animals such as cattle, sheep, and pigs, raised for food or other products.', example: 'Livestock production uses 80% of global agricultural land.' },
+      { word: 'plant-based diet', type: 'noun', def: 'A diet centred on foods derived from plants, with few or no animal products.', example: 'Adopting a plant-based diet is one of the most effective individual actions to reduce carbon emissions.' },
+      { word: 'food waste', type: 'noun', def: 'Food that is discarded or left to spoil at any stage of the supply chain.', example: 'Reducing food waste is one of the most impactful ways to cut greenhouse gas emissions.' }
+    ],
+    quiz: [
+      { q: 'What share of global greenhouse gas emissions come from food systems?', opts: ['About 5%','About 15%','About one-third','About half'], correct: 2, explanation: 'Food systems account for approximately 26-34% — roughly one-third — of total global greenhouse gas emissions.' },
+      { q: 'What percentage of agricultural land is used for livestock?', opts: ['20%','40%','60%','80%'], correct: 3, explanation: 'Approximately 80% of global agricultural land is used for raising livestock and growing their feed.' },
+      { q: 'How much food produced worldwide is wasted?', opts: ['One-tenth','One-quarter','One-third','One-half'], correct: 2, explanation: 'Approximately one-third of all food produced globally is lost or wasted.' }
+    ],
+    prompt: 'Should governments tax meat products to encourage people to eat more sustainably? Is this fair? Give your view.',
+    fact: '🍽️ If food waste were a country, it would be the third largest emitter of greenhouse gases in the world — after China and the USA.'
+  },
+  {
+    id: 10, emoji: '🏙️', category: 'Cities & Sustainability', title: 'Building Green Cities',
+    completed: false,
+    articles: {
+      B1: { level:'B1', text: `Today, more than half of the world's population lives in cities. By 2050, this will increase to about 70%. Cities use a lot of energy and produce a lot of pollution. They are responsible for about 70% of global CO₂ emissions. But cities can also be part of the solution to climate change.\n\nMany cities around the world are trying to become more sustainable. In Copenhagen, Denmark, the government has built hundreds of kilometres of cycle paths. Today, more people commute by bicycle than by car. In Singapore, buildings must have green roofs and walls covered in plants. This helps to cool the city and improve air quality.\n\nUrban forests and parks are also very important. Trees in cities reduce air pollution, provide shade, and help to manage rainfall. Some cities, like Vienna in Austria, have planted thousands of new trees in recent years. Scientists say that making cities greener, cleaner, and more efficient is essential for fighting climate change.` },
+      B2: { level:'B2', text: `Urbanisation is the defining demographic trend of the twenty-first century: over 55% of the global population currently resides in urban areas, a figure projected to reach 68% by 2050 as an estimated 2.5 billion people are added to the world's cities. This concentration of population also represents a concentration of resource consumption and emissions: cities account for approximately 70% of global CO₂ emissions despite occupying just 2% of Earth's land surface.\n\nThe paradox of cities is that their density — often associated with congestion and pollution — is also their greatest sustainability asset. High-density urban environments reduce per-capita transport energy demand, enable efficient district heating and cooling systems, and concentrate the infrastructure investments needed for low-carbon living. Cities such as Copenhagen, Singapore, Vienna, and Medellín have demonstrated that urban environments can be transformed through ambitious investment in cycling infrastructure, public transit, urban greening, and green building standards.\n\nBiophilic urbanism — the deliberate integration of nature into city design — is emerging as both an ecological and public health strategy. Urban trees reduce ambient temperatures through evapotranspiration, attenuate surface runoff, sequester carbon, and significantly improve mental health outcomes for urban residents. The challenge is ensuring equitable distribution: urban green space historically skews toward wealthier districts.` },
+      C1: { level:'C1', text: `The trajectory of global urbanisation — projected to deliver two-thirds of humanity into urban settlements by 2050 — frames cities as both the primary site of humanity's environmental challenge and its most plausible solution. Urban areas account for approximately 70% of global energy-related CO₂ emissions while occupying merely 2% of land surface, a concentration that simultaneously reflects the pathological inefficiencies of car-dependent, energy-intensive urban form and the untapped potential of density as a decarbonisation strategy.\n\nThe urban form literature has converged on a clear finding: compact, mixed-use, transit-oriented urban development reduces per-capita energy consumption, transport emissions, and land use relative to sprawling, automobile-dependent alternatives. Cities achieving low-carbon trajectories — Copenhagen's carbon neutrality ambitions, Singapore's green building mandates, Bogotá's transformation through Bus Rapid Transit and ciclovía — demonstrate that urban governance, rather than individual behaviour, is the proximate lever of system-scale change.\n\nEmerging frameworks of urban resilience and biophilic design add ecological and social dimensions to the engineering logic of efficiency. Urban forest strategies, sponge city approaches to stormwater management, and cool pavement and green roof programmes address both mitigation and adaptation imperatives while generating co-benefits — improved air quality, reduced urban heat island effects, enhanced mental health outcomes — that are distributed unevenly across income gradients. The just city transition requires that these benefits reach low-income communities historically excluded from urban greening efforts.` }
+    },
+    vocab: [
+      { word: 'sustainable', type: 'adjective', def: 'Able to be maintained long-term without causing damage to the environment.', example: 'Copenhagen is widely regarded as one of the world\'s most sustainable cities.' },
+      { word: 'urban heat island', type: 'noun', def: 'A phenomenon where cities are significantly warmer than surrounding rural areas due to human activities and infrastructure.', example: 'Planting trees can help to reduce the urban heat island effect.' },
+      { word: 'biophilic', type: 'adjective', def: 'Relating to the integration of nature and natural elements into human environments and design.', example: 'Biophilic design incorporates plants, water, and natural light into buildings.' },
+      { word: 'transit-oriented', type: 'adjective', def: 'Describing urban development designed around public transport links.', example: 'Transit-oriented development reduces car dependency and carbon emissions.' }
+    ],
+    quiz: [
+      { q: 'What percentage of global CO₂ emissions come from cities?', opts: ['30%','50%','70%','90%'], correct: 2, explanation: 'Cities account for approximately 70% of global CO₂ emissions.' },
+      { q: 'What percentage of the world\'s population will live in cities by 2050?', opts: ['55%','60%','68%','80%'], correct: 2, explanation: 'By 2050, approximately 68% of the world\'s population is projected to live in urban areas.' },
+      { q: 'Which city is known for its extensive cycling infrastructure?', opts: ['New York','Tokyo','Copenhagen','Mumbai'], correct: 2, explanation: 'Copenhagen, Denmark, has built hundreds of kilometres of cycle paths, and more residents commute by bicycle than by car.' }
+    ],
+    prompt: 'Should cities be designed primarily around public transport and cycling, with private cars heavily restricted? Argue your position.',
+    fact: '🏙️ Singapore requires all new buildings to replace any greenery lost during construction — meaning the city\'s total green coverage has actually increased despite rapid development.'
+  }
+];
+
+// ── STATE ──
+let currentLevel = 'B1';
+let streak = parseInt(localStorage.getItem('de_streak') || '0');
+let lessonState = { lesson: null, step: 0, quizIndex: 0, quizScore: 0, practiceMode: 'writing', transcript: '', recognition: null, isListening: false };
+const steps = ['read', 'vocab', 'quiz', 'practice', 'complete'];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function showTopics() {
+  updateStreakDisplay();
+  renderTopics();
+  showScreen('topics');
+}
+
+function setLevel(lvl) {
+  currentLevel = lvl;
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.level-btn.' + lvl.toLowerCase()).classList.add('active');
+  renderTopics();
+}
+
+function renderTopics() {
+  const list = document.getElementById('topics-list');
+  list.innerHTML = '';
+  LESSONS.forEach(lesson => {
+    const card = document.createElement('div');
+    card.className = 'topic-card' + (lesson.completed ? ' completed' : '');
+    card.innerHTML = `
+      <div class="topic-emoji">${lesson.emoji}</div>
+      <div class="topic-info">
+        <div class="topic-category">${lesson.category}</div>
+        <div class="topic-title">${lesson.title}</div>
+        <div class="topic-desc">${lesson.articles[currentLevel].text.substring(0, 80)}…</div>
+        <div class="topic-meta">
+          <span class="topic-tag level-${currentLevel.toLowerCase()}">${currentLevel}</span>
+          <span class="topic-tag mins">⏱ ~5 mins</span>
+        </div>
+      </div>
+      <div class="topic-check">${lesson.completed ? '✅' : '→'}</div>`;
+    card.onclick = () => startLesson(lesson);
+    list.appendChild(card);
+  });
+}
+
+function updateStreakDisplay() {
+  document.getElementById('streak-count').textContent = streak;
+  document.getElementById('lesson-streak').textContent = streak;
+}
+
+function startLesson(lesson) {
+  lessonState = { lesson, step: 0, quizIndex: 0, quizScore: 0, practiceMode: 'writing', transcript: '', recognition: null, isListening: false };
+  document.getElementById('lesson-header-title').textContent = lesson.title;
+  updateStreakDisplay();
+  renderStep();
+  showScreen('lesson');
+}
+
+function renderStep() {
+  const { lesson, step } = lessonState;
+  const stepName = steps[step];
+  const total = steps.length;
+  const pct = Math.round((step / (total - 1)) * 100);
+  document.getElementById('lesson-progress').style.width = pct + '%';
+  document.getElementById('step-label').textContent = `Step ${step + 1} of ${total} — ${stepName.charAt(0).toUpperCase() + stepName.slice(1)}`;
+  document.getElementById('step-pct').textContent = pct + '%';
+
+  const body = document.getElementById('lesson-body');
+  body.innerHTML = '';
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.disabled = false;
+  nextBtn.textContent = step < total - 1 ? 'Continue →' : 'Finish lesson ✓';
+
+  if (stepName === 'read') renderRead(body, lesson);
+  else if (stepName === 'vocab') renderVocab(body, lesson);
+  else if (stepName === 'quiz') { renderQuiz(body, lesson); nextBtn.disabled = true; }
+  else if (stepName === 'practice') { renderPractice(body, lesson); nextBtn.disabled = true; }
+  else if (stepName === 'complete') renderComplete(body, lesson);
+
+  body.scrollTop = 0;
+}
+
+function renderRead(body, lesson) {
+  const article = lesson.articles[currentLevel];
+  body.innerHTML = `
+    <div class="section-header"><div class="section-icon">📰</div><div class="section-title-text">Read the article</div></div>
+    <div class="section-sub-text">Read carefully — there will be comprehension questions after.</div>
+    <div class="article-card">
+      <div class="article-header">
+        <div class="article-category">${lesson.category}</div>
+        <div class="article-title">${lesson.title}</div>
+      </div>
+      <div class="article-body">
+        ${article.text.split('\n\n').map(p => `<p>${p}</p>`).join('')}
+        <span class="article-level-badge ${article.level.toLowerCase()}">${article.level}</span>
+      </div>
+    </div>`;
+}
+
+function renderVocab(body, lesson) {
+  body.innerHTML = `
+    <div class="section-header"><div class="section-icon">📚</div><div class="section-title-text">Key vocabulary</div></div>
+    <div class="section-sub-text">Learn these ${lesson.vocab.length} key words from the article.</div>
+    <div class="vocab-grid">
+      ${lesson.vocab.map(v => `
+        <div class="vocab-card">
+          <div class="vocab-word">${esc(v.word)}</div>
+          <div class="vocab-type">${esc(v.type)}</div>
+          <div class="vocab-def">${esc(v.def)}</div>
+          <div class="vocab-example">"${esc(v.example)}"</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderQuiz(body, lesson) {
+  lessonState.quizIndex = 0;
+  lessonState.quizScore = 0;
+  renderQuizQuestion(body, lesson);
+}
+
+function renderQuizQuestion(body, lesson) {
+  const q = lesson.quiz[lessonState.quizIndex];
+  body.innerHTML = `
+    <div class="section-header"><div class="section-icon">❓</div><div class="section-title-text">Comprehension check</div></div>
+    <div class="section-sub-text">Answer all ${lesson.quiz.length} questions to continue.</div>
+    <div class="quiz-counter">Question ${lessonState.quizIndex + 1} of ${lesson.quiz.length}</div>
+    <div class="quiz-question">${esc(q.q)}</div>
+    <div class="quiz-options">
+      ${q.opts.map((opt, i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${esc(opt)}</button>`).join('')}
+    </div>
+    <div id="quiz-feedback"></div>`;
+}
+
+function answerQuiz(chosen) {
+  const lesson = lessonState.lesson;
+  const q = lesson.quiz[lessonState.quizIndex];
+  const correct = chosen === q.correct;
+  if (correct) lessonState.quizScore++;
+
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === chosen && !correct) btn.classList.add('wrong');
+  });
+
+  document.getElementById('quiz-feedback').innerHTML = `<div class="quiz-feedback ${correct ? 'correct' : 'wrong'}">${correct ? '✓ Correct! ' : '✗ Not quite. '}${esc(q.explanation)}</div>`;
+
+  setTimeout(() => {
+    lessonState.quizIndex++;
+    if (lessonState.quizIndex < lesson.quiz.length) {
+      renderQuizQuestion(document.getElementById('lesson-body'), lesson);
+    } else {
+      document.getElementById('btn-next').disabled = false;
+      document.getElementById('lesson-body').innerHTML += `<div style="background:var(--green-light,#e8f4ee);border-radius:10px;padding:14px;text-align:center;font-weight:500;color:var(--forest)">Quiz complete! You scored ${lessonState.quizScore}/${lesson.quiz.length} 🎉</div>`;
+    }
+  }, 1800);
+}
+
+function renderPractice(body, lesson) {
+  body.innerHTML = `
+    <div class="section-header"><div class="section-icon">💬</div><div class="section-title-text">Practice</div></div>
+    <div class="section-sub-text">Choose how you want to respond — speaking or writing.</div>
+    <div class="practice-toggle">
+      <button class="practice-btn ${lessonState.practiceMode === 'writing' ? 'active' : ''}" onclick="setPracticeMode('writing')">✍️ Writing</button>
+      <button class="practice-btn ${lessonState.practiceMode === 'speaking' ? 'active' : ''}" onclick="setPracticeMode('speaking')">🎤 Speaking</button>
+    </div>
+    <div class="practice-prompt-box">
+      <div class="practice-prompt-label">Discussion prompt</div>
+      <div class="practice-prompt-text">${esc(lesson.prompt)}</div>
+    </div>
+    <div id="practice-input-area"></div>
+    <div id="feedback-area"></div>`;
+  renderPracticeInput();
+}
+
+function setPracticeMode(mode) {
+  lessonState.practiceMode = mode;
+  document.querySelectorAll('.practice-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && mode === 'writing') || (i === 1 && mode === 'speaking')));
+  renderPracticeInput();
+}
+
+function renderPracticeInput() {
+  const area = document.getElementById('practice-input-area');
+  if (lessonState.practiceMode === 'writing') {
+    area.innerHTML = `
+      <textarea class="practice-textarea" id="practice-text" placeholder="Write your response here (aim for 50–100 words)…" oninput="updatePracticeWordCount()"></textarea>
+      <div class="word-count-bar">Words: <span id="practice-wc">0</span></div>
+      <button style="width:100%;background:var(--forest);color:white;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit" onclick="submitPractice()">Get feedback →</button>`;
+  } else {
+    area.innerHTML = `
+      <div class="mic-area">
+        <div class="live-transcript" id="live-transcript">${lessonState.transcript || ''}</div>
+        <button class="mic-btn ${lessonState.isListening ? 'listening' : ''}" id="mic-btn" onclick="toggleMic()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
+        </button>
+        <button class="submit-speak-btn ${lessonState.transcript ? 'visible' : ''}" onclick="submitPractice()">Submit answer →</button>
+        <div class="mic-status ${lessonState.isListening ? 'listening' : ''}" id="mic-status">${lessonState.isListening ? 'Listening… speak now' : lessonState.transcript ? 'Got it! Submit when ready.' : 'Tap the microphone to speak'}</div>
+      </div>`;
+    initMic();
+  }
+}
+
+function updatePracticeWordCount() {
+  const text = document.getElementById('practice-text').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  document.getElementById('practice-wc').textContent = words;
+}
+
+function initMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { document.getElementById('mic-status').textContent = 'Microphone requires Chrome or Edge'; return; }
+  if (lessonState.recognition) { try { lessonState.recognition.stop(); } catch(e) {} }
+  const rec = new SR();
+  rec.continuous = true; rec.interimResults = true; rec.lang = 'en-US';
+  rec.onstart = () => { lessonState.isListening = true; document.getElementById('mic-btn')?.classList.add('listening'); document.getElementById('mic-status').textContent = 'Listening… speak now'; document.getElementById('mic-status').className = 'mic-status listening'; };
+  rec.onresult = (e) => {
+    let final = '', interim = '';
+    for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) final += e.results[i][0].transcript + ' '; else interim += e.results[i][0].transcript; }
+    lessonState.transcript = (final + interim).trim();
+    if (document.getElementById('live-transcript')) document.getElementById('live-transcript').textContent = lessonState.transcript;
+    if (lessonState.transcript) { const sb = document.querySelector('.submit-speak-btn'); if (sb) sb.classList.add('visible'); }
+  };
+  rec.onerror = () => { lessonState.isListening = false; };
+  rec.onend = () => { if (lessonState.isListening) { try { rec.start(); } catch(e) {} } };
+  lessonState.recognition = rec;
+}
+
+function toggleMic() {
+  if (lessonState.isListening) {
+    lessonState.isListening = false;
+    try { lessonState.recognition.stop(); } catch(e) {}
+    document.getElementById('mic-btn')?.classList.remove('listening');
+    document.getElementById('mic-status').textContent = lessonState.transcript ? 'Got it! Submit when ready.' : 'Tap the microphone to speak';
+    document.getElementById('mic-status').className = 'mic-status';
+  } else {
+    lessonState.transcript = '';
+    try { lessonState.recognition.start(); } catch(e) { initMic(); try { lessonState.recognition.start(); } catch(e2) {} }
+  }
+}
+
+async function submitPractice() {
+  let answer = '';
+  if (lessonState.practiceMode === 'writing') {
+    answer = document.getElementById('practice-text')?.value.trim() || '';
+    if (answer.split(/\s+/).length < 10) { showToast('Please write a little more before submitting.'); return; }
+  } else {
+    answer = lessonState.transcript.trim();
+    if (!answer) { showToast('No speech detected. Please tap the mic and try again.'); return; }
+    if (lessonState.isListening) toggleMic();
+  }
+
+  showLoading('Getting your feedback…');
+
+  try {
+    const fb = await getPracticeFeedback(answer, lessonState.lesson.prompt, lessonState.lesson.title, lessonState.practiceMode, currentLevel);
+    hideLoading();
+    document.getElementById('btn-next').disabled = false;
+
+    const fbArea = document.getElementById('feedback-area');
+    const grammarHtml = fb.grammar_errors?.length
+      ? fb.grammar_errors.map(g => `<div class="fb-row"><div class="fb-icon amber">✎</div><div class="fb-text"><strong>Grammar:</strong> <span style="text-decoration:line-through;color:var(--ink-light)">"${esc(g.original)}"</span> → <span class="correction">"${esc(g.correction)}"</span><br><span style="font-size:12px;color:var(--ink-mid)">${esc(g.explanation)}</span></div></div>`).join('')
+      : `<div class="fb-row"><div class="fb-icon green">✓</div><div class="fb-text">No significant errors — well done!</div></div>`;
+
+    fbArea.innerHTML = `
+      <div class="feedback-card" style="margin-top:14px">
+        <div class="fb-header"><span>Your feedback</span></div>
+        <div class="fb-body">
+          <div class="fb-row"><div class="fb-icon green">★</div><div class="fb-text">${esc(fb.praise)}</div></div>
+          ${grammarHtml}
+          ${(fb.vocabulary_suggestions||[]).map(v => `<div class="fb-row"><div class="fb-icon blue">💡</div><div class="fb-text"><strong>Vocabulary:</strong> Try <span class="correction">"${esc(v.better)}"</span> instead of "${esc(v.original)}" — ${esc(v.explanation)}</div></div>`).join('')}
+          <div class="fb-row"><div class="fb-icon blue">💬</div><div class="fb-text"><strong>Content:</strong> ${esc(fb.content_feedback)}</div></div>
+          <div class="fb-row"><div class="fb-icon green">→</div><div class="fb-text">${esc(fb.overall)}</div></div>
+        </div>
+      </div>`;
+    fbArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch(e) {
+    hideLoading();
+    showToast('Error getting feedback — check your connection.');
+  }
+}
+
+async function getPracticeFeedback(answer, prompt, topic, mode, level) {
+  const system = `You are a warm English language coach. A ${level} student has responded to a discussion prompt about ${topic}.
+Return ONLY valid JSON:
+{"praise":"one genuine specific compliment","grammar_errors":[{"original":"exact phrase","correction":"corrected","explanation":"brief rule"}],"vocabulary_suggestions":[{"original":"word used","better":"better alternative","explanation":"why"}],"content_feedback":"one sentence on the quality and depth of their ideas","overall":"one warm encouraging closing sentence"}
+Grammar: max 2 errors. Vocabulary: max 2 suggestions. Be encouraging and specific. This is ${mode === 'speaking' ? 'spoken English — be lenient on formality' : 'written English'}.`;
+
+  const resp = await fetch(WORKER_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 800, system, messages: [{ role: 'user', content: `Prompt: ${prompt}\nStudent's response: ${answer}` }] })
+  });
+  const data = await resp.json();
+  return JSON.parse(data.content[0].text.replace(/```json|```/g, '').trim());
+}
+
+function renderComplete(body, lesson) {
+  lesson.completed = true;
+  streak++;
+  localStorage.setItem('de_streak', streak);
+  updateStreakDisplay();
+
+  body.innerHTML = `
+    <div class="complete-card">
+      <div class="complete-emoji">${lesson.emoji}</div>
+      <div class="complete-title">Lesson complete!</div>
+      <div class="complete-sub">You just learned about <strong>${lesson.title}</strong> and practised your English. Every lesson brings you closer to fluency — and helps you understand our planet better.</div>
+      <div class="complete-fact"><strong>🌍 Did you know?</strong><br>${esc(lesson.fact)}</div>
+      <div class="streak-display">🔥 ${streak}</div>
+      <div class="streak-label">day${streak !== 1 ? 's' : ''} in a row — keep it up!</div>
+    </div>
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
+      <div style="font-size:14px;color:var(--ink-mid);margin-bottom:12px">Ready for your next lesson?</div>
+      <button onclick="showTopics()" style="background:var(--forest);color:white;border:none;border-radius:8px;padding:11px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit">Browse more topics →</button>
+    </div>`;
+
+  document.getElementById('btn-next').textContent = 'Back to topics';
+}
+
+function nextStep() {
+  if (lessonState.step >= steps.length - 1) { showTopics(); return; }
+  lessonState.step++;
+  renderStep();
+}
+
+function showLoading(msg) { document.getElementById('loading-text').textContent = msg; document.getElementById('loading-overlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+</script>
+</body>
+</html>
