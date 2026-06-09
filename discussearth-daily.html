@@ -194,6 +194,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: 
 .dict-popup-close { position: absolute; top: 8px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--ink-light); line-height: 1; }
 .highlight-word { background: #fff3cd; border-radius: 3px; padding: 0 3px; cursor: pointer; border-bottom: 2px solid var(--earth-light); transition: background 0.15s; }
 .highlight-word:hover { background: var(--earth-light); }
+.any-word { cursor: pointer; border-radius: 2px; transition: background 0.15s; }
+.any-word:hover { background: rgba(90,122,74,0.12); }
 
 .loading-overlay { position: fixed; inset: 0; background: rgba(250,247,242,0.92); display: none; align-items: center; justify-content: center; z-index: 50; flex-direction: column; gap: 12px; }
 .loading-overlay.show { display: flex; }
@@ -628,13 +630,28 @@ function renderStep() {
 function renderRead(body, lesson) {
   const article = lesson.articles[currentLevel];
   let text = article.text;
+
+  // First highlight key vocab words with popup
+  const vocabWords = lesson.vocab.map(v => v.word.toLowerCase());
   lesson.vocab.forEach((v, i) => {
     const regex = new RegExp(`\\b(${v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'gi');
-    text = text.replace(regex, `<span class="highlight-word" onclick="showDict(${i})" title="Click for definition">$1</span>`);
+    text = text.replace(regex, `<span class="highlight-word" onclick="showDict(${i})" title="📖 Key vocabulary — click for definition">$1</span>`);
   });
+
+  // Then wrap all other words to open MW in new tab on click
+  // Split into tokens preserving HTML spans already added
+  text = text.replace(/(<span[^>]*>.*?<\/span>)|(\b[a-zA-Z]{3,}\b)/g, (match, span, word) => {
+    if (span) return span; // already a highlighted vocab word — leave it
+    if (!word) return match;
+    return `<span class="any-word" onclick="window.open('https://www.merriam-webster.com/dictionary/${encodeURIComponent(word.toLowerCase())}','_blank')" title="Look up '${word}' in Merriam-Webster">${word}</span>`;
+  });
+
   body.innerHTML = `
     <div class="section-header"><div class="section-icon">📰</div><div class="section-title-text">Read the article</div></div>
-    <div class="section-sub-text">Tap any <span style="background:#fff3cd;border-radius:3px;padding:0 4px;border-bottom:2px solid var(--earth-light);font-size:12px">highlighted word</span> to see its definition.</div>
+    <div class="section-sub-text">
+      <span style="background:#fff3cd;border-radius:3px;padding:0 4px;border-bottom:2px solid var(--earth-light);font-size:12px">Yellow words</span> = key vocab (tap for popup) &nbsp;·&nbsp;
+      <span style="font-size:12px;color:var(--ink-light)">Tap any other word to look it up in Merriam-Webster</span>
+    </div>
     <div class="article-card">
       ${lesson.image ? `
         <div style="position:relative;height:180px;overflow:hidden">
