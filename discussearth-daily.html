@@ -175,6 +175,26 @@ body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: 
 .section-title-text { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--forest); }
 .section-sub-text { font-size: 12px; color: var(--ink-light); margin-bottom: 14px; }
 
+/* Dictionary popup */
+.dict-popup {
+  position: fixed; z-index: 200;
+  background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px;
+  box-shadow: 0 8px 32px rgba(42,74,53,0.18);
+  max-width: 280px; min-width: 220px;
+  display: none;
+}
+.dict-popup.show { display: block; }
+.dict-popup-word { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--forest); font-weight: 700; margin-bottom: 2px; }
+.dict-popup-type { font-size: 11px; color: var(--ink-light); font-style: italic; margin-bottom: 8px; }
+.dict-popup-def { font-size: 13px; color: var(--ink); line-height: 1.55; margin-bottom: 8px; }
+.dict-popup-example { font-size: 12px; color: var(--ink-mid); font-style: italic; border-left: 3px solid var(--sage); padding-left: 8px; margin-bottom: 10px; line-height: 1.5; }
+.dict-popup-link { display: inline-block; font-size: 12px; font-weight: 500; color: var(--forest); text-decoration: none; border: 1px solid var(--forest); border-radius: 6px; padding: 4px 10px; transition: background 0.15s; }
+.dict-popup-link:hover { background: var(--forest); color: white; }
+.dict-popup-close { position: absolute; top: 8px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--ink-light); line-height: 1; }
+.highlight-word { background: #fff3cd; border-radius: 3px; padding: 0 3px; cursor: pointer; border-bottom: 2px solid var(--earth-light); transition: background 0.15s; }
+.highlight-word:hover { background: var(--earth-light); }
+
 .loading-overlay { position: fixed; inset: 0; background: rgba(250,247,242,0.92); display: none; align-items: center; justify-content: center; z-index: 50; flex-direction: column; gap: 12px; }
 .loading-overlay.show { display: flex; }
 .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--forest); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -188,21 +208,48 @@ body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: 
 
 <!-- LANDING -->
 <div id="screen-landing" class="screen active">
-  <div class="landing-logo">Discuss<span>Earth</span></div>
-  <div class="landing-tagline">Learn English · Understand Your Planet</div>
-  <div class="streak-badge">🔥 Build a daily streak — 5 minutes a day</div>
-  <div class="landing-sub">Short daily lessons combining real environmental science with English language practice at your level.</div>
-  <div class="topic-preview">
-    <span class="topic-mini">🌊 Oceans</span>
-    <span class="topic-mini">🌳 Forests</span>
-    <span class="topic-mini">🦁 Wildlife</span>
-    <span class="topic-mini">🌡️ Climate</span>
-    <span class="topic-mini">⚡ Energy</span>
-    <span class="topic-mini">🍽 Food</span>
+  <!-- SVG landscape background -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;bottom:0;left:0;right:0;width:100%;height:60%">
+      <!-- Sky gradient handled by CSS background -->
+      <!-- Sun/Earth circle -->
+      <circle cx="200" cy="120" r="55" fill="rgba(184,212,160,0.15)"/>
+      <circle cx="200" cy="120" r="40" fill="rgba(184,212,160,0.2)"/>
+      <circle cx="200" cy="120" r="28" fill="rgba(184,212,160,0.25)"/>
+      <!-- Distant hills -->
+      <ellipse cx="80" cy="220" rx="120" ry="60" fill="rgba(42,74,53,0.4)"/>
+      <ellipse cx="320" cy="230" rx="130" ry="55" fill="rgba(42,74,53,0.35)"/>
+      <!-- Tree silhouettes - back row -->
+      <path d="M30,280 L30,220 L15,220 L30,190 L20,190 L35,158 L50,190 L40,190 L55,220 L40,220 L40,280Z" fill="rgba(26,40,28,0.6)"/>
+      <path d="M75,280 L75,215 L58,215 L75,180 L63,180 L80,145 L97,180 L85,180 L102,215 L87,215 L87,280Z" fill="rgba(26,40,28,0.65)"/>
+      <path d="M355,280 L355,210 L340,210 L355,178 L344,178 L360,144 L376,178 L365,178 L380,210 L365,210 L365,280Z" fill="rgba(26,40,28,0.6)"/>
+      <path d="M320,280 L320,218 L305,218 L320,185 L310,185 L325,152 L340,185 L330,185 L345,218 L330,218 L330,280Z" fill="rgba(26,40,28,0.55)"/>
+      <!-- Tree silhouettes - front row -->
+      <path d="M145,300 L145,235 L125,235 L145,195 L130,195 L150,152 L170,195 L155,195 L175,235 L155,235 L155,300Z" fill="rgba(20,32,22,0.85)"/>
+      <path d="M200,300 L200,228 L178,228 L200,185 L184,185 L205,138 L226,185 L210,185 L232,228 L210,228 L210,300Z" fill="rgba(20,32,22,0.9)"/>
+      <path d="M255,300 L255,238 L236,238 L255,198 L241,198 L260,157 L279,198 L265,198 L284,238 L265,238 L265,300Z" fill="rgba(20,32,22,0.85)"/>
+      <!-- Ground -->
+      <rect x="0" y="278" width="400" height="22" fill="rgba(20,32,22,0.9)" rx="0"/>
+    </svg>
   </div>
-  <div class="landing-btns">
-    <button class="btn-land-primary" onclick="showTopics()">Start learning →</button>
-    <button class="btn-land-secondary" onclick="showTopics()">Browse all topics</button>
+
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center;padding:2rem;padding-bottom:160px">
+    <div class="landing-logo">Discuss<span>Earth</span></div>
+    <div class="landing-tagline">Learn English · Understand Your Planet</div>
+    <div class="streak-badge">🔥 Build a daily streak — 5 minutes a day</div>
+    <div class="landing-sub">Short daily lessons combining real environmental science with English language practice at your level.</div>
+    <div class="topic-preview">
+      <span class="topic-mini">🌊 Oceans</span>
+      <span class="topic-mini">🌳 Forests</span>
+      <span class="topic-mini">🦁 Wildlife</span>
+      <span class="topic-mini">🌡️ Climate</span>
+      <span class="topic-mini">⚡ Energy</span>
+      <span class="topic-mini">🍽 Food</span>
+    </div>
+    <div class="landing-btns">
+      <button class="btn-land-primary" onclick="showTopics()">Start learning →</button>
+      <button class="btn-land-secondary" onclick="showTopics()">Browse all topics</button>
+    </div>
   </div>
 </div>
 
@@ -247,6 +294,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: 
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- Dictionary popup -->
+<div class="dict-popup" id="dict-popup">
+  <button class="dict-popup-close" onclick="closeDict()">×</button>
+  <div class="dict-popup-word" id="dict-word"></div>
+  <div class="dict-popup-type" id="dict-type"></div>
+  <div class="dict-popup-def" id="dict-def"></div>
+  <div class="dict-popup-example" id="dict-example"></div>
+  <a class="dict-popup-link" id="dict-link" target="_blank">Full definition →</a>
+</div>
+
 <script>
 const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
 
@@ -254,6 +311,7 @@ const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
 const LESSONS = [
   {
     id: 1, emoji: '🌊', category: 'Oceans & Marine Life', title: 'Coral Reefs Under Threat',
+    image: 'https://images.unsplash.com/photo-1546500840-ae38253aba9b?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Coral reefs are some of the most important ecosystems on Earth. They cover less than 1% of the ocean floor, but they are home to about 25% of all marine species. Fish, turtles, sharks, and thousands of other animals depend on coral reefs to survive.\n\nUnfortunately, coral reefs are in serious danger. The main problem is climate change. When the ocean gets too warm, corals lose the algae that live inside them. Without this algae, corals turn white. This is called coral bleaching. If the water stays warm for too long, the corals die.\n\nScientists say that we have already lost about 50% of the world's coral reefs. If temperatures continue to rise, we could lose 90% of all coral reefs by 2050. This would be a disaster for millions of people who depend on reefs for food and income.` },
@@ -276,6 +334,7 @@ const LESSONS = [
   },
   {
     id: 2, emoji: '🌳', category: 'Forests & Biodiversity', title: 'The Amazon in Crisis',
+    image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `The Amazon rainforest is the largest tropical rainforest in the world. It covers about 5.5 million square kilometres across nine countries in South America. Scientists call it "the lungs of the Earth" because it produces about 20% of the world's oxygen.\n\nThe Amazon is also home to an incredible variety of plants and animals. It contains about 10% of all species on Earth. Many of these species have not even been discovered yet.\n\nUnfortunately, the Amazon is being destroyed very quickly. Deforestation — cutting down trees — is the biggest problem. Farmers cut down trees to create land for cattle and crops. Every year, thousands of square kilometres of forest disappear. Scientists warn that if we lose too much forest, the Amazon could turn into a dry savannah. This would be a disaster for the climate and for millions of people and animals.` },
@@ -298,6 +357,7 @@ const LESSONS = [
   },
   {
     id: 3, emoji: '🦁', category: 'Wildlife & Extinction', title: 'The Sixth Mass Extinction',
+    image: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Scientists believe that we are living through the sixth mass extinction in Earth's history. A mass extinction is when a very large number of species disappear in a short period of time. The last mass extinction happened 66 million years ago, when the dinosaurs died out after an asteroid hit the Earth.\n\nThis time, however, humans are causing the extinction. We are destroying habitats, hunting animals, and polluting the environment. The World Wildlife Fund says that we have lost 69% of all wildlife populations since 1970. That is in just 50 years.\n\nOver one million species are currently threatened with extinction. This includes elephants, tigers, and many types of birds and insects. Scientists warn that losing so many species could damage ecosystems in ways that affect human life too. For example, if bees disappear, many crops that humans depend on will not be able to grow.` },
@@ -320,6 +380,7 @@ const LESSONS = [
   },
   {
     id: 4, emoji: '🌡️', category: 'Climate & Weather', title: 'The Carbon Budget',
+    image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `When we burn fossil fuels like oil, gas, and coal, we release carbon dioxide (CO₂) into the atmosphere. This gas traps heat from the sun, making the Earth warmer. This is called the greenhouse effect, and it is causing climate change.\n\nScientists have calculated something called the "carbon budget." This is the total amount of CO₂ that we can release before the Earth gets more than 1.5°C warmer. The Paris Agreement — signed by almost all countries in the world — says we must try to keep warming below 1.5°C.\n\nThe problem is that we are using our carbon budget very quickly. At our current rate, we will have used the entire budget in less than 10 years. After that, every year of fossil fuel use makes the situation worse. Scientists say we need to cut emissions by 45% by 2030 and reach zero emissions by 2050 to have a chance of staying within the budget.` },
@@ -342,6 +403,7 @@ const LESSONS = [
   },
   {
     id: 5, emoji: '🐝', category: 'Pollinators & Food', title: 'The Bee Crisis',
+    image: 'https://images.unsplash.com/photo-1558642084-fd07fae5282e?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Bees are one of the most important animals on Earth. They pollinate about 75% of the food crops that humans eat. Without bees, we would lose fruits, vegetables, nuts, and many other foods. Scientists estimate that bees contribute about $500 billion to the global food supply every year.\n\nUnfortunately, bee populations around the world are in serious decline. In the United States, beekeepers lose about 30-40% of their bee colonies every winter. In Europe, many wild bee species are threatened with extinction.\n\nThe main causes of bee decline are pesticides, habitat loss, disease, and climate change. Pesticides kill bees directly or damage their ability to navigate and reproduce. When wildflowers disappear from the countryside, bees have less food. Scientists and farmers are working on solutions, such as planting more wildflowers and reducing pesticide use. But the situation remains urgent.` },
@@ -364,6 +426,7 @@ const LESSONS = [
   },
   {
     id: 6, emoji: '🏔️', category: 'Ice & Water', title: 'Glaciers in Retreat',
+    image: 'https://images.unsplash.com/photo-1504870712357-65ea720d6078?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Glaciers are large, slow-moving bodies of ice that form over thousands of years. They can be found in mountain ranges and at the Earth's poles. Glaciers are an important source of fresh water for billions of people around the world. When glaciers melt, they release water into rivers, which people use for drinking, farming, and electricity.\n\nToday, glaciers around the world are melting at an alarming rate because of climate change. Scientists estimate that glaciers are losing about 267 billion tonnes of ice every year. This is causing sea levels to rise, which threatens coastal cities and low-lying islands.\n\nIn some mountain regions, glaciers provide up to 70% of the fresh water that local communities depend on. As glaciers disappear, these communities face serious water shortages. Scientists predict that by 2100, many smaller mountain glaciers could completely disappear.` },
@@ -386,6 +449,7 @@ const LESSONS = [
   },
   {
     id: 7, emoji: '🐋', category: 'Oceans & Marine Life', title: 'Plastic and the Ocean',
+    image: 'https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Every year, about 8 million tonnes of plastic enter the ocean. This is like dropping a rubbish truck full of plastic into the sea every minute. Plastic pollution is one of the most serious environmental problems in the world today.\n\nPlastic does not disappear. Over time, it breaks into tiny pieces called microplastics. These tiny pieces are now found everywhere — in the deepest parts of the ocean, in the Arctic ice, and even in the air we breathe. Scientists have found microplastics inside fish, seabirds, whales, and humans.\n\nPlastic pollution harms wildlife in many ways. Animals can get trapped in plastic bags and fishing nets. They can eat plastic by mistake, thinking it is food. This can block their stomachs and kill them. Scientists estimate that plastic pollution kills over one million seabirds and 100,000 marine mammals every year.` },
@@ -408,6 +472,7 @@ const LESSONS = [
   },
   {
     id: 8, emoji: '⚡', category: 'Energy & Innovation', title: 'The Renewable Revolution',
+    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Renewable energy comes from natural sources that are constantly replenished, such as sunlight, wind, and water. Unlike fossil fuels — which produce greenhouse gases when burned — renewable energy is clean and does not cause climate change.\n\nThe good news is that renewable energy is growing very quickly. In 2022, renewable energy provided about 30% of global electricity. Solar power is growing especially fast. The cost of solar panels has dropped by 90% in the last ten years, making it cheaper than coal in most parts of the world.\n\nSeveral countries are leading the way in renewable energy. Denmark gets about 50% of its electricity from wind. Iceland uses geothermal energy — heat from the Earth — to provide almost all of its heating and electricity. China is currently building more renewable energy than the rest of the world combined. The challenge now is to speed up the transition and to store energy for when the sun is not shining and the wind is not blowing.` },
@@ -430,6 +495,7 @@ const LESSONS = [
   },
   {
     id: 9, emoji: '🍽️', category: 'Food & Agriculture', title: 'Food Systems and the Planet',
+    image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `The way we produce and eat food has a huge impact on the environment. Food systems — farming, processing, packaging, and transport — are responsible for about one-third of all global greenhouse gas emissions. Meat production is especially harmful. Producing one kilogram of beef creates about 60kg of CO₂, compared to just 4kg for chicken and 1kg for lentils.\n\nLivestock also uses a lot of land. About 80% of agricultural land is used for raising animals and growing their food. However, meat and dairy only provide about 20% of the world's calories. This means we are using land very inefficiently.\n\nThere is also the problem of food waste. About one-third of all food produced in the world is wasted. This wasted food releases greenhouse gases as it rots in landfill. Scientists say that if we ate less meat, wasted less food, and grew crops more sustainably, we could dramatically reduce the impact of food systems on the climate.` },
@@ -452,6 +518,7 @@ const LESSONS = [
   },
   {
     id: 10, emoji: '🏙️', category: 'Cities & Sustainability', title: 'Building Green Cities',
+    image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
     completed: false,
     articles: {
       B1: { level:'B1', text: `Today, more than half of the world's population lives in cities. By 2050, this will increase to about 70%. Cities use a lot of energy and produce a lot of pollution. They are responsible for about 70% of global CO₂ emissions. But cities can also be part of the solution to climate change.\n\nMany cities around the world are trying to become more sustainable. In Copenhagen, Denmark, the government has built hundreds of kilometres of cycle paths. Today, more people commute by bicycle than by car. In Singapore, buildings must have green roofs and walls covered in plants. This helps to cool the city and improve air quality.\n\nUrban forests and parks are also very important. Trees in cities reduce air pollution, provide shade, and help to manage rainfall. Some cities, like Vienna in Austria, have planted thousands of new trees in recent years. Scientists say that making cities greener, cleaner, and more efficient is essential for fighting climate change.` },
@@ -478,7 +545,7 @@ const LESSONS = [
 let currentLevel = 'B1';
 let streak = parseInt(localStorage.getItem('de_streak') || '0');
 let lessonState = { lesson: null, step: 0, quizIndex: 0, quizScore: 0, practiceMode: 'writing', transcript: '', recognition: null, isListening: false };
-const steps = ['read', 'vocab', 'quiz', 'practice', 'complete'];
+const steps = ['vocab', 'read', 'quiz', 'practice', 'complete'];
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -505,7 +572,7 @@ function renderTopics() {
     const card = document.createElement('div');
     card.className = 'topic-card' + (lesson.completed ? ' completed' : '');
     card.innerHTML = `
-      <div class="topic-emoji">${lesson.emoji}</div>
+      ${lesson.image ? `<img src="${lesson.image}" alt="${lesson.title}" style="width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0">` : `<div class="topic-emoji">${lesson.emoji}</div>`}
       <div class="topic-info">
         <div class="topic-category">${lesson.category}</div>
         <div class="topic-title">${lesson.title}</div>
@@ -540,7 +607,7 @@ function renderStep() {
   const total = steps.length;
   const pct = Math.round((step / (total - 1)) * 100);
   document.getElementById('lesson-progress').style.width = pct + '%';
-  document.getElementById('step-label').textContent = `Step ${step + 1} of ${total} — ${stepName.charAt(0).toUpperCase() + stepName.slice(1)}`;
+  document.getElementById('step-label').textContent = `Step ${step + 1} of ${total} — ${stepName === 'vocab' ? 'Vocabulary' : stepName === 'read' ? 'Read' : stepName === 'quiz' ? 'Quiz' : stepName === 'practice' ? 'Practice' : 'Complete'}`;
   document.getElementById('step-pct').textContent = pct + '%';
 
   const body = document.getElementById('lesson-body');
@@ -560,16 +627,30 @@ function renderStep() {
 
 function renderRead(body, lesson) {
   const article = lesson.articles[currentLevel];
+  let text = article.text;
+  lesson.vocab.forEach((v, i) => {
+    const regex = new RegExp(`\\b(${v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'gi');
+    text = text.replace(regex, `<span class="highlight-word" onclick="showDict(${i})" title="Click for definition">$1</span>`);
+  });
   body.innerHTML = `
     <div class="section-header"><div class="section-icon">📰</div><div class="section-title-text">Read the article</div></div>
-    <div class="section-sub-text">Read carefully — there will be comprehension questions after.</div>
+    <div class="section-sub-text">Tap any <span style="background:#fff3cd;border-radius:3px;padding:0 4px;border-bottom:2px solid var(--earth-light);font-size:12px">highlighted word</span> to see its definition.</div>
     <div class="article-card">
-      <div class="article-header">
-        <div class="article-category">${lesson.category}</div>
-        <div class="article-title">${lesson.title}</div>
-      </div>
+      ${lesson.image ? `
+        <div style="position:relative;height:180px;overflow:hidden">
+          <img src="${lesson.image}" alt="${lesson.title}" style="width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(42,74,53,0.85) 100%)"></div>
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 18px">
+            <div class="article-category" style="color:var(--sage-light)">${lesson.category}</div>
+            <div class="article-title">${lesson.title}</div>
+          </div>
+        </div>` : `
+        <div class="article-header">
+          <div class="article-category">${lesson.category}</div>
+          <div class="article-title">${lesson.title}</div>
+        </div>`}
       <div class="article-body">
-        ${article.text.split('\n\n').map(p => `<p>${p}</p>`).join('')}
+        ${text.split('\n\n').map(p => `<p>${p}</p>`).join('')}
         <span class="article-level-badge ${article.level.toLowerCase()}">${article.level}</span>
       </div>
     </div>`;
@@ -578,12 +659,17 @@ function renderRead(body, lesson) {
 function renderVocab(body, lesson) {
   body.innerHTML = `
     <div class="section-header"><div class="section-icon">📚</div><div class="section-title-text">Key vocabulary</div></div>
-    <div class="section-sub-text">Learn these ${lesson.vocab.length} key words from the article.</div>
+    <div class="section-sub-text">Learn these ${lesson.vocab.length} words before reading. You'll see them highlighted in the article.</div>
     <div class="vocab-grid">
-      ${lesson.vocab.map(v => `
+      ${lesson.vocab.map((v, i) => `
         <div class="vocab-card">
-          <div class="vocab-word">${esc(v.word)}</div>
-          <div class="vocab-type">${esc(v.type)}</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <div>
+              <div class="vocab-word">${esc(v.word)}</div>
+              <div class="vocab-type">${esc(v.type)}</div>
+            </div>
+            <a href="https://www.merriam-webster.com/dictionary/${encodeURIComponent(v.word)}" target="_blank" style="font-size:11px;color:var(--forest);border:1px solid var(--forest);border-radius:6px;padding:3px 8px;text-decoration:none;white-space:nowrap;flex-shrink:0;margin-top:2px" title="Open in Merriam-Webster">MW →</a>
+          </div>
           <div class="vocab-def">${esc(v.def)}</div>
           <div class="vocab-example">"${esc(v.example)}"</div>
         </div>`).join('')}
@@ -783,7 +869,7 @@ function renderComplete(body, lesson) {
 
   body.innerHTML = `
     <div class="complete-card">
-      <div class="complete-emoji">${lesson.emoji}</div>
+      ${lesson.image ? `<img src="${lesson.image}" alt="${lesson.title}" style="width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:16px;opacity:0.85">` : `<div class="complete-emoji">${lesson.emoji}</div>`}
       <div class="complete-title">Lesson complete!</div>
       <div class="complete-sub">You just learned about <strong>${lesson.title}</strong> and practised your English. Every lesson brings you closer to fluency — and helps you understand our planet better.</div>
       <div class="complete-fact"><strong>🌍 Did you know?</strong><br>${esc(lesson.fact)}</div>
@@ -803,6 +889,35 @@ function nextStep() {
   lessonState.step++;
   renderStep();
 }
+
+function showDict(vocabIndex) {
+  const v = lessonState.lesson.vocab[vocabIndex];
+  document.getElementById('dict-word').textContent = v.word;
+  document.getElementById('dict-type').textContent = v.type;
+  document.getElementById('dict-def').textContent = v.def;
+  document.getElementById('dict-example').textContent = '"' + v.example + '"';
+  document.getElementById('dict-link').href = `https://www.merriam-webster.com/dictionary/${encodeURIComponent(v.word)}`;
+
+  const popup = document.getElementById('dict-popup');
+  popup.classList.add('show');
+
+  // Position in centre of screen
+  popup.style.top = '50%';
+  popup.style.left = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
+}
+
+function closeDict() {
+  document.getElementById('dict-popup').classList.remove('show');
+}
+
+// Close popup when clicking outside
+document.addEventListener('click', (e) => {
+  const popup = document.getElementById('dict-popup');
+  if (popup.classList.contains('show') && !popup.contains(e.target) && !e.target.classList.contains('highlight-word')) {
+    closeDict();
+  }
+});
 
 function showLoading(msg) { document.getElementById('loading-text').textContent = msg; document.getElementById('loading-overlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
