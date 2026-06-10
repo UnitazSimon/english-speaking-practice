@@ -4,202 +4,301 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IELTS Speaking Practice</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --ink: #1a1814; --ink-mid: #5c5750; --ink-light: #9c9690;
-    --cream: #faf8f4; --cream-dark: #f0ece4; --cream-darker: #e4dfd5;
-    --accent: #1a4f8a; --accent-light: #e8f0f8; --accent-dark: #0f2f5a;
-    --green: #2d6a4f; --green-light: #e8f4ee;
-    --blue: #1e4f7a; --blue-light: #e8f0f8;
-    --gold: #b8860b; --gold-light: #fdf6e0;
-    --border: #ddd8ce;
-    --shadow: 0 1px 3px rgba(26,24,20,0.08), 0 4px 16px rgba(26,24,20,0.06);
-    --mic-red: #e03e2d;
-    --part1: #2d6a4f; --part2: #1a4f8a; --part3: #7a3a8a;
-  }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
-  .screen { display: none; min-height: 100vh; }
-  .screen.active { display: flex; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #0E9BAD; --teal-dark: #0a7a8a; --teal-light: #e0f4f6; --teal-mid: #b8e8ee;
+  --ink: #1a1a1a; --ink-mid: #555555; --ink-light: #999999;
+  --bg: #f8f9fa; --white: #ffffff; --border: #e2e8f0;
+  --p1: #0E9BAD; --p2: #1a4f8a; --p3: #6b3fa0;
+  --p1-light: #e0f4f6; --p2-light: #e8f0f8; --p3-light: #f0ebf8;
+  --red: #e03e2d; --red-light: #fdecea;
+  --green: #16a34a; --green-light: #dcfce7;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.05);
+  --radius: 12px; --radius-sm: 8px;
+}
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
 
-  /* LANDING */
-  #screen-landing { flex-direction: column; align-items: center; justify-content: center; padding: 2rem; gap: 1.2rem; }
-  .landing-logo { font-family: 'Lora', serif; font-size: 1.8rem; color: var(--ink); letter-spacing: -0.02em; text-align: center; }
-  .landing-logo span { color: var(--accent); font-style: italic; }
-  .landing-sub { color: var(--ink-mid); font-size: 14px; text-align: center; max-width: 340px; }
-  .ielts-badge { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 99px; }
-  .badge-parts { background: #f0e8f8; color: #7a3a8a; }
-  .landing-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
-  .btn-primary { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 13px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; text-align: center; }
-  .btn-primary:hover { background: #333; }
-  .btn-secondary { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); border-radius: 8px; padding: 12px 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s; text-align: center; }
-  .btn-secondary:hover { background: var(--cream-dark); }
-  .divider { width: 100%; max-width: 300px; height: 1px; background: var(--border); }
-  .parts-info { display: flex; gap: 8px; max-width: 340px; width: 100%; }
-  .part-chip { flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 500; }
-  .part-chip.p1 { background: #e8f4ee; color: var(--part1); }
-  .part-chip.p2 { background: var(--accent-light); color: var(--part2); }
-  .part-chip.p3 { background: #f0e8f8; color: var(--part3); }
-  .part-chip div:first-child { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+/* ── HEADER ── */
+.app-header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; box-shadow: var(--shadow-sm);
+}
+.logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-icon {
+  width: 36px; height: 36px;
+}
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-text .earth { font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: 0.05em; }
+.logo-text .university { font-size: 9px; font-weight: 500; color: var(--ink-mid); letter-spacing: 0.12em; text-transform: uppercase; }
+.header-badge { font-size: 12px; font-weight: 500; color: var(--teal); background: var(--teal-light); padding: 4px 12px; border-radius: 99px; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-timer { display: none; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; }
+.header-timer.visible { display: flex; }
+.header-timer.urgent { background: var(--red-light); border-color: var(--red); }
+.timer-label { font-size: 11px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.06em; }
+.timer-value { font-size: 18px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.header-timer.urgent .timer-value { color: var(--red); }
 
-  /* STUDENT */
-  #screen-student { flex-direction: column; height: 100vh; }
-  .chat-header { padding: 12px 18px; border-bottom: 1px solid var(--border); background: white; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .chat-logo { font-family: 'Lora', serif; font-size: 0.95rem; }
-  .chat-logo span { color: var(--accent); font-style: italic; }
-  .part-indicator { margin-left: auto; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 99px; }
-  .part-indicator.p1 { background: #e8f4ee; color: var(--part1); }
-  .part-indicator.p2 { background: var(--accent-light); color: var(--part2); }
-  .part-indicator.p3 { background: #f0e8f8; color: var(--part3); }
-  .part-indicator.done { background: var(--cream-darker); color: var(--ink-light); }
+/* ── LANDING ── */
+#screen-landing {
+  align-items: center; justify-content: center; padding: 2rem; gap: 0;
+  background: linear-gradient(135deg, #f0fafb 0%, var(--white) 60%, #f8f0ff 100%);
+}
+.landing-card {
+  background: var(--white); border-radius: 20px; padding: 48px 40px;
+  box-shadow: var(--shadow-lg); max-width: 440px; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center;
+}
+.landing-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.landing-logo-icon { width: 48px; height: 48px; }
+.landing-logo-text { text-align: left; }
+.landing-logo-text .earth { font-size: 20px; font-weight: 700; letter-spacing: 0.05em; color: var(--ink); }
+.landing-logo-text .university { font-size: 10px; letter-spacing: 0.14em; color: var(--ink-mid); text-transform: uppercase; }
+.landing-divider { width: 40px; height: 3px; background: var(--teal); border-radius: 99px; }
+.landing-title { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.landing-sub { font-size: 14px; color: var(--ink-mid); max-width: 320px; line-height: 1.7; }
+.parts-grid { display: flex; gap: 8px; width: 100%; }
+.part-chip {
+  flex: 1; padding: 12px 8px; border-radius: var(--radius-sm); text-align: center;
+  font-size: 11px; font-weight: 500; border: 1px solid transparent;
+}
+.part-chip .pnum { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.part-chip.p1 { background: var(--p1-light); color: var(--p1); border-color: #b8e8ee; }
+.part-chip.p2 { background: var(--p2-light); color: var(--p2); border-color: #c8ddf0; }
+.part-chip.p3 { background: var(--p3-light); color: var(--p3); border-color: #ddd0f0; }
+.landing-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.btn-primary { background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); padding: 13px 24px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+.btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 24px; font-family: 'Inter', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s; }
+.btn-secondary:hover { background: var(--bg); }
 
-  .exam-select-area { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--cream-dark); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .exam-select-area label { font-size: 13px; color: var(--ink-mid); white-space: nowrap; }
-  .exam-select-area select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: white; outline: none; }
-  .btn-start { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
-  .btn-start:hover { background: var(--accent-dark); }
+/* ── STUDENT SCREEN ── */
+#screen-student { height: 100vh; overflow: hidden; }
+.exam-bar { padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--bg); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.exam-bar select { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink); background: white; outline: none; }
+.btn-start { background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; transition: background 0.15s; }
+.btn-start:hover { background: var(--teal-dark); }
 
-  .progress-bar-wrap { padding: 8px 16px 0; flex-shrink: 0; }
-  .progress-label { font-size: 11px; color: var(--ink-light); margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .progress-bar { height: 3px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+/* Progress */
+.progress-track { padding: 10px 20px 0; flex-shrink: 0; background: var(--white); border-bottom: 1px solid var(--border); }
+.progress-meta { font-size: 11px; color: var(--ink-light); display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-bar { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease, background 0.3s; background: var(--teal); }
+.part-tabs { display: flex; gap: 4px; padding-bottom: 0; }
+.part-tab { flex: 1; padding: 6px 4px; text-align: center; font-size: 11px; font-weight: 500; border-radius: var(--radius-sm) var(--radius-sm) 0 0; color: var(--ink-light); background: transparent; cursor: default; transition: all 0.2s; border-bottom: 2px solid transparent; }
+.part-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.part-tab.done { color: var(--green); }
 
-  .messages-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-  .msg-wrap { display: flex; flex-direction: column; max-width: 86%; gap: 5px; }
-  .msg-wrap.bot { align-self: flex-start; }
-  .msg-wrap.user { align-self: flex-end; }
-  .bubble { padding: 11px 15px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
-  .msg-wrap.bot .bubble { background: white; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; color: var(--ink); box-shadow: var(--shadow); }
-  .msg-wrap.user .bubble { background: var(--ink); color: white; border-radius: 16px 4px 16px 16px; }
-  .transcript-label { font-size: 11px; color: var(--ink-light); text-align: right; padding-right: 4px; }
+/* Messages */
+.messages-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
+.msg-wrap { display: flex; flex-direction: column; max-width: 88%; gap: 4px; }
+.msg-wrap.bot { align-self: flex-start; }
+.msg-wrap.user { align-self: flex-end; }
+.msg-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.msg-avatar.bot { background: var(--teal-light); color: var(--teal); }
+.msg-row { display: flex; gap: 8px; align-items: flex-end; }
+.msg-wrap.user .msg-row { flex-direction: row-reverse; }
+.bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.65; }
+.msg-wrap.bot .bubble { background: var(--white); border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; color: var(--ink); box-shadow: var(--shadow-sm); }
+.msg-wrap.user .bubble { background: var(--teal); color: white; border-radius: 16px 4px 16px 16px; }
+.msg-time { font-size: 11px; color: var(--ink-light); padding: 0 4px; }
+.msg-wrap.user .msg-time { text-align: right; }
 
-  /* PART 2 CUE CARD */
-  .cue-card { background: #fffef0; border: 2px solid #e8d84a; border-radius: 12px; padding: 16px 18px; font-size: 14px; box-shadow: var(--shadow); }
-  .cue-card-title { font-weight: 600; color: var(--ink); margin-bottom: 10px; font-size: 15px; }
-  .cue-card-prompt { color: var(--ink-mid); font-size: 13px; margin-bottom: 8px; }
-  .cue-card-bullets { list-style: none; padding: 0; }
-  .cue-card-bullets li { padding: 3px 0 3px 16px; font-size: 13px; color: var(--ink-mid); position: relative; }
-  .cue-card-bullets li::before { content: "•"; position: absolute; left: 0; color: var(--gold); }
-  .cue-card-timer { margin-top: 10px; font-size: 12px; color: var(--accent); font-weight: 500; }
+/* Part divider */
+.part-divider { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.part-divider-line { flex: 1; height: 1px; background: var(--border); }
+.part-divider-pill { font-size: 11px; font-weight: 600; padding: 4px 14px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; }
+.part-divider-pill.p1 { background: var(--p1-light); color: var(--p1); }
+.part-divider-pill.p2 { background: var(--p2-light); color: var(--p2); }
+.part-divider-pill.p3 { background: var(--p3-light); color: var(--p3); }
 
-  /* PART DIVIDER */
-  .part-divider { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
-  .part-divider-line { flex: 1; height: 1px; background: var(--border); }
-  .part-divider-label { font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; }
-  .part-divider-label.p1 { background: #e8f4ee; color: var(--part1); }
-  .part-divider-label.p2 { background: var(--accent-light); color: var(--part2); }
-  .part-divider-label.p3 { background: #f0e8f8; color: var(--part3); }
+/* Cue card */
+.cue-card { background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.cue-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cue-card-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.cue-card-badge { font-size: 11px; font-weight: 600; background: #f59e0b; color: white; padding: 2px 10px; border-radius: 99px; }
+.cue-card-prompt { font-size: 13px; color: var(--ink-mid); margin-bottom: 10px; font-style: italic; }
+.cue-card-bullets { list-style: none; }
+.cue-card-bullets li { padding: 3px 0 3px 18px; font-size: 13px; color: var(--ink-mid); position: relative; }
+.cue-card-bullets li::before { content: "→"; position: absolute; left: 0; color: #f59e0b; font-weight: 600; }
+.cue-card-note { margin-top: 12px; font-size: 12px; color: #92400e; background: #fef3c7; border-radius: 6px; padding: 6px 10px; }
 
-  /* MIC AREA */
-  .mic-area { padding: 12px 16px 16px; border-top: 1px solid var(--border); background: white; display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
-  .live-transcript { font-size: 13px; color: var(--ink-mid); font-style: italic; min-height: 18px; text-align: center; line-height: 1.5; max-width: 460px; width: 100%; }
-  .mic-controls { display: flex; align-items: center; gap: 14px; }
-  .mic-btn { width: 68px; height: 68px; border-radius: 50%; border: none; cursor: pointer; background: var(--ink); color: white; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; outline: none; }
-  .mic-btn:hover { background: #333; transform: scale(1.04); }
-  .mic-btn.listening { background: var(--mic-red); animation: pulse-ring 1.4s ease-out infinite; }
-  .mic-btn:disabled { background: var(--cream-darker); cursor: not-allowed; transform: none; }
-  .mic-btn svg { width: 26px; height: 26px; }
-  @keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(224,62,45,0.5)} 70%{box-shadow:0 0 0 16px rgba(224,62,45,0)} 100%{box-shadow:0 0 0 0 rgba(224,62,45,0)} }
-  .submit-btn { background: var(--green); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; display: none; }
-  .submit-btn.visible { display: block; }
-  .mic-status { font-size: 13px; color: var(--ink-mid); text-align: center; }
-  .mic-status.listening { color: var(--mic-red); font-weight: 500; }
-  .mic-hint { font-size: 12px; color: var(--ink-light); text-align: center; }
+/* Part 2 timer card */
+.timer-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow-sm); }
+.timer-card.prep { border-color: #f59e0b; background: #fffbeb; }
+.timer-card.speaking { border-color: var(--teal); background: var(--teal-light); }
+.timer-card.urgent { border-color: var(--red); background: var(--red-light); animation: pulse-border 1s ease-in-out infinite; }
+@keyframes pulse-border { 0%,100%{border-color:var(--red)} 50%{border-color:#ff8888} }
+.timer-ring { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring .ring-bg { fill: none; stroke: var(--border); stroke-width: 4; }
+.timer-ring .ring-fill { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+.timer-ring-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.timer-info { flex: 1; }
+.timer-info-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 2px; }
+.timer-info-desc { font-size: 14px; color: var(--ink); }
+.timer-info-sub { font-size: 12px; color: var(--ink-mid); margin-top: 2px; }
+.timer-start-btn { background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; white-space: nowrap; }
+.timer-start-btn:hover { background: var(--teal-dark); }
 
-  /* FEEDBACK */
-  .feedback-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: var(--shadow); }
-  .fb-header { padding: 7px 12px; background: var(--cream-dark); font-size: 11px; font-weight: 500; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .fb-body { padding: 11px 13px; display: flex; flex-direction: column; gap: 9px; }
-  .fb-row { display: flex; gap: 9px; align-items: flex-start; }
-  .fb-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
-  .fb-icon.green { background: var(--green-light); color: var(--green); }
-  .fb-icon.amber { background: var(--gold-light); color: var(--gold); }
-  .fb-icon.blue { background: var(--blue-light); color: var(--blue); }
-  .fb-icon.purple { background: #f0e8f8; color: #7a3a8a; }
-  .fb-icon.orange { background: var(--accent-light); color: var(--accent); }
-  .fb-text { line-height: 1.55; color: var(--ink); flex: 1; }
-  .fb-text .correction { color: var(--green); font-weight: 500; }
-  .fb-text .original { text-decoration: line-through; color: var(--ink-light); }
+/* Feedback cards */
+.feedback-wrap { display: flex; flex-direction: column; gap: 10px; }
+.fb-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.fb-card-header { padding: 8px 14px; background: var(--bg); font-size: 11px; font-weight: 600; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+.fb-card-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.fb-row { display: flex; gap: 10px; align-items: flex-start; }
+.fb-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.fb-dot.g { background: var(--green-light); color: var(--green); }
+.fb-dot.a { background: #fef3c7; color: #92400e; }
+.fb-dot.b { background: var(--p2-light); color: var(--p2); }
+.fb-dot.p { background: var(--p3-light); color: var(--p3); }
+.fb-text { font-size: 13px; line-height: 1.6; color: var(--ink); flex: 1; }
+.band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.band-box { background: var(--bg); border-radius: var(--radius-sm); padding: 10px 12px; }
+.band-box-name { font-size: 10px; color: var(--ink-light); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+.band-box-score { font-size: 22px; font-weight: 700; color: var(--teal); }
+.band-box-note { font-size: 11px; color: var(--ink-mid); margin-top: 2px; line-height: 1.4; }
 
-  /* BAND SCORE */
-  .band-pill { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; font-weight: 700; font-size: 16px; font-family: 'Lora', serif; flex-shrink: 0; }
+/* Summary */
+.summary-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); }
+.summary-header { background: var(--teal); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+.summary-header-left { }
+.summary-header-title { font-size: 16px; font-weight: 700; color: white; }
+.summary-header-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.summary-band-big { text-align: center; }
+.summary-band-num { font-size: 44px; font-weight: 700; color: white; line-height: 1; }
+.summary-band-label { font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.08em; }
+.summary-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.summary-section-title { font-size: 11px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.crit-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--bg); margin-bottom: 5px; }
+.crit-name { font-size: 12px; font-weight: 500; flex: 1; }
+.crit-bar-wrap { flex: 2; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.crit-bar { height: 100%; border-radius: 99px; background: var(--teal); }
+.crit-score { font-size: 14px; font-weight: 700; color: var(--teal); min-width: 28px; text-align: right; }
+.summary-tip { background: var(--teal-light); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: #0a6b78; line-height: 1.6; border-left: 3px solid var(--teal); }
+.summary-actions { display: flex; gap: 10px; }
 
-  /* SUMMARY */
-  .summary-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; box-shadow: var(--shadow); }
-  .summary-header { padding: 12px 16px; background: var(--accent); color: white; font-family: 'Lora', serif; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
-  .summary-band { font-size: 24px; font-weight: 700; font-family: 'Lora', serif; }
-  .summary-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-  .summary-section-title { font-size: 11px; font-weight: 500; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
-  .criterion-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: var(--cream-dark); margin-bottom: 5px; }
-  .criterion-name { font-size: 12px; font-weight: 500; flex: 1; }
-  .criterion-bar-wrap { flex: 2; height: 6px; background: var(--cream-darker); border-radius: 99px; overflow: hidden; }
-  .criterion-bar { height: 100%; border-radius: 99px; }
-  .criterion-score { font-size: 13px; font-weight: 600; font-family: 'Lora', serif; min-width: 24px; text-align: right; }
-  .summary-item { padding: 7px 11px; border-radius: 8px; line-height: 1.55; margin-bottom: 5px; font-size: 13px; }
-  .summary-item.grammar { background: var(--accent-light); color: var(--accent-dark); }
-  .summary-item.vocab { background: var(--gold-light); color: #7a5c00; }
-  .summary-item.praise { background: var(--green-light); color: var(--green); }
+/* Mic area */
+.mic-area { padding: 14px 20px 16px; border-top: 1px solid var(--border); background: var(--white); display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; box-shadow: 0 -2px 8px rgba(0,0,0,0.04); }
+.live-transcript { font-size: 13px; color: var(--ink-mid); font-style: italic; min-height: 18px; text-align: center; line-height: 1.5; max-width: 500px; width: 100%; }
+.mic-controls { display: flex; align-items: center; gap: 16px; }
+.mic-btn { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; background: var(--teal); color: white; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; outline: none; box-shadow: 0 4px 12px rgba(14,155,173,0.3); }
+.mic-btn:hover { background: var(--teal-dark); transform: scale(1.04); }
+.mic-btn.listening { background: var(--red); box-shadow: 0 4px 12px rgba(224,62,45,0.35); animation: pulse-ring 1.4s ease-out infinite; }
+.mic-btn:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; transform: none; }
+.mic-btn svg { width: 26px; height: 26px; }
+@keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(224,62,45,0.5)} 70%{box-shadow:0 0 0 16px rgba(224,62,45,0)} 100%{box-shadow:0 0 0 0 rgba(224,62,45,0)} }
+.submit-btn { background: var(--ink); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; }
+.submit-btn:hover { background: #333; }
+.submit-btn:disabled { background: var(--border); color: var(--ink-light); cursor: not-allowed; }
+.mic-status { font-size: 12px; color: var(--ink-light); text-align: center; }
+.mic-status.listening { color: var(--red); font-weight: 500; }
+.mic-hint { font-size: 11px; color: var(--ink-light); text-align: center; }
 
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(26,24,20,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 12px; padding: 28px; width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 40px rgba(26,24,20,0.2); }
-  .modal h2 { font-family: 'Lora', serif; font-size: 1.1rem; }
-  .modal p { font-size: 13px; color: var(--ink-mid); }
-  .modal input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; }
-  .modal input:focus { border-color: var(--accent); }
-  .modal-btns { display: flex; gap: 8px; }
-  .modal-error { font-size: 12px; color: #c85a2a; display: none; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .typing-dots { display: flex; gap: 4px; padding: 11px 15px; background: white; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; width: fit-content; box-shadow: var(--shadow); }
-  .typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-light); animation: bounce 1.2s infinite; }
-  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(2px); }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 16px; padding: 28px; width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-lg); }
+.modal h2 { font-size: 1.1rem; font-weight: 600; }
+.modal p { font-size: 13px; color: var(--ink-mid); }
+.modal input { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s; }
+.modal input:focus { border-color: var(--teal); }
+.modal-btns { display: flex; gap: 8px; }
+.modal-error { font-size: 12px; color: var(--red); display: none; }
+
+.loading-overlay { position: fixed; inset: 0; background: rgba(248,249,250,0.92); display: none; align-items: center; justify-content: center; z-index: 50; flex-direction: column; gap: 14px; }
+.loading-overlay.show { display: flex; }
+.loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--ink-mid); }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: white; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) { .landing-card { padding: 32px 24px; } .messages-area { padding: 14px; } }
 </style>
 </head>
 <body>
 
 <!-- LANDING -->
 <div id="screen-landing" class="screen active">
-  <div class="landing-logo">IELTS <span>Speaking</span> Practice</div>
-  <div class="ielts-badge badge-parts">🎤 Full Speaking Test — Parts 1, 2 & 3</div>
-  <div class="landing-sub">Practice the complete IELTS Speaking test with instant band score feedback on all 4 official criteria</div>
-  <div class="parts-info">
-    <div class="part-chip p1"><div>Part 1</div>Introduction</div>
-    <div class="part-chip p2"><div>Part 2</div>Long Turn</div>
-    <div class="part-chip p3"><div>Part 3</div>Discussion</div>
-  </div>
-  <div class="landing-btns">
-    <button class="btn-primary" onclick="showStudent()">Start practice →</button>
-    <div class="divider"></div>
-    <button class="btn-secondary" onclick="showPasswordModal()">Teacher panel</button>
+  <div class="landing-card">
+    <div class="landing-logo-wrap">
+      <svg class="landing-logo-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 44 C24 44 10 34 10 22 C10 14 16 8 24 8 C32 8 38 14 38 22 C38 34 24 44 24 44Z" fill="#0E9BAD" opacity="0.15"/>
+        <path d="M24 6 C20 6 17 9 16 13 C15 11 13 10 11 10 C11 16 14 20 18 22 C17 20 17 17 19 15 C19 19 21 23 24 26 C27 23 29 19 29 15 C31 17 31 20 30 22 C34 20 37 16 37 10 C35 10 33 11 32 13 C31 9 28 6 24 6Z" fill="#0E9BAD"/>
+      </svg>
+      <div class="landing-logo-text">
+        <div class="earth">EARTH</div>
+        <div class="university">UNIVERSITY</div>
+      </div>
+    </div>
+    <div class="landing-divider"></div>
+    <div class="landing-title">IELTS Speaking Practice</div>
+    <div class="landing-sub">20 full speaking tests with AI band score feedback across all four official IELTS criteria</div>
+    <div class="parts-grid">
+      <div class="part-chip p1"><div class="pnum">Part 1</div>Introduction<br>4–5 mins</div>
+      <div class="part-chip p2"><div class="pnum">Part 2</div>Long Turn<br>3–4 mins</div>
+      <div class="part-chip p3"><div class="pnum">Part 3</div>Discussion<br>4–5 mins</div>
+    </div>
+    <div class="landing-btns">
+      <button class="btn-primary" onclick="showStudent()">Start practice →</button>
+      <button class="btn-secondary" onclick="showPasswordModal()">Teacher panel</button>
+    </div>
   </div>
 </div>
 
 <!-- STUDENT -->
 <div id="screen-student" class="screen">
-  <div class="chat-header">
-    <div class="chat-logo">IELTS <span>Speaking</span> Practice</div>
-    <div class="part-indicator done" id="part-indicator">Select a test</div>
+  <div class="app-header">
+    <div class="logo-wrap">
+      <svg class="logo-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 32 C18 32 8 25 8 17 C8 11 12 6 18 6 C24 6 28 11 28 17 C28 25 18 32 18 32Z" fill="#0E9BAD" opacity="0.15"/>
+        <path d="M18 4 C15 4 13 7 12 10 C11 8 9 8 8 8 C8 13 11 16 14 17 C13 15 13 13 15 11 C15 14 16 17 18 20 C20 17 21 14 21 11 C23 13 23 15 22 17 C25 16 28 13 28 8 C27 8 25 8 24 10 C23 7 21 4 18 4Z" fill="#0E9BAD"/>
+      </svg>
+      <div class="logo-text">
+        <span class="earth">EARTH</span>
+        <span class="university">UNIVERSITY</span>
+      </div>
+    </div>
+    <div class="header-badge">IELTS Speaking</div>
+    <div class="header-right">
+      <div class="header-timer" id="header-timer">
+        <div>
+          <div class="timer-label" id="timer-label">Time</div>
+          <div class="timer-value" id="timer-value">2:00</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="exam-select-area">
-    <label>Select test:</label>
-    <select id="exam-select" onchange="onExamChange()">
-      <option value="">— choose a test —</option>
-    </select>
+
+  <div class="exam-bar">
+    <select id="exam-select" onchange="onExamChange()"><option value="">— Select a test —</option></select>
     <button class="btn-start" onclick="startExam()">Start</button>
   </div>
-  <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
-    <div class="progress-label">
-      <span id="progress-label-text">Part 1 — Question 1</span>
+
+  <div class="progress-track" id="progress-track" style="display:none">
+    <div class="progress-meta">
+      <span id="progress-label">Part 1 — Introduction</span>
       <span id="progress-pct">0%</span>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%;background:var(--part1)"></div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="part-tabs">
+      <div class="part-tab" id="tab-p1">Part 1</div>
+      <div class="part-tab" id="tab-p2">Part 2</div>
+      <div class="part-tab" id="tab-p3">Part 3</div>
+    </div>
   </div>
+
   <div class="messages-area" id="messages-area"></div>
+
   <div class="mic-area">
     <div class="live-transcript" id="live-transcript"></div>
     <div class="mic-controls">
@@ -210,9 +309,9 @@
           <line x1="12" y1="19" x2="12" y2="22"/>
         </svg>
       </button>
-      <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Submit answer →</button>
+      <button class="submit-btn" id="submit-btn" onclick="submitAnswer()" disabled>Submit →</button>
     </div>
-    <div class="mic-status" id="mic-status">Select a test above to begin</div>
+    <div class="mic-status" id="mic-status">Select a test to begin</div>
     <div class="mic-hint" id="mic-hint"></div>
   </div>
 </div>
@@ -220,8 +319,8 @@
 <!-- PASSWORD MODAL -->
 <div class="modal-overlay" id="pw-modal">
   <div class="modal">
-    <h2>Teacher Access</h2>
-    <p>Enter the teacher password.</p>
+    <h2>Teacher Panel</h2>
+    <p>Enter the teacher password to access settings.</p>
     <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"/>
     <div class="modal-error" id="pw-error">Incorrect password.</div>
     <div class="modal-btns">
@@ -230,654 +329,483 @@
     </div>
   </div>
 </div>
+<div class="loading-overlay" id="loading-overlay"><div class="loading-spinner"></div><div class="loading-text" id="loading-text">Analysing your response…</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 const TEACHER_PASSWORD = "teacher123";
 const WORKER_URL = "https://chatbot-limit-0d2b.simonwhalley.workers.dev";
 
-// ── 20 IELTS SPEAKING TESTS ──
 const IELTS_TESTS = [
-  {
-    id: 1, name: "IELTS Speaking Test 1 — Daily Life",
-    part1: { topic: "Your Home & Neighbourhood", questions: ["Can you describe the area where you currently live?", "What do you like most about your neighbourhood?", "How has your neighbourhood changed in recent years?", "Do you think it is better to live in a house or an apartment? Why?"] },
-    part2: { title: "Describe a place in your city or town that you enjoy visiting.", bullets: ["Where it is", "How often you go there", "What you do there", "Explain why you enjoy visiting this place"] },
-    part3: { topic: "Urban Development & Community", questions: ["How important is it for cities to have green spaces and parks?", "Do you think modern cities are becoming more or less friendly for residents? Why?", "How might cities need to change to meet the needs of future generations?", "What are the advantages and disadvantages of living in a large city compared to a small town?"] }
-  },
-  {
-    id: 2, name: "IELTS Speaking Test 2 — Technology",
-    part1: { topic: "Technology in Daily Life", questions: ["How often do you use the internet in a typical day?", "What kinds of things do you use your phone for most?", "Do you think people your age spend too much time on their phones?", "Can you remember life before smartphones? How was it different?"] },
-    part2: { title: "Describe a piece of technology that you find very useful.", bullets: ["What it is", "How long you have used it", "What you use it for", "Explain why you find it so useful"] },
-    part3: { topic: "Technology & Society", questions: ["How has technology changed the way people communicate with each other?", "Do you think technology is making people more or less productive? Why?", "What are the risks of society becoming too dependent on technology?", "How do you think artificial intelligence will change the workplace in the future?"] }
-  },
-  {
-    id: 3, name: "IELTS Speaking Test 3 — Education",
-    part1: { topic: "Studying & Learning", questions: ["What subject did you enjoy most at school and why?", "Do you prefer studying alone or with others?", "How do you think your education has prepared you for the future?", "Is there a subject you wish you had studied more? Why?"] },
-    part2: { title: "Describe a teacher who had a positive influence on you.", bullets: ["Who this person was", "What subject they taught", "What made them special", "Explain how they influenced you"] },
-    part3: { topic: "Education Systems & Learning", questions: ["What do you think is the most important purpose of education?", "Should university education be free for all students? Why or why not?", "How has the way people learn changed with the development of the internet?", "Do you think exams are the best way to assess students' abilities? Why or why not?"] }
-  },
-  {
-    id: 4, name: "IELTS Speaking Test 4 — Environment",
-    part1: { topic: "Nature & the Environment", questions: ["Do you enjoy spending time in nature? Why or why not?", "How often do you think about the environment in your daily choices?", "Has awareness of environmental issues changed among young people in your country?", "What do you do personally to help protect the environment?"] },
-    part2: { title: "Describe an environmental problem that concerns you.", bullets: ["What the problem is", "What causes it", "What effects it has", "Explain what you think should be done about it"] },
-    part3: { topic: "Environmental Issues & Responsibility", questions: ["Who do you think is most responsible for protecting the environment — individuals, companies, or governments?", "How effective do you think international agreements on climate change have been?", "Do you think economic development and environmental protection can go hand in hand?", "How might climate change affect your country specifically in the next 50 years?"] }
-  },
-  {
-    id: 5, name: "IELTS Speaking Test 5 — Work & Careers",
-    part1: { topic: "Work & Jobs", questions: ["What kind of work do you do or would you like to do in the future?", "What is more important to you in a job — salary or job satisfaction?", "Do you think it is important to have a work-life balance? Why?", "What skills do you think are most important in the modern workplace?"] },
-    part2: { title: "Describe a job you would like to have in the future.", bullets: ["What the job is", "What qualifications or skills it requires", "What the job involves", "Explain why you would like to do this job"] },
-    part3: { topic: "Work, Economy & Society", questions: ["How has the nature of work changed over the past few decades?", "Do you think people today have more or less job security than in the past?", "What are the advantages and disadvantages of working from home?", "How might automation and artificial intelligence affect employment in the future?"] }
-  },
-  {
-    id: 6, name: "IELTS Speaking Test 6 — Health & Lifestyle",
-    part1: { topic: "Health & Wellbeing", questions: ["How important is it to you to maintain a healthy lifestyle?", "What do you do to keep fit or healthy?", "Do you think people in your country have a healthy diet in general?", "How has health awareness changed among young people in your country?"] },
-    part2: { title: "Describe a healthy habit you have or would like to develop.", bullets: ["What the habit is", "How long you have had it or when you would like to start", "What it involves", "Explain why you think it is beneficial"] },
-    part3: { topic: "Health, Society & Government", questions: ["To what extent should governments be responsible for the health of their citizens?", "Do you think the food industry has a responsibility to make healthier products?", "How has modern life affected people's physical and mental health?", "What do you think are the biggest health challenges facing your country?"] }
-  },
-  {
-    id: 7, name: "IELTS Speaking Test 7 — Travel & Tourism",
-    part1: { topic: "Travel & Holidays", questions: ["How often do you travel, and where do you usually go?", "Do you prefer travelling alone or with others? Why?", "What do you think is the best way to experience a new country?", "Has travel become easier or more difficult in recent years, in your opinion?"] },
-    part2: { title: "Describe a journey or trip that you remember well.", bullets: ["Where you went", "Who you travelled with", "What you did there", "Explain why this journey was memorable"] },
-    part3: { topic: "Tourism & Its Impact", questions: ["What are the economic benefits and drawbacks of tourism for a country?", "How does mass tourism affect local cultures and environments?", "Do you think space tourism will become common in the future? Why?", "How can governments encourage sustainable tourism?"] }
-  },
-  {
-    id: 8, name: "IELTS Speaking Test 8 — Media & Communication",
-    part1: { topic: "News & Media", questions: ["How do you usually get your news — TV, newspapers, or social media?", "Do you think it is important to follow current events? Why?", "How much do you trust the news sources you use?", "Has the way you consume media changed in recent years?"] },
-    part2: { title: "Describe a news story or event that affected you.", bullets: ["What the story or event was", "When and how you heard about it", "What happened as a result", "Explain why it affected you"] },
-    part3: { topic: "Media, Truth & Society", questions: ["How has social media changed the way news is reported and shared?", "What are the dangers of misinformation spreading on social media?", "Do you think traditional newspapers will survive in the digital age?", "Should governments have the right to regulate what is published on the internet?"] }
-  },
-  {
-    id: 9, name: "IELTS Speaking Test 9 — Family & Relationships",
-    part1: { topic: "Family Life", questions: ["Can you tell me about your family?", "How important is family to you compared to friends?", "How have family structures changed in your country in recent years?", "Do you think it is better for children to grow up in a large or small family? Why?"] },
-    part2: { title: "Describe a person in your family who you admire.", bullets: ["Who this person is", "What they do or have done", "What their personality is like", "Explain why you admire them"] },
-    part3: { topic: "Family, Society & Change", questions: ["How has the role of women in the family changed in your society?", "Do you think it is important for older generations to live with or near younger family members?", "How do you think family values differ between generations today?", "What responsibilities do adult children have towards their parents as they age?"] }
-  },
-  {
-    id: 10, name: "IELTS Speaking Test 10 — Arts & Culture",
-    part1: { topic: "Arts, Music & Culture", questions: ["Do you enjoy visiting museums or art galleries? Why or why not?", "What kind of music do you listen to, and why do you like it?", "Is art and culture important in everyday life, in your opinion?", "Have you ever learned to play a musical instrument or do any kind of art?"] },
-    part2: { title: "Describe a film, book, or piece of music that you found meaningful.", bullets: ["What it is and who created it", "When you first encountered it", "What it is about or what happens in it", "Explain why it was meaningful to you"] },
-    part3: { topic: "Arts, Culture & Society", questions: ["Should governments fund the arts, or should the arts be self-supporting?", "How does art reflect or influence the society in which it is created?", "Do you think traditional arts and crafts are in danger of disappearing? Why?", "How has globalisation affected local cultures around the world?"] }
-  },
-  {
-    id: 11, name: "IELTS Speaking Test 11 — Food & Eating",
-    part1: { topic: "Food & Cooking", questions: ["Do you enjoy cooking? What kinds of food do you like to cook?", "How important is food and eating together in your culture?", "Have your eating habits changed since you were a child?", "Do you prefer eating at home or in restaurants? Why?"] },
-    part2: { title: "Describe a meal you particularly enjoyed.", bullets: ["What the occasion was", "Where the meal was and who prepared it", "What you ate", "Explain why this meal was so enjoyable"] },
-    part3: { topic: "Food, Culture & Global Issues", questions: ["How has globalisation changed the food culture in your country?", "Do you think people today make healthy food choices? Why or why not?", "What responsibilities do food companies have towards consumers' health?", "How serious is the issue of food waste globally, and what can be done about it?"] }
-  },
-  {
-    id: 12, name: "IELTS Speaking Test 12 — Sports & Exercise",
-    part1: { topic: "Sport & Physical Activity", questions: ["What sports or physical activities do you enjoy?", "How important do you think it is for children to participate in sport?", "Is sport popular in your country? What kinds of sport do people follow?", "Do you think professional athletes earn too much money? Why?"] },
-    part2: { title: "Describe a sporting event that you watched or participated in.", bullets: ["What the event was", "When and where it took place", "What happened", "Explain why it was interesting or important to you"] },
-    part3: { topic: "Sport, Society & Competition", questions: ["What are the social benefits of sport beyond physical fitness?", "Do you think competition in sport teaches important life lessons?", "How has technology changed professional sport in recent years?", "Should countries spend large amounts of money hosting events like the Olympics? Why?"] }
-  },
-  {
-    id: 13, name: "IELTS Speaking Test 13 — Science & Innovation",
-    part1: { topic: "Science & Discovery", questions: ["Were you interested in science at school? Why or why not?", "What scientific discovery do you think has had the greatest impact on humanity?", "Do you follow scientific news or developments? Why or why not?", "Do you think science and technology have improved or complicated our lives?"] },
-    part2: { title: "Describe a scientific discovery or invention that you find fascinating.", bullets: ["What it is", "When it was discovered or invented", "How it works or what it does", "Explain why you find it fascinating"] },
-    part3: { topic: "Science, Ethics & Progress", questions: ["Should there be limits on scientific research? Who should decide?", "How important is it to invest in space exploration compared to solving problems on Earth?", "Do you think genetic engineering offers more benefits or risks to humanity?", "How can governments encourage more young people to pursue careers in science?"] }
-  },
-  {
-    id: 14, name: "IELTS Speaking Test 14 — Shopping & Money",
-    part1: { topic: "Shopping & Consumer Habits", questions: ["Do you enjoy shopping? What do you like to buy?", "How has online shopping changed the way you buy things?", "Do you think people today spend money wisely?", "How important is it to save money for the future?"] },
-    part2: { title: "Describe something expensive that you bought or would like to buy.", bullets: ["What it is", "Why it is expensive", "Whether you bought it or are saving for it", "Explain whether you think it was or would be worth the cost"] },
-    part3: { topic: "Consumerism, Economy & Values", questions: ["Do you think people in your country consume too much? Why?", "How does advertising influence people's spending habits?", "What are the environmental consequences of a consumer-driven economy?", "Do you think there is too much inequality between rich and poor in the world today?"] }
-  },
-  {
-    id: 15, name: "IELTS Speaking Test 15 — Language & Communication",
-    part1: { topic: "Language Learning", questions: ["What languages do you speak, and how did you learn them?", "Do you think it is important to learn foreign languages? Why?", "What do you find most challenging about learning a new language?", "Has learning another language changed how you think or see the world?"] },
-    part2: { title: "Describe an experience you had communicating in a foreign language.", bullets: ["When and where it happened", "What language you used", "What the situation was", "Explain how you felt about the experience"] },
-    part3: { topic: "Language, Identity & Globalisation", questions: ["Do you think English will remain the world's dominant international language?", "How does the language we speak influence our identity and culture?", "Is it important for countries to protect minority languages? Why?", "How has the internet affected the way languages develop and change?"] }
-  },
-  {
-    id: 16, name: "IELTS Speaking Test 16 — Crime & Justice",
-    part1: { topic: "Safety & Society", questions: ["Do you feel safe in the area where you live? Why?", "How has crime changed in your country in recent years?", "What do you think causes people to commit crimes?", "Do you think punishments for crime are fair in your country?"] },
-    part2: { title: "Describe a law or rule that you think is particularly important.", bullets: ["What the law or rule is", "Why it exists", "How it affects people", "Explain why you think it is important"] },
-    part3: { topic: "Crime, Justice & Society", questions: ["What do you think is the most effective way to reduce crime in society?", "Should the focus of the justice system be on punishment or rehabilitation?", "How has organised crime changed with the development of technology?", "Do you think surveillance cameras in public places help reduce crime or invade privacy?"] }
-  },
-  {
-    id: 17, name: "IELTS Speaking Test 17 — Children & Development",
-    part1: { topic: "Childhood & Growing Up", questions: ["What is your earliest happy memory from childhood?", "How do you think childhood is different today compared to previous generations?", "Do you think children today have more or fewer opportunities than in the past?", "What activities do you think are most beneficial for children's development?"] },
-    part2: { title: "Describe something you learned in childhood that has been useful in your life.", bullets: ["What you learned", "How you learned it", "Who taught you or how you discovered it", "Explain how it has been useful"] },
-    part3: { topic: "Education, Parenting & Society", questions: ["How much responsibility should parents have for their children's behaviour in society?", "Do you think schools or parents have a greater influence on a child's development?", "How important is play in children's development, and is it given enough priority?", "What are the effects of social media on children and teenagers?"] }
-  },
-  {
-    id: 18, name: "IELTS Speaking Test 18 — Government & Politics",
-    part1: { topic: "Society & Citizenship", questions: ["Do you follow politics in your country? Why or why not?", "Do you think it is important to vote in elections?", "What do you think is the most important responsibility of a government?", "How satisfied are people in your country with their government, in general?"] },
-    part2: { title: "Describe a change you would like to see in your country.", bullets: ["What change you would like", "Why this change is needed", "How it could be achieved", "Explain what impact you think it would have"] },
-    part3: { topic: "Democracy, Rights & Global Issues", questions: ["What are the strengths and weaknesses of a democratic system of government?", "Do you think citizens today have enough power to influence government decisions?", "How should governments balance individual freedoms with the needs of society?", "Do you think international organisations like the United Nations are effective? Why?"] }
-  },
-  {
-    id: 19, name: "IELTS Speaking Test 19 — Future & Change",
-    part1: { topic: "Plans & Ambitions", questions: ["What are your main ambitions or goals for the future?", "How do you think your life will be different in ten years?", "Are you an optimistic or pessimistic person when you think about the future? Why?", "What is the most important change you hope to see in the world during your lifetime?"] },
-    part2: { title: "Describe something you are planning to do in the near future.", bullets: ["What you are planning to do", "When you plan to do it", "How you are preparing for it", "Explain why you are looking forward to it"] },
-    part3: { topic: "Change, Progress & Society", questions: ["Do you think the world will be a better or worse place in 50 years? Why?", "How can individuals best prepare for an uncertain future?", "What do you think are the greatest challenges facing humanity in the coming decades?", "How important is it to learn from the past in order to shape a better future?"] }
-  },
-  {
-    id: 20, name: "IELTS Speaking Test 20 — Social Issues",
-    part1: { topic: "Community & Social Life", questions: ["How connected do you feel to your local community?", "Do you think people today are more or less socially isolated than in the past?", "How important is it to volunteer or give back to society?", "What social issue do you feel most strongly about?"] },
-    part2: { title: "Describe a social issue that you care about.", bullets: ["What the issue is", "Who it affects and how", "What is being done about it", "Explain why you care about this issue"] },
-    part3: { topic: "Inequality, Society & Global Responsibility", questions: ["What do you think are the root causes of poverty, and how can it be addressed?", "Do you think social media has made society more or less equal? Why?", "How can governments best address growing inequality within their countries?", "Do wealthier countries have a moral obligation to help poorer nations? Why?"] }
-  }
+  { id:1, name:"Test 1 — Daily Life & Urban Living", part1:{topic:"Your Home & Neighbourhood",questions:["Can you describe the area where you currently live?","What do you like most about your neighbourhood?","How has your neighbourhood changed in recent years?","Do you think it is better to live in a house or an apartment? Why?"]}, part2:{title:"Describe a place in your city or town that you enjoy visiting.",bullets:["Where it is","How often you go there","What you do there","Explain why you enjoy visiting this place"]}, part3:{topic:"Urban Development & Community",questions:["How important is it for cities to have green spaces and parks?","Do you think modern cities are becoming more or less friendly for residents?","How might cities need to change to meet the needs of future generations?","What are the advantages and disadvantages of living in a large city?"]}},
+  { id:2, name:"Test 2 — Technology & Society", part1:{topic:"Technology in Daily Life",questions:["How often do you use the internet in a typical day?","What kinds of things do you use your phone for most?","Do you think people your age spend too much time on their phones?","Can you remember life before smartphones? How was it different?"]}, part2:{title:"Describe a piece of technology that you find very useful.",bullets:["What it is","How long you have used it","What you use it for","Explain why you find it so useful"]}, part3:{topic:"Technology & Society",questions:["How has technology changed the way people communicate?","Do you think technology is making people more or less productive?","What are the risks of society becoming too dependent on technology?","How do you think AI will change the workplace in the future?"]}},
+  { id:3, name:"Test 3 — Education & Learning", part1:{topic:"Studying & Learning",questions:["What subject did you enjoy most at school and why?","Do you prefer studying alone or with others?","How do you think your education has prepared you for the future?","Is there a subject you wish you had studied more?"]}, part2:{title:"Describe a teacher who had a positive influence on you.",bullets:["Who this person was","What subject they taught","What made them special","Explain how they influenced you"]}, part3:{topic:"Education Systems",questions:["What do you think is the most important purpose of education?","Should university education be free for all students?","How has the internet changed the way people learn?","Do you think exams are the best way to assess students?"]}},
+  { id:4, name:"Test 4 — Environment & Nature", part1:{topic:"Nature & the Environment",questions:["Do you enjoy spending time in nature? Why or why not?","How often do you think about the environment in your daily choices?","Has environmental awareness changed among young people in your country?","What do you do personally to help protect the environment?"]}, part2:{title:"Describe an environmental problem that concerns you.",bullets:["What the problem is","What causes it","What effects it has","Explain what you think should be done"]}, part3:{topic:"Environmental Issues",questions:["Who is most responsible for protecting the environment?","How effective have international climate agreements been?","Can economic development and environmental protection go hand in hand?","How might climate change affect your country in the next 50 years?"]}},
+  { id:5, name:"Test 5 — Work & Careers", part1:{topic:"Work & Jobs",questions:["What kind of work do you do or would like to do?","What is more important — salary or job satisfaction?","Do you think it is important to have a work-life balance?","What skills do you think are most important in the modern workplace?"]}, part2:{title:"Describe a job you would like to have in the future.",bullets:["What the job is","What qualifications it requires","What the job involves","Explain why you would like to do it"]}, part3:{topic:"Work & Economy",questions:["How has the nature of work changed over recent decades?","Do people today have more or less job security than in the past?","What are the advantages and disadvantages of working from home?","How might automation affect employment in the future?"]}},
+  { id:6, name:"Test 6 — Health & Lifestyle", part1:{topic:"Health & Wellbeing",questions:["How important is it to you to maintain a healthy lifestyle?","What do you do to keep fit or healthy?","Do people in your country have a healthy diet in general?","How has health awareness changed among young people?"]}, part2:{title:"Describe a healthy habit you have or would like to develop.",bullets:["What the habit is","How long you have had it","What it involves","Explain why it is beneficial"]}, part3:{topic:"Health & Society",questions:["To what extent should governments be responsible for citizens' health?","Does the food industry have a responsibility to make healthier products?","How has modern life affected physical and mental health?","What are the biggest health challenges facing your country?"]}},
+  { id:7, name:"Test 7 — Travel & Tourism", part1:{topic:"Travel & Holidays",questions:["How often do you travel, and where do you usually go?","Do you prefer travelling alone or with others?","What do you think is the best way to experience a new country?","Has travel become easier or more difficult in recent years?"]}, part2:{title:"Describe a journey or trip that you remember well.",bullets:["Where you went","Who you travelled with","What you did there","Explain why this journey was memorable"]}, part3:{topic:"Tourism & Society",questions:["How has tourism changed in your country?","What are the positive and negative effects of tourism on local communities?","Do you think cheap air travel should be taxed more?","How might tourism change over the next 20 years?"]}},
+  { id:8, name:"Test 8 — Arts, Media & Culture", part1:{topic:"Arts & Entertainment",questions:["What kind of music do you enjoy and why?","How often do you watch films or TV series?","Do you think arts and culture are important in society?","Has social media changed the way people consume art and entertainment?"]}, part2:{title:"Describe a film, book, or piece of music that impressed you.",bullets:["What it is","When you experienced it","What it is about or what it involves","Explain why it impressed you"]}, part3:{topic:"Arts, Media & Society",questions:["Should governments fund arts and culture?","How has social media changed journalism and news?","Do you think people today read less than previous generations?","How does popular culture reflect the values of a society?"]}},
+  { id:9, name:"Test 9 — Family & Relationships", part1:{topic:"Family & Home Life",questions:["Can you describe your family?","How much time do you spend with your family?","How have family structures changed in your country?","What do you think makes a happy family?"]}, part2:{title:"Describe a person in your family who has influenced you.",bullets:["Who this person is","What your relationship is","What qualities they have","Explain how they have influenced you"]}, part3:{topic:"Family & Society",questions:["How have gender roles within families changed?","Should grandparents play a role in raising children?","What are the effects of high divorce rates on society?","How might family life change in the future?"]}},
+  { id:10, name:"Test 10 — Food & Culture", part1:{topic:"Food & Eating",questions:["What kinds of food do you enjoy eating?","Do you prefer eating at home or in restaurants?","How important is food to your culture?","Have your eating habits changed over time?"]}, part2:{title:"Describe a traditional meal or dish from your country.",bullets:["What the dish is","How it is prepared","When it is usually eaten","Explain why it is significant"]}, part3:{topic:"Food, Culture & Global Issues",questions:["How has globalisation affected food culture?","Is it important to preserve traditional foods and recipes?","What are the environmental impacts of modern food production?","How can governments encourage healthier eating?"]}},
+  { id:11, name:"Test 11 — Sport & Physical Activity", part1:{topic:"Sport & Exercise",questions:["Do you play any sports or do regular exercise?","How popular is sport in your country?","Do you prefer watching or participating in sport?","Has your interest in sport changed as you have got older?"]}, part2:{title:"Describe a sport or physical activity you enjoy.",bullets:["What the sport or activity is","How often you do it","How you got started","Explain why you enjoy it"]}, part3:{topic:"Sport & Society",questions:["Should PE be compulsory at all levels of school?","What are the social benefits of team sports?","Do professional athletes earn too much money?","How has technology changed the world of sport?"]}},
+  { id:12, name:"Test 12 — Science & Innovation", part1:{topic:"Science & Discovery",questions:["Are you interested in science? Why or why not?","What scientific discovery do you think has been most important?","How do you keep up with scientific news and developments?","Do you think science classes at school are interesting?"]}, part2:{title:"Describe a scientific discovery or invention that you find fascinating.",bullets:["What the discovery or invention is","When it was made or developed","How it works or what it does","Explain why you find it fascinating"]}, part3:{topic:"Science, Ethics & Society",questions:["Should governments invest more in scientific research?","Are there any areas of science that should be restricted?","How has science changed our understanding of the world?","What do you think will be the most important scientific development of the next century?"]}},
+  { id:13, name:"Test 13 — Money & Economy", part1:{topic:"Money & Finance",questions:["How important is money to you personally?","Do you think you are good at managing money?","Have attitudes towards money changed in your country?","Do you prefer paying by cash or card?"]}, part2:{title:"Describe a time when money was important to a decision you made.",bullets:["What the decision was","What the financial situation was","What you decided to do","Explain how money affected the outcome"]}, part3:{topic:"Money, Economy & Inequality",questions:["Is the gap between rich and poor growing in your country?","Should governments introduce a minimum wage?","What are the advantages and disadvantages of a cashless society?","How does economic inequality affect social cohesion?"]}},
+  { id:14, name:"Test 14 — Shopping & Consumerism", part1:{topic:"Shopping & Consumer Habits",questions:["Do you enjoy shopping? What do you like to buy?","How has online shopping changed the way you buy things?","Do you think people today spend money wisely?","How important is it to save money for the future?"]}, part2:{title:"Describe something expensive that you bought or would like to buy.",bullets:["What it is","Why it is expensive","Whether you bought it or are saving for it","Explain whether you think it was worth the cost"]}, part3:{topic:"Consumerism & Society",questions:["Do people in your country consume too much?","How does advertising influence spending habits?","What are the environmental consequences of a consumer economy?","Is there too much inequality between rich and poor?"]}},
+  { id:15, name:"Test 15 — Language & Communication", part1:{topic:"Language Learning",questions:["What languages do you speak, and how did you learn them?","Do you think it is important to learn foreign languages?","What do you find most challenging about learning a new language?","Has learning another language changed how you think?"]}, part2:{title:"Describe an experience communicating in a foreign language.",bullets:["When and where it happened","What language you used","What the situation was","Explain how you felt about the experience"]}, part3:{topic:"Language & Globalisation",questions:["Will English remain the world's dominant international language?","How does language influence identity and culture?","Is it important to protect minority languages?","How has the internet affected the way languages develop?"]}},
+  { id:16, name:"Test 16 — Crime & Justice", part1:{topic:"Safety & Society",questions:["Do you feel safe in the area where you live?","How has crime changed in your country recently?","What do you think causes people to commit crimes?","Do you think punishments for crime are fair?"]}, part2:{title:"Describe a law or rule that you think is particularly important.",bullets:["What the law or rule is","Why it exists","How it affects people","Explain why you think it is important"]}, part3:{topic:"Crime & Justice",questions:["What is the most effective way to reduce crime?","Should the focus be on punishment or rehabilitation?","How has organised crime changed with technology?","Do surveillance cameras help reduce crime or invade privacy?"]}},
+  { id:17, name:"Test 17 — Childhood & Development", part1:{topic:"Childhood & Growing Up",questions:["What is your earliest happy memory from childhood?","How do you think childhood is different today?","Do children today have more or fewer opportunities than in the past?","What activities are most beneficial for children's development?"]}, part2:{title:"Describe something you learned in childhood that has been useful.",bullets:["What you learned","How you learned it","Who taught you","Explain how it has been useful"]}, part3:{topic:"Education & Parenting",questions:["How much responsibility should parents have for children's behaviour?","Do schools or parents have a greater influence on development?","Is play important enough in children's lives?","What are the effects of social media on children?"]}},
+  { id:18, name:"Test 18 — Government & Democracy", part1:{topic:"Society & Citizenship",questions:["Do you follow politics in your country?","Do you think it is important to vote?","What is the most important responsibility of a government?","How satisfied are people with their government?"]}, part2:{title:"Describe a change you would like to see in your country.",bullets:["What change you would like","Why it is needed","How it could be achieved","Explain what impact it would have"]}, part3:{topic:"Democracy & Rights",questions:["What are the strengths and weaknesses of democracy?","Do citizens have enough power to influence government?","How should governments balance freedom with social needs?","Are international organisations like the UN effective?"]}},
+  { id:19, name:"Test 19 — The Future & Change", part1:{topic:"Plans & Ambitions",questions:["What are your main ambitions for the future?","How do you think your life will be different in ten years?","Are you optimistic or pessimistic about the future?","What is the most important change you hope to see in your lifetime?"]}, part2:{title:"Describe something you are planning to do in the near future.",bullets:["What you are planning to do","When you plan to do it","How you are preparing","Explain why you are looking forward to it"]}, part3:{topic:"Change & Progress",questions:["Will the world be a better or worse place in 50 years?","How can individuals prepare for an uncertain future?","What are the greatest challenges facing humanity?","How important is it to learn from the past?"]}},
+  { id:20, name:"Test 20 — Social Issues & Inequality", part1:{topic:"Community & Social Life",questions:["How connected do you feel to your local community?","Are people more or less socially isolated than in the past?","How important is it to volunteer or give back?","What social issue do you feel most strongly about?"]}, part2:{title:"Describe a social issue that you care about.",bullets:["What the issue is","Who it affects","What is being done about it","Explain why you care"]}, part3:{topic:"Inequality & Society",questions:["What are the root causes of poverty?","Has social media made society more or less equal?","How can governments address growing inequality?","Do wealthier countries have a moral obligation to help poorer nations?"]}}
 ];
 
 // ── STATE ──
-let examState = {
-  test: null,
-  phase: null, // 'part1', 'part2', 'part3', 'done'
-  currentQ: 0,
-  allFeedback: [],
-  done: false
-};
+let examState = { test:null, phase:null, currentQ:0, allFeedback:[], done:false };
+let recognition = null, isListening = false, currentTranscript = '', finalTranscript = '';
 
-let recognition = null;
-let isListening = false;
-let currentTranscript = '';
-let finalTranscript = '';
+// ── TIMER STATE ──
+let timerInterval = null;
+let timerSeconds = 0;
+let timerMode = null; // 'prep' | 'speaking'
 
-// ── INIT ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-}
+// ── NAVIGATION ──
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+id).classList.add('active'); }
 
 function showStudent() {
-  populateExams();
+  const sel = document.getElementById('exam-select');
+  sel.innerHTML = '<option value="">— Select a test —</option>';
+  IELTS_TESTS.forEach(t => { const o=document.createElement('option'); o.value=t.id; o.textContent=t.name; sel.appendChild(o); });
   showScreen('student');
 }
 
-function populateExams() {
-  const sel = document.getElementById('exam-select');
-  sel.innerHTML = '<option value="">— choose a test —</option>';
-  IELTS_TESTS.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.id;
-    opt.textContent = t.name;
-    sel.appendChild(opt);
-  });
-}
-
-function onExamChange() {
-  const sel = document.getElementById('exam-select');
-  const t = IELTS_TESTS.find(t => t.id == sel.value);
-  const ind = document.getElementById('part-indicator');
-  ind.textContent = t ? 'Ready' : 'Select a test';
-  ind.className = 'part-indicator done';
-}
-
-function showPasswordModal() {
-  document.getElementById('pw-modal').classList.add('open');
-  document.getElementById('pw-input').value = '';
-  document.getElementById('pw-error').style.display = 'none';
-}
+function onExamChange() {}
+function showPasswordModal() { document.getElementById('pw-modal').classList.add('open'); document.getElementById('pw-input').value=''; document.getElementById('pw-error').style.display='none'; }
 function closeModal() { document.getElementById('pw-modal').classList.remove('open'); }
-function checkPw() {
-  if (document.getElementById('pw-input').value === TEACHER_PASSWORD) {
-    closeModal();
-    showToast('Teacher mode — tests are built in to the code');
-  } else {
-    document.getElementById('pw-error').style.display = 'block';
+function checkPw() { if(document.getElementById('pw-input').value===TEACHER_PASSWORD){closeModal();showToast('Tests are built into the code — no setup needed!');}else{document.getElementById('pw-error').style.display='block';} }
+
+// ── TIMER ──
+function startTimer(seconds, mode, label) {
+  stopTimer();
+  timerSeconds = seconds;
+  timerMode = mode;
+  const headerTimer = document.getElementById('header-timer');
+  const timerLabel = document.getElementById('timer-label');
+  const timerVal = document.getElementById('timer-value');
+  headerTimer.classList.add('visible');
+  timerLabel.textContent = label;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) { stopTimer(); onTimerEnd(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const mins = Math.floor(timerSeconds / 60);
+  const secs = timerSeconds % 60;
+  const display = `${mins}:${secs.toString().padStart(2,'0')}`;
+  document.getElementById('timer-value').textContent = display;
+  const headerTimer = document.getElementById('header-timer');
+  if (timerSeconds <= 30) { headerTimer.classList.add('urgent'); }
+  else { headerTimer.classList.remove('urgent'); }
+  // Update inline timer card if visible
+  const inlineVal = document.getElementById('inline-timer-val');
+  if (inlineVal) {
+    inlineVal.textContent = display;
+    const ring = document.getElementById('timer-ring-fill');
+    if (ring) {
+      const total = timerMode === 'prep' ? 60 : 120;
+      const pct = timerSeconds / total;
+      const circumference = 2 * Math.PI * 26;
+      ring.style.strokeDasharray = circumference;
+      ring.style.strokeDashoffset = circumference * (1 - pct);
+      ring.style.stroke = timerSeconds <= 30 ? '#e03e2d' : timerMode === 'prep' ? '#f59e0b' : '#0E9BAD';
+    }
   }
+}
+
+function stopTimer() { if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+
+function onTimerEnd() {
+  if (timerMode === 'prep') {
+    // Prep time over — automatically start speaking timer
+    showToast('Preparation time over — start speaking now!');
+    startSpeakingPhase();
+  } else if (timerMode === 'speaking') {
+    showToast('Time is up! Submit your answer.');
+    document.getElementById('mic-status').textContent = 'Time is up — please submit your answer';
+    if (isListening) toggleMic();
+  }
+}
+
+function startSpeakingPhase() {
+  const area = document.getElementById('messages-area');
+  // Update timer card
+  const tc = document.getElementById('timer-card');
+  if (tc) {
+    tc.className = 'timer-card speaking';
+    tc.querySelector('.timer-info-label').textContent = 'Speaking Time';
+    tc.querySelector('.timer-info-desc').textContent = 'Speak for up to 2 minutes';
+    tc.querySelector('.timer-info-sub').textContent = 'You will be stopped at 2 minutes';
+    const btn = tc.querySelector('.timer-start-btn');
+    if (btn) btn.style.display = 'none';
+  }
+  startTimer(120, 'speaking', 'Speaking');
+  enableMic();
+  document.getElementById('mic-status').textContent = 'Speaking time — tap the mic and speak now';
+}
+
+function enableMic() {
+  document.getElementById('mic-btn').disabled = false;
+  document.getElementById('submit-btn').disabled = false;
 }
 
 // ── EXAM ──
 function startExam() {
   const sel = document.getElementById('exam-select');
-  const test = IELTS_TESTS.find(t => t.id == sel.value);
+  const test = IELTS_TESTS.find(t=>t.id==sel.value);
   if (!test) { alert('Please choose a test first.'); return; }
-
-  examState = { test, phase: 'part1', currentQ: 0, allFeedback: [], done: false };
-  document.getElementById('messages-area').innerHTML = '';
-  document.getElementById('progress-wrap').style.display = 'block';
+  examState = { test, phase:'part1', currentQ:0, allFeedback:[], done:false };
+  stopTimer();
+  document.getElementById('header-timer').classList.remove('visible');
+  document.getElementById('progress-track').style.display='block';
+  document.getElementById('messages-area').innerHTML='';
   updateProgress();
-
-  initRecognition();
-  document.getElementById('mic-btn').disabled = false;
-  setMicStatus('Tap the microphone when ready to speak', '');
-
-  // Welcome
-  addBotMessage(`Welcome to <strong>${test.name}</strong>.<br><br>This practice test has <strong>3 parts</strong>, just like the real IELTS Speaking exam:<br><br>🟢 <strong>Part 1</strong> — Introduction & Interview (personal questions)<br>🔵 <strong>Part 2</strong> — Long Turn (speak for 1–2 minutes from a cue card)<br>🟣 <strong>Part 3</strong> — Two-way Discussion (abstract questions)<br><br>After each answer you'll receive feedback on all 4 IELTS criteria. Your band score will appear in the final summary. Good luck!`);
-
-  setTimeout(() => {
-    addPartDivider('p1', 'Part 1 — Introduction & Interview');
-    addBotMessage(`Part 1 is about <strong>${test.part1.topic}</strong>. I'll ask you ${test.part1.questions.length} questions. Answer naturally — there are no right or wrong answers.`);
-    setTimeout(() => askCurrentQuestion(), 600);
-  }, 800);
-}
-
-function askCurrentQuestion() {
-  const { test, phase, currentQ } = examState;
-  const ind = document.getElementById('part-indicator');
-
-  if (phase === 'part1') {
-    ind.textContent = 'Part 1';
-    ind.className = 'part-indicator p1';
-    addBotMessage(`<strong>Question ${currentQ + 1}:</strong> ${test.part1.questions[currentQ]}`);
-  } else if (phase === 'part2') {
-    ind.textContent = 'Part 2';
-    ind.className = 'part-indicator p2';
-    const card = test.part2;
-    const cardHtml = `<div class="cue-card">
-      <div class="cue-card-title">📋 ${card.title}</div>
-      <div class="cue-card-prompt">You should say:</div>
-      <ul class="cue-card-bullets">${card.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
-      <div class="cue-card-timer">⏱ Speak for 1–2 minutes</div>
-    </div>`;
-    addRawMessage(cardHtml);
-    addBotMessage('You have one minute to prepare, then speak for 1–2 minutes. When you are ready, tap the microphone and begin.');
-  } else if (phase === 'part3') {
-    ind.textContent = 'Part 3';
-    ind.className = 'part-indicator p3';
-    addBotMessage(`<strong>Question ${currentQ + 1}:</strong> ${test.part3.questions[currentQ]}`);
-  }
+  startPart1();
 }
 
 function updateProgress() {
-  const { test, phase, currentQ } = examState;
-  const total = test.part1.questions.length + 1 + test.part3.questions.length;
+  const { phase, test, currentQ } = examState;
+  const p1total = test.part1.questions.length;
+  const p2total = 1;
+  const p3total = test.part3.questions.length;
+  const total = p1total + p2total + p3total;
   let done = 0;
-  if (phase === 'part1') done = currentQ;
-  else if (phase === 'part2') done = test.part1.questions.length + currentQ;
-  else if (phase === 'part3') done = test.part1.questions.length + 1 + currentQ;
-  else if (phase === 'done') done = total;
-
-  const pct = Math.round((done / total) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  const colors = { part1: 'var(--part1)', part2: 'var(--part2)', part3: 'var(--part3)', done: 'var(--green)' };
-  document.getElementById('progress-fill').style.background = colors[phase] || 'var(--green)';
-  document.getElementById('progress-label-text').textContent =
-    phase === 'part1' ? `Part 1 — Question ${currentQ + 1} of ${test.part1.questions.length}` :
-    phase === 'part2' ? 'Part 2 — Long Turn' :
-    phase === 'part3' ? `Part 3 — Question ${currentQ + 1} of ${test.part3.questions.length}` :
-    'Complete!';
-  document.getElementById('progress-pct').textContent = pct + '%';
+  if (phase==='part1') done = currentQ;
+  else if (phase==='part2') done = p1total;
+  else if (phase==='part3') done = p1total + p2total + currentQ;
+  else if (phase==='done') done = total;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+  // Part tabs
+  ['p1','p2','p3'].forEach(p => {
+    const tab = document.getElementById('tab-'+p);
+    tab.className = 'part-tab';
+    if ((phase==='part1'&&p==='p1')||(phase==='part2'&&p==='p2')||(phase==='part3'&&p==='p3')) tab.classList.add('active');
+    if ((phase==='part2'&&p==='p1')||(phase==='part3'&&(p==='p1'||p==='p2'))||(phase==='done')) tab.classList.add('done');
+  });
+  const labels = { part1:'Part 1 — Introduction', part2:'Part 2 — Long Turn', part3:'Part 3 — Discussion', done:'Complete!' };
+  document.getElementById('progress-label').textContent = labels[phase]||'';
 }
 
-async function submitAnswer() {
-  const answer = currentTranscript.trim();
-  if (!answer) { setMicStatus('No speech detected. Please tap the mic and try again.', ''); return; }
-  if (isListening) stopListening();
+function startPart1() {
+  addDivider('Part 1', 'p1');
+  addBotMsg(`Welcome! Let's begin with Part 1. I'll ask you some questions about <strong>${examState.test.part1.topic}</strong>. Answer naturally — there are no right or wrong answers.`);
+  setTimeout(() => askPart1Question(), 600);
+}
 
+function askPart1Question() {
+  const q = examState.test.part1.questions[examState.currentQ];
+  addBotMsg(q);
+  document.getElementById('mic-btn').disabled = false;
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('mic-status').textContent = 'Tap the microphone to answer';
+  document.getElementById('mic-hint').textContent = `Question ${examState.currentQ+1} of ${examState.test.part1.questions.length}`;
+}
+
+function startPart2() {
+  examState.phase = 'part2';
+  examState.currentQ = 0;
+  updateProgress();
+  stopTimer();
+  addDivider('Part 2', 'p2');
+  addBotMsg("Now for Part 2. You'll have <strong>1 minute to prepare</strong>, then <strong>2 minutes to speak</strong>. Here is your task card:");
+  
+  const { title, bullets } = examState.test.part2;
+  const cueHtml = `
+    <div class="cue-card">
+      <div class="cue-card-header">
+        <div class="cue-card-title">${esc(title)}</div>
+        <span class="cue-card-badge">Task Card</span>
+      </div>
+      <div class="cue-card-prompt">You should say:</div>
+      <ul class="cue-card-bullets">${bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+      <div class="cue-card-note">📝 Make notes during your preparation minute. Speak for up to 2 minutes.</div>
+    </div>`;
+  addBotHTML(cueHtml);
+
+  // Timer card with prep timer
+  const timerHtml = `
+    <div class="timer-card prep" id="timer-card">
+      <div class="timer-ring">
+        <svg viewBox="0 0 60 60" width="64" height="64">
+          <circle class="ring-bg" cx="30" cy="30" r="26"/>
+          <circle class="ring-fill" id="timer-ring-fill" cx="30" cy="30" r="26"
+            stroke="#f59e0b" stroke-dasharray="163.4" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-ring-text" id="inline-timer-val">1:00</div>
+      </div>
+      <div class="timer-info">
+        <div class="timer-info-label">Preparation Time</div>
+        <div class="timer-info-desc">Use this minute to make notes</div>
+        <div class="timer-info-sub">Speaking will start automatically</div>
+      </div>
+      <button class="timer-start-btn" onclick="beginPrepTimer()">Start prep →</button>
+    </div>`;
+  addBotHTML(timerHtml);
   document.getElementById('mic-btn').disabled = true;
-  document.getElementById('submit-btn').classList.remove('visible');
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('mic-status').textContent = 'Press "Start prep" when you are ready';
+  document.getElementById('mic-hint').textContent = '';
+}
+
+function beginPrepTimer() {
+  const btn = document.querySelector('.timer-start-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
+  startTimer(60, 'prep', 'Prep');
+  document.getElementById('mic-status').textContent = 'Make your notes — speaking starts in 1 minute…';
+}
+
+function startPart3() {
+  examState.phase = 'part3';
+  examState.currentQ = 0;
+  updateProgress();
+  stopTimer();
+  document.getElementById('header-timer').classList.remove('visible');
+  addDivider('Part 3', 'p3');
+  addBotMsg(`Excellent! Now for Part 3 — a deeper discussion on the theme of <strong>${examState.test.part3.topic}</strong>. I'll ask you some more abstract questions.`);
+  setTimeout(() => askPart3Question(), 600);
+}
+
+function askPart3Question() {
+  const q = examState.test.part3.questions[examState.currentQ];
+  addBotMsg(q);
+  document.getElementById('mic-btn').disabled = false;
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('mic-status').textContent = 'Tap the microphone to answer';
+  document.getElementById('mic-hint').textContent = `Question ${examState.currentQ+1} of ${examState.test.part3.questions.length}`;
+}
+
+// ── SUBMIT ──
+async function submitAnswer() {
+  const answer = finalTranscript.trim() || currentTranscript.trim();
+  if (!answer) { showToast('No speech detected — please tap the mic and speak.'); return; }
+  if (isListening) toggleMic();
+  stopTimer();
+  document.getElementById('header-timer').classList.remove('visible');
+  addUserMsg(answer);
+  document.getElementById('mic-btn').disabled = true;
+  document.getElementById('submit-btn').disabled = true;
   document.getElementById('live-transcript').textContent = '';
-  setMicStatus('Analysing your answer…', '');
+  finalTranscript = ''; currentTranscript = '';
 
-  addUserMessage(answer);
-  currentTranscript = '';
-  finalTranscript = '';
+  const { phase, currentQ, test } = examState;
+  const question = phase==='part1' ? test.part1.questions[currentQ]
+                 : phase==='part2' ? test.part2.title
+                 : test.part3.questions[currentQ];
+  const partLabel = phase==='part1'?'Part 1':phase==='part2'?'Part 2':'Part 3';
 
-  const typingId = addTyping();
-
+  showLoading('Analysing your response…');
   try {
-    const { test, phase, currentQ } = examState;
-    const question = phase === 'part1' ? test.part1.questions[currentQ] :
-                     phase === 'part2' ? test.part2.title :
-                     test.part3.questions[currentQ];
-    const partLabel = phase === 'part1' ? 'Part 1 — Introduction' :
-                      phase === 'part2' ? 'Part 2 — Long Turn' :
-                      'Part 3 — Discussion';
-
-    const feedback = await getIELTSFeedback(answer, question, partLabel, phase);
-    removeTyping(typingId);
-    addFeedbackCard(feedback, partLabel);
-    examState.allFeedback.push({ question, answer, feedback, phase, partLabel });
+    const fb = await getFeedback(answer, question, partLabel, phase);
+    hideLoading();
+    examState.allFeedback.push({ phase, question, answer, feedback: fb });
+    showFeedback(fb, partLabel, phase);
 
     // Advance
-    isListening = false;
-    try { if (recognition) recognition.stop(); } catch(e) {}
-    currentTranscript = '';
-    finalTranscript = '';
-    document.getElementById('live-transcript').textContent = '';
-    document.getElementById('submit-btn').classList.remove('visible');
-
-    setMicStatus('Read your feedback…', 'Tap the microphone when ready for the next question');
-
-    setTimeout(() => {
-      advanceExam();
-    }, 1500);
-
+    if (phase==='part1') {
+      examState.currentQ++;
+      if (examState.currentQ < test.part1.questions.length) {
+        setTimeout(()=>askPart1Question(), 800);
+      } else {
+        setTimeout(()=>startPart2(), 1000);
+      }
+    } else if (phase==='part2') {
+      setTimeout(()=>startPart3(), 1000);
+    } else {
+      examState.currentQ++;
+      if (examState.currentQ < test.part3.questions.length) {
+        setTimeout(()=>askPart3Question(), 800);
+      } else {
+        examState.phase='done'; examState.done=true;
+        updateProgress();
+        setTimeout(()=>showSummary(), 1000);
+      }
+    }
   } catch(e) {
-    removeTyping(typingId);
-    addBotMessage('Sorry, there was a problem getting feedback. Please check your connection and try again.');
-    isListening = false;
-    try { if (recognition) recognition.stop(); } catch(e) {}
-    currentTranscript = '';
-    finalTranscript = '';
+    hideLoading();
+    showToast('Error getting feedback — please check your connection.');
     document.getElementById('mic-btn').disabled = false;
-    setMicStatus('Tap the microphone to try again', '');
+    document.getElementById('submit-btn').disabled = false;
   }
 }
 
-function advanceExam() {
-  const { test, phase, currentQ } = examState;
+// ── FEEDBACK ──
+function showFeedback(fb, partLabel, phase) {
+  const roundHalf = n => Math.round(n*2)/2;
+  const s = { fc:fb.fluency?.score||6, lr:fb.lexical_resource?.score||6, gr:fb.grammatical_range?.score||6, p:fb.pronunciation?.score||6 };
+  const avg = roundHalf((s.fc+s.lr+s.gr+s.p)/4);
+  const bandColor = avg>=7.5?'#16a34a':avg>=6?'#d97706':'#dc2626';
 
-  if (phase === 'part1') {
-    if (currentQ + 1 < test.part1.questions.length) {
-      examState.currentQ++;
-      updateProgress();
-      askCurrentQuestion();
-      document.getElementById('mic-btn').disabled = false;
-      setMicStatus('Tap the microphone when ready', '');
-    } else {
-      // Move to Part 2
-      examState.phase = 'part2';
-      examState.currentQ = 0;
-      updateProgress();
-      addPartDivider('p2', 'Part 2 — Long Turn');
-      addBotMessage('Well done on Part 1! Now we move to <strong>Part 2</strong>. You will receive a cue card with a topic. Take a moment to read it, then speak for 1–2 minutes.');
-      setTimeout(() => {
-        askCurrentQuestion();
-        document.getElementById('mic-btn').disabled = false;
-        setMicStatus('Read the cue card, then tap the microphone when ready', '');
-      }, 600);
-    }
-  } else if (phase === 'part2') {
-    // Move to Part 3
-    examState.phase = 'part3';
-    examState.currentQ = 0;
-    updateProgress();
-    addPartDivider('p3', 'Part 3 — Two-way Discussion');
-    addBotMessage(`Excellent! Now for <strong>Part 3</strong>. I\'ll ask you ${test.part3.questions.length} more abstract discussion questions related to the topic of <strong>${test.part2.title.toLowerCase().replace('describe ', '')}</strong>.`);
-    setTimeout(() => {
-      askCurrentQuestion();
-      document.getElementById('mic-btn').disabled = false;
-      setMicStatus('Tap the microphone when ready', '');
-    }, 600);
-  } else if (phase === 'part3') {
-    if (currentQ + 1 < test.part3.questions.length) {
-      examState.currentQ++;
-      updateProgress();
-      askCurrentQuestion();
-      document.getElementById('mic-btn').disabled = false;
-      setMicStatus('Tap the microphone when ready', '');
-    } else {
-      // Done!
-      examState.phase = 'done';
-      examState.done = true;
-      updateProgress();
-      document.getElementById('mic-btn').disabled = true;
-      document.getElementById('part-indicator').textContent = 'Complete';
-      document.getElementById('part-indicator').className = 'part-indicator done';
-      setMicStatus('Test complete! Great work 🎉', '');
-      addBotMessage("Congratulations — you've completed the full IELTS Speaking practice test! 🎉 Here is your detailed feedback summary:");
-      setTimeout(() => addSummaryCard(), 800);
-    }
-  }
-}
-
-async function getIELTSFeedback(answer, question, partLabel, phase) {
-  const partInstructions = {
-    part1: 'This is Part 1 (Introduction). Answers should be natural and conversational, 2-4 sentences.',
-    part2: 'This is Part 2 (Long Turn). The student should speak for 1-2 minutes covering all bullet points on the cue card.',
-    part3: 'This is Part 3 (Discussion). Answers should be more extended and analytical, showing the ability to discuss abstract ideas.'
-  };
-
-  const systemPrompt = `You are an expert IELTS Speaking examiner. Assess the student's spoken response strictly according to the 4 official IELTS Speaking assessment criteria.
-
-${partInstructions[phase]}
-
-Return ONLY valid JSON:
-{
-  "praise": "One specific genuine compliment about a strength in this answer",
-  "fluency_coherence": {
-    "score": 6.5,
-    "comment": "Assessment of fluency, hesitation, coherence, and use of cohesive devices"
-  },
-  "lexical_resource": {
-    "score": 6.0,
-    "comment": "Assessment of vocabulary range, precision, and ability to paraphrase"
-  },
-  "grammatical_range": {
-    "score": 6.5,
-    "comment": "Assessment of grammatical structures used, range, and accuracy"
-  },
-  "pronunciation": {
-    "score": 6.5,
-    "comment": "Note: assessed from transcription only — limited accuracy. Comment on sentence structure and word choice that might affect clarity."
-  },
-  "grammar_errors": [{"original": "error phrase", "correction": "correct phrase", "explanation": "rule"}],
-  "vocabulary_suggestions": [{"original": "word used", "better": "more sophisticated alternative", "explanation": "why this is better for IELTS"}],
-  "speaking_tip": "One specific actionable tip for this part of the test",
-  "overall": "One encouraging closing sentence with a clear next step"
-}
-
-Band scores: use 0.5 increments from 4.0 to 9.0. Be calibrated: 5.0=modest, 6.0=competent, 7.0=good, 8.0=very good, 9.0=expert.
-Grammar errors: max 3, most impactful only.
-Vocabulary: max 2 suggestions.
-Remember speech recognition removes punctuation and delivery cues — be fair and generous in scoring.`;
-
-  const resp = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 1200,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: `Part: ${partLabel}\nQuestion: ${question}\nStudent's answer: ${answer}` }]
-    })
-  });
-
-  const data = await resp.json();
-  const text = data.content[0].text;
-  return JSON.parse(text.replace(/```json|```/g, '').trim());
-}
-
-function addFeedbackCard(fb, partLabel) {
-  const area = document.getElementById('messages-area');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap bot';
-
-  const avgScore = ((fb.fluency_coherence?.score || 6) + (fb.lexical_resource?.score || 6) + (fb.grammatical_range?.score || 6) + (fb.pronunciation?.score || 6)) / 4;
-  const bandColor = avgScore >= 7.5 ? '#2d6a4f' : avgScore >= 6 ? '#b8860b' : '#c85a2a';
-
-  const grammarHtml = fb.grammar_errors?.length
-    ? fb.grammar_errors.map(g => `<div class="fb-row"><div class="fb-icon amber">✎</div><div class="fb-text"><strong>Grammar:</strong> <span class="original">"${esc(g.original)}"</span> → <span class="correction">"${esc(g.correction)}"</span><br>${esc(g.explanation)}</div></div>`).join('')
-    : `<div class="fb-row"><div class="fb-icon green">✓</div><div class="fb-text"><strong>Grammar:</strong> No significant errors noted.</div></div>`;
-
-  const vocabHtml = (fb.vocabulary_suggestions || []).map(v =>
-    `<div class="fb-row"><div class="fb-icon blue">💡</div><div class="fb-text"><strong>Vocabulary:</strong> <span class="correction">"${esc(v.better)}"</span> instead of "${esc(v.original)}" — ${esc(v.explanation)}</div></div>`).join('');
-
-  wrap.innerHTML = `
-    <div class="feedback-card">
-      <div class="fb-header"><span>${esc(partLabel)} Feedback</span><span style="color:${bandColor};font-weight:600">Band ~${avgScore.toFixed(1)}</span></div>
-      <div class="fb-body">
-        <div class="fb-row"><div class="fb-icon green">★</div><div class="fb-text">${esc(fb.praise)}</div></div>
-        <div class="fb-row"><div class="fb-icon blue">〜</div><div class="fb-text"><strong>Fluency & Coherence:</strong> ${esc(fb.fluency_coherence?.comment || '')}</div></div>
-        <div class="fb-row"><div class="fb-icon purple">📚</div><div class="fb-text"><strong>Lexical Resource:</strong> ${esc(fb.lexical_resource?.comment || '')}</div></div>
-        <div class="fb-row"><div class="fb-icon amber">✎</div><div class="fb-text"><strong>Grammatical Range:</strong> ${esc(fb.grammatical_range?.comment || '')}</div></div>
-        ${grammarHtml}
-        ${vocabHtml}
-        <div class="fb-row"><div class="fb-icon orange">🗣</div><div class="fb-text"><strong>Tip:</strong> ${esc(fb.speaking_tip)}</div></div>
-        <div class="fb-row"><div class="fb-icon green">→</div><div class="fb-text">${esc(fb.overall)}</div></div>
+  const html = `
+    <div class="feedback-wrap">
+      <div class="fb-card">
+        <div class="fb-card-header"><span>${partLabel} — Band Scores</span><span style="color:${bandColor};font-weight:700">Band ${avg.toFixed(1)}</span></div>
+        <div class="fb-card-body">
+          <div class="band-grid">
+            <div class="band-box"><div class="band-box-name">Fluency & Coherence</div><div class="band-box-score" style="color:${bandColor}">${s.fc.toFixed(1)}</div><div class="band-box-note">${esc(fb.fluency?.comment||'')}</div></div>
+            <div class="band-box"><div class="band-box-name">Lexical Resource</div><div class="band-box-score" style="color:${bandColor}">${s.lr.toFixed(1)}</div><div class="band-box-note">${esc(fb.lexical_resource?.comment||'')}</div></div>
+            <div class="band-box"><div class="band-box-name">Grammatical Range</div><div class="band-box-score" style="color:${bandColor}">${s.gr.toFixed(1)}</div><div class="band-box-note">${esc(fb.grammatical_range?.comment||'')}</div></div>
+            <div class="band-box"><div class="band-box-name">Pronunciation</div><div class="band-box-score" style="color:${bandColor}">${s.p.toFixed(1)}</div><div class="band-box-note">${esc(fb.pronunciation?.comment||'')}</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fb-card">
+        <div class="fb-card-header"><span>Detailed Feedback</span></div>
+        <div class="fb-card-body">
+          <div class="fb-row"><div class="fb-dot g">★</div><div class="fb-text">${esc(fb.praise)}</div></div>
+          ${fb.grammar_correction?`<div class="fb-row"><div class="fb-dot a">✎</div><div class="fb-text"><strong>Grammar:</strong> ${esc(fb.grammar_correction)}</div></div>`:''}
+          ${fb.vocabulary_tip?`<div class="fb-row"><div class="fb-dot b">💡</div><div class="fb-text"><strong>Vocabulary:</strong> ${esc(fb.vocabulary_tip)}</div></div>`:''}
+          <div class="fb-row"><div class="fb-dot p">→</div><div class="fb-text"><strong>Tip:</strong> ${esc(fb.improvement_tip)}</div></div>
+        </div>
       </div>
     </div>`;
-
-  area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  addBotHTML(html);
 }
 
-function addSummaryCard() {
-  const area = document.getElementById('messages-area');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap bot';
+function showSummary() {
+  const roundHalf = n => Math.round(n*2)/2;
+  const allScores = examState.allFeedback.map(f => {
+    const fb = f.feedback;
+    return (fb.fluency?.score + fb.lexical_resource?.score + fb.grammatical_range?.score + fb.pronunciation?.score) / 4;
+  });
+  const overall = roundHalf(allScores.reduce((a,b)=>a+b,0)/allScores.length);
+  const bandColor = overall>=7.5?'#16a34a':overall>=6?'#d97706':'#dc2626';
 
-  const allFb = examState.allFeedback.map(f => f.feedback);
-  const avg = (key) => allFb.reduce((s, f) => s + (f[key]?.score || 6), 0) / allFb.length;
+  const avgCrit = key => {
+    const scores = examState.allFeedback.map(f=>f.feedback[key]?.score||6);
+    return roundHalf(scores.reduce((a,b)=>a+b,0)/scores.length);
+  };
+  const fc=avgCrit('fluency'), lr=avgCrit('lexical_resource'), gr=avgCrit('grammatical_range'), p=avgCrit('pronunciation');
+  const critBar=(label,score)=>`<div class="crit-row"><div class="crit-name">${label}</div><div class="crit-bar-wrap"><div class="crit-bar" style="width:${(score/9)*100}%;background:${bandColor}"></div></div><div class="crit-score" style="color:${bandColor}">${score.toFixed(1)}</div></div>`;
 
-  const fc = avg('fluency_coherence');
-  const lr = avg('lexical_resource');
-  const gr = avg('grammatical_range');
-  const pr = avg('pronunciation');
-  const overall = ((fc + lr + gr + pr) / 4);
+  const tip = overall>=7?'Outstanding performance! You are speaking at a high level. Focus on consistency across all parts.':overall>=6?'Good result! Work on extending your answers in Part 2 and developing your ideas more fully.':'Keep practising! Focus on fluency and expanding your vocabulary range.';
 
-  // Round to nearest 0.5
-  const roundHalf = (n) => Math.round(n * 2) / 2;
-  const overallBand = roundHalf(overall);
-  const bandColor = overallBand >= 7.5 ? '#2d6a4f' : overallBand >= 6 ? '#b8860b' : '#c85a2a';
-
-  const allGrammar = allFb.flatMap(f => f.grammar_errors || []);
-  const allVocab = allFb.flatMap(f => f.vocabulary_suggestions || []);
-
-  const criterionBar = (label, score, color) => `
-    <div class="criterion-row">
-      <div class="criterion-name">${label}</div>
-      <div class="criterion-bar-wrap"><div class="criterion-bar" style="width:${(score/9)*100}%;background:${color}"></div></div>
-      <div class="criterion-score" style="color:${color}">${roundHalf(score).toFixed(1)}</div>
-    </div>`;
-
-  const grammarItems = allGrammar.length
-    ? allGrammar.map(g => `<div class="summary-item grammar">✎ <strong>${esc(g.original)}</strong> → ${esc(g.correction)}</div>`).join('')
-    : `<div class="summary-item grammar">✓ No significant grammar errors recorded.</div>`;
-
-  const vocabItems = allVocab.length
-    ? allVocab.map(v => `<div class="summary-item vocab">💡 <strong>${esc(v.better)}</strong> instead of "${esc(v.original)}"</div>`).join('')
-    : `<div class="summary-item vocab">Good vocabulary range throughout.</div>`;
-
-  wrap.innerHTML = `
+  const html = `
     <div class="summary-card">
       <div class="summary-header">
-        <span>IELTS Speaking — Full Test Summary</span>
-        <div>
-          <div style="font-size:11px;opacity:0.8;margin-bottom:2px">Overall Band</div>
-          <div class="summary-band" style="color:white">${overallBand.toFixed(1)}</div>
+        <div class="summary-header-left">
+          <div class="summary-header-title">Test Complete!</div>
+          <div class="summary-header-sub">${examState.test.name}</div>
+        </div>
+        <div class="summary-band-big">
+          <div class="summary-band-num">${overall.toFixed(1)}</div>
+          <div class="summary-band-label">Overall Band</div>
         </div>
       </div>
       <div class="summary-body">
         <div>
-          <div class="summary-section-title">Band Scores by Criterion</div>
-          ${criterionBar('Fluency & Coherence', fc, '#1e4f7a')}
-          ${criterionBar('Lexical Resource', lr, '#b8860b')}
-          ${criterionBar('Grammatical Range & Accuracy', gr, '#7a3a8a')}
-          ${criterionBar('Pronunciation', pr, '#2d6a4f')}
+          <div class="summary-section-title">Band scores by criterion</div>
+          ${critBar('Fluency & Coherence', fc)}
+          ${critBar('Lexical Resource', lr)}
+          ${critBar('Grammatical Range & Accuracy', gr)}
+          ${critBar('Pronunciation', p)}
         </div>
-        <div><div class="summary-section-title">Grammar to practise</div>${grammarItems}</div>
-        <div><div class="summary-section-title">Vocabulary to upgrade</div>${vocabItems}</div>
-        <div class="summary-item praise">🎓 ${overallBand >= 7 ? 'Excellent result! You are performing at a strong level. Focus on consistency and pushing your band score higher.' : overallBand >= 6 ? 'Good result! With focused practice on fluency and vocabulary range, you can reach Band 7.' : 'Keep practising! Focus on developing longer, more coherent answers and expanding your vocabulary range.'}</div>
+        <div class="summary-tip">🎓 ${tip}</div>
+        <div class="summary-actions">
+          <button class="btn-primary" style="flex:1" onclick="location.reload()">Try another test →</button>
+        </div>
       </div>
     </div>`;
-
-  area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  addBotHTML(html);
+  document.getElementById('mic-btn').disabled = true;
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('mic-status').textContent = 'Test complete!';
 }
 
-// ── SPEECH ──
-function initRecognition() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return;
-  recognition = new SR();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US';
-  recognition.onstart = () => {
-    isListening = true;
-    document.getElementById('mic-btn').classList.add('listening');
-    setMicStatus('Listening… speak now', "Tap the mic again when you're done");
-  };
-  recognition.onresult = (e) => {
-    let interim = '', final = '';
-    for (let i = 0; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
-      else interim += e.results[i][0].transcript;
-    }
-    finalTranscript = final;
-    currentTranscript = (final + interim).trim();
-    document.getElementById('live-transcript').textContent = currentTranscript;
-    if (currentTranscript) document.getElementById('submit-btn').classList.add('visible');
-  };
-  recognition.onerror = (e) => {
-    if (e.error === 'not-allowed') setMicStatus('Microphone access denied.', '');
-    stopListening();
-  };
-  recognition.onend = () => {
-    if (isListening && !examState.done) { try { recognition.start(); } catch(e) {} }
-    else { isListening = false; document.getElementById('mic-btn').classList.remove('listening'); }
-  };
+// ── API ──
+async function getFeedback(answer, question, partLabel, phase) {
+  const system = `You are an expert IELTS Speaking examiner. Assess this ${partLabel} response strictly.
+Return ONLY valid JSON:
+{"praise":"one specific genuine strength","fluency":{"score":6.5,"comment":"brief comment"},"lexical_resource":{"score":6.0,"comment":"brief comment"},"grammatical_range":{"score":6.5,"comment":"brief comment"},"pronunciation":{"score":6.0,"comment":"brief comment"},"grammar_correction":"one specific correction if needed, or null","vocabulary_tip":"one vocabulary upgrade suggestion, or null","improvement_tip":"one specific actionable tip"}
+Scores 4.0–9.0 in 0.5 steps. Be accurate and honest.`;
+  const resp = await fetch(WORKER_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:800, system, messages:[{role:'user',content:`Question: ${question}\n\nStudent answer: ${answer}`}] }) });
+  const data = await resp.json();
+  return JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
 }
 
+// ── MIC ──
 function toggleMic() {
-  if (examState.done) return;
-  if (isListening) stopListening();
-  else startListening();
+  if (isListening) { stopListening(); } else { startListening(); }
 }
 
 function startListening() {
-  if (!recognition) { alert('Please use Chrome or Edge for microphone support.'); return; }
-  finalTranscript = ''; currentTranscript = '';
-  document.getElementById('live-transcript').textContent = '';
-  document.getElementById('submit-btn').classList.remove('visible');
-  try { recognition.start(); } catch(e) {}
+  const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+  if (!SR) { showToast('Speech recognition requires Chrome or Edge.'); return; }
+  if (recognition) { try{recognition.stop();}catch(e){} }
+  recognition = new SR();
+  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+  recognition.onstart = () => { isListening=true; document.getElementById('mic-btn').classList.add('listening'); document.getElementById('mic-status').textContent='Listening… speak now'; document.getElementById('mic-status').className='mic-status listening'; };
+  recognition.onresult = e => {
+    let fin='', int='';
+    for(let i=0;i<e.results.length;i++){ if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '; else int+=e.results[i][0].transcript; }
+    finalTranscript=fin.trim(); currentTranscript=(fin+int).trim();
+    document.getElementById('live-transcript').textContent=currentTranscript;
+  };
+  recognition.onerror = () => { isListening=false; document.getElementById('mic-btn').classList.remove('listening'); };
+  recognition.onend = () => { if(isListening){try{recognition.start();}catch(e){}} };
+  try { recognition.start(); } catch(e) { showToast('Could not start microphone. Please allow access.'); }
 }
 
 function stopListening() {
-  isListening = false;
-  try { recognition.stop(); } catch(e) {}
+  isListening=false;
+  try{recognition.stop();}catch(e){}
   document.getElementById('mic-btn').classList.remove('listening');
-  if (currentTranscript) {
-    setMicStatus('Got it! Submit when ready.', 'Or tap mic to re-record.');
-    document.getElementById('submit-btn').classList.add('visible');
-  } else {
-    setMicStatus('Tap the microphone to speak', '');
-  }
+  document.getElementById('mic-status').textContent = currentTranscript ? 'Got it! Press Submit when ready.' : 'Tap the microphone to answer';
+  document.getElementById('mic-status').className='mic-status';
 }
 
-function setMicStatus(msg, hint) {
-  const el = document.getElementById('mic-status');
-  el.textContent = msg;
-  el.className = msg.includes('Listening') ? 'mic-status listening' : 'mic-status';
-  document.getElementById('mic-hint').textContent = hint || '';
-}
-
-// ── UI HELPERS ──
-function addBotMessage(html) {
+// ── DOM HELPERS ──
+function addBotMsg(html) {
   const area = document.getElementById('messages-area');
   const wrap = document.createElement('div');
   wrap.className = 'msg-wrap bot';
-  wrap.innerHTML = `<div class="bubble">${html}</div>`;
+  wrap.innerHTML = `<div class="msg-row"><div class="msg-avatar bot">🎓</div><div class="bubble">${html}</div></div>`;
   area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
-
-function addRawMessage(html) {
+function addBotHTML(html) {
   const area = document.getElementById('messages-area');
   const wrap = document.createElement('div');
   wrap.className = 'msg-wrap bot';
+  wrap.style.maxWidth = '95%';
   wrap.innerHTML = html;
   area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
-
-function addUserMessage(text) {
+function addUserMsg(text) {
   const area = document.getElementById('messages-area');
   const wrap = document.createElement('div');
   wrap.className = 'msg-wrap user';
-  wrap.innerHTML = `<div class="transcript-label">🎤 spoken answer</div><div class="bubble">${esc(text)}</div>`;
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  wrap.innerHTML = `<div class="msg-row"><div class="bubble">${esc(text)}</div></div><div class="msg-time">${time}</div>`;
   area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
-
-function addPartDivider(cls, label) {
+function addDivider(label, cls) {
   const area = document.getElementById('messages-area');
-  const div = document.createElement('div');
-  div.className = 'part-divider';
-  div.innerHTML = `<div class="part-divider-line"></div><div class="part-divider-label ${cls}">${label}</div><div class="part-divider-line"></div>`;
-  area.appendChild(div);
+  const d = document.createElement('div');
+  d.className = 'part-divider';
+  d.innerHTML = `<div class="part-divider-line"></div><div class="part-divider-pill ${cls}">${label}</div><div class="part-divider-line"></div>`;
+  area.appendChild(d);
 }
 
-function addTyping() {
-  const area = document.getElementById('messages-area');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap bot';
-  const id = 'typing-' + Date.now();
-  wrap.id = id;
-  wrap.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
-  area.appendChild(wrap);
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  return id;
-}
-
-function removeTyping(id) { const el = document.getElementById(id); if (el) el.remove(); }
+function showLoading(msg) { document.getElementById('loading-text').textContent=msg; document.getElementById('loading-overlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 </script>
 </body>
 </html>
