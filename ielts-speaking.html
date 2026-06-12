@@ -335,7 +335,7 @@ const IELTS_TESTS = [
 
 // ── STATE ──
 let examState = { test:null, phase:null, currentQ:0, allFeedback:[], done:false };
-let recognition = null, isListening = false, currentTranscript = '', finalTranscript = '';
+let recognition = null, isListening = false, currentTranscript = '', finalTranscript = '', accumulatedFinal = '';
 
 // ── TIMER STATE ──
 let timerInterval = null;
@@ -571,7 +571,7 @@ async function submitAnswer() {
   document.getElementById('mic-btn').disabled = true;
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('live-transcript').textContent = '';
-  finalTranscript = ''; currentTranscript = '';
+  finalTranscript = ''; currentTranscript = ''; accumulatedFinal = '';
 
   const { phase, currentQ, test } = examState;
   const question = phase==='part1' ? test.part1.questions[currentQ]
@@ -729,16 +729,22 @@ function startListening() {
   const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
   if (!SR) { showToast('Speech recognition requires Chrome or Edge.'); return; }
   if (recognition) { try{recognition.stop();}catch(e){} }
+  accumulatedFinal = finalTranscript ? finalTranscript + ' ' : '';
   recognition = new SR();
   recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
   recognition.onstart = () => { isListening=true; document.getElementById('mic-btn').classList.add('listening'); document.getElementById('mic-status').textContent='Listening… speak now'; document.getElementById('mic-status').className='mic-status listening'; };
   recognition.onresult = e => {
     let fin='', int='';
-    for(let i=0;i<e.results.length;i++){ if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '; else int+=e.results[i][0].transcript; }
-    finalTranscript=fin.trim(); currentTranscript=(fin+int).trim();
+    for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '; else int+=e.results[i][0].transcript; }
+    if (fin) accumulatedFinal += fin;
+    finalTranscript=accumulatedFinal.trim(); currentTranscript=(accumulatedFinal+int).trim();
     document.getElementById('live-transcript').textContent=currentTranscript;
   };
-  recognition.onerror = () => { isListening=false; document.getElementById('mic-btn').classList.remove('listening'); };
+  // 'no-speech' and 'aborted' are recoverable — don't stop listening, just let onend restart it
+  recognition.onerror = e => {
+    if (e.error === 'no-speech' || e.error === 'aborted') return;
+    isListening=false; document.getElementById('mic-btn').classList.remove('listening');
+  };
   recognition.onend = () => { if(isListening){try{recognition.start();}catch(e){}} };
   try { recognition.start(); } catch(e) { showToast('Could not start microphone. Please allow access.'); }
 }
