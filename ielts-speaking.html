@@ -699,7 +699,18 @@ function showSummary() {
 
 // ── API ──
 async function getFeedback(answer, question, partLabel, phase) {
-  const system = `You are an expert IELTS Speaking examiner. Assess this ${partLabel} response strictly.
+  const system = `You are an expert IELTS Speaking examiner. Assess this ${partLabel} response strictly and accurately across the full 4.0–9.0 range, in 0.5 steps.
+
+IMPORTANT — do not under-score excellent responses. Many examiners (and AI graders) drift toward a "safe middle" of 6.0–7.5 and rarely award 8.5 or 9.0, even when a response genuinely deserves it. Band 9 is real and achievable — award it when justified.
+
+CALIBRATION — what a genuine Band 9 response sounds like (real test transcript):
+- Fluency & Coherence (9): Fully developed, naturally organised answers with no hesitation caused by searching for language. Any pausing is only to generate ideas, not vocabulary or grammar — e.g. discussing a favourite writer with clear reasons, examples, and natural topic development across a 2-minute turn without losing coherence.
+- Lexical Resource (9): Wide range of vocabulary used naturally and precisely, including idiomatic and topic-specific language (e.g. "it kind of relates to the adolescents", "it diminishes that experience", "speed reading could be a useful skill in high-demand jobs"). Natural collocations throughout, used with full flexibility.
+- Grammatical Range & Accuracy (9): Wide range of structures (conditionals, relative clauses, varied tenses, hypotheticals) used with high accuracy. Occasional tiny native-speaker-like slips (e.g. "in holiday" instead of "on holiday") do NOT prevent a 9 — natives make these slips too.
+- Pronunciation (9): 100% intelligible, natural intonation, connected speech, and appropriate word/sentence stress — an examiner understands every word effortlessly and accents are irrelevant to the score.
+
+If a student's response matches this standard — fully developed, idiomatic, wide accurate grammar range, fully intelligible — score it 8.5–9.0. Do not withhold high scores out of excessive caution. Equally, be honest: do not inflate weaker responses.
+
 Return ONLY valid JSON:
 {"praise":"one specific genuine strength","fluency":{"score":6.5,"comment":"brief comment"},"lexical_resource":{"score":6.0,"comment":"brief comment"},"grammatical_range":{"score":6.5,"comment":"brief comment"},"pronunciation":{"score":6.0,"comment":"brief comment"},"grammar_correction":"one specific correction if needed, or null","vocabulary_tip":"one vocabulary upgrade suggestion, or null","improvement_tip":"one specific actionable tip"}
 Scores 4.0–9.0 in 0.5 steps. Be accurate and honest.`;
